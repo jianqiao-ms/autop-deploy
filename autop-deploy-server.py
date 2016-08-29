@@ -9,8 +9,9 @@ import datetime
 import tornado.ioloop
 import tornado.web
 import tornado.options
-import tornado.escape
-import torndb
+from tornado.gen import coroutine
+
+from tasks import mysql_query
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -27,9 +28,7 @@ def fdumps(obj, status_code, request_method):
         obj['status'] = 'ERROR'
     obj['status_code'] = status_code
     obj['request_method'] = request_method
-    # return obj
     return json.dumps(obj, indent=4, cls=DateJsonEncoder)
-    # return tornado.escape.json_encode(obj)
 
 # 自定义方法
 def getLocaltime():
@@ -37,18 +36,18 @@ def getLocaltime():
 
 # 返回tornad app对象
 settings = dict(
-
+    debug = 'True'
 )
 
 def make_app():
     return tornado.web.Application([
         (r"/", Index),
         (r"^/assets"
-         r"(?P<path0>/?)(?P<item>[A-Za-z]*)"
-         r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Assets),
+            r"(?P<path0>/?)(?P<item>[A-Za-z]*)"
+            r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Assets),
         (r"^/deploy"
-         r"(?P<path0>/?)(?P<item>[A-Za-z-]*)"
-         r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Deploy),
+            r"(?P<path0>/?)(?P<item>[A-Za-z-]*)"
+            r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Deploy),
         (r".*", Error)
     ], **settings)
 
@@ -108,21 +107,21 @@ class Assets(AddHeaderRequestHandler, object):
                 LEFT JOIN t_assets_hosttype   AS `hosttype` ON (`host`.type_id    = `hosttype`.id)
                 LEFT JOIN t_assets_hostgroup  AS `hostgroup` ON (`host`.group_id  = `hostgroup`.id)"""
 
-        response = dict(host=db.query(sql))
+        response = dict(host=mysql_query(sql))
         if isreturn:
             return response
         self.write(**response)
 
     def get_hostgroup(self, isreturn = 0):
         sql = """SELECT * FROM `t_assets_hostgroup`"""
-        response = dict(hostgroup=db.query(sql))
+        response = dict(hostgroup=mysql_query(sql))
         if isreturn:
             return response
         self.write(**response)
 
     def get_project(self, isreturn = 0):
         sql = """SELECT * FROM `t_assets_project`"""
-        response = dict(project=db.query(sql))
+        response = dict(project=mysql_query(sql))
         if isreturn:
             return response
         self.write(**response)
@@ -193,8 +192,8 @@ class Deploy(AddHeaderRequestHandler, object):
                         LEFT JOIN t_assets_project AS project ON template.project_id = project.id
                         WHERE template.deploy_method = 'host'"""
         response = dict(template=[])
-        response['template'].append(db.query(sql_hostgroup))
-        response['template'].append(db.query(sql_host))
+        response['template'].append(mysql_query(sql_hostgroup))
+        response['template'].append(mysql_query(sql_host))
 
         if isreturn:
             return response
@@ -216,7 +215,7 @@ class Deploy(AddHeaderRequestHandler, object):
                         LEFT JOIN t_deploy_template AS template ON task.template_id = template.id
                         LEFT JOIN t_assets_project AS project ON template.project_id = project.id"""
 
-        response = dict(task=db.query(sql))
+        response = dict(task=mysql_query(sql))
 
         if isreturn:
             return response
@@ -238,12 +237,6 @@ class Deploy(AddHeaderRequestHandler, object):
             print kwargs['method']
 
 if __name__ == "__main__":
-    try:
-        db = torndb.Connection('192.168.0.195','autop','cupid','everyone2xhfz')
-    except Exception,e:
-        print e
-        pass
-
     tornado.options.parse_command_line()
     app = make_app()
     app.listen(8888)
