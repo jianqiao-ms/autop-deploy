@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autop</title>
+</head>
+<body>
+    <div class="container">
+        <div class="top">
+            <table>
+                <tr>
+                    <td><a href="/">Index</a></td>
+                    <td><a href="/assets">Assets</a></td>
+                    <td><a href="/depoy">Depoy</a></td>
+                </tr>
+                <tr>{% block second-nav %}{% end %}</tr>
+            </table>
+
+        </div>
+        <div class="content">
+            {% block content %}{% end %}
+        </div>
+    </div>
+</body>
+</html>

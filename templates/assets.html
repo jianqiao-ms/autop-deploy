@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block second-nav  %}
+<td><a href="/assets/host">host</a></td>
+<td><a href="/assets/hosttype">hosttype</a></td>
+<td><a href="/assets/hostgroup">hostgroup</a></td>
+<td><a href="/assets/env">env</a></td>
+<td><a href="/assets/project">project</a></td>
+{% end %}
+
+{% block content %}
+
+{% for data in result %}
+<div>{{ data }}</div>
+{% end %}
+
+{% end %}

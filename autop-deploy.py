@@ -20,6 +20,8 @@ class DateJsonEncoder(json.JSONEncoder, object):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.__str__()
+        if isinstance(obj, datetime.date):
+            return obj.__str__()
         else:
             return json.JSONEncoder.default(self, obj)
 
@@ -47,20 +49,30 @@ settings = dict(
 def make_app():
     return Application([
         (r"/", Index),
-        # (r"^/assets"
-        #     r"(?P<path0>/?)(?P<item>[A-Za-z]*)"
-        #     r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Assets),
-        # (r"^/deploy"
-        #     r"(?P<path0>/?)(?P<item>[A-Za-z-]*)"
-        #     r"(?P<path1>/?)(?P<function>[A-Za-z]*)", Deploy),
+        (r"^/assets", Assets),
+        (r"^/assets/([a-zA-Z]+)", Assets)
     ], **settings)
 
 class Index(RequestHandler, object):
     def get(self):
-        a = mysql_query("SELECT * FROM `t_deploy_task`")
-        print a
-        # self.write(json.dumps(a, cls=DateJsonEncoder))
-        self.write(a)
+        self.render("base.html")
+
+class Assets(RequestHandler, object):
+    @coroutine
+    def get(self, item=''):
+
+        item_table = dict(host      = "t_assets_host",
+                          hosttype  = "t_assets_hosttype",
+                          hostgroup = "t_assets_hostgroup",
+                          env       = "t_assets_env",
+                          project   = "t_assets_project")
+
+        if not item:
+            print 'r'
+            self.render("assets.html",result = '')
+        else:
+            result = mysql_query("SELECT * FROM {table_name}".format(table_name=item_table[item]))
+            self.render("assets.html", result = result)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
