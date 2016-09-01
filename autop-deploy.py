@@ -14,6 +14,7 @@ import tornado.options
 from tornado.gen import coroutine
 
 from tasks import mysql_query
+from tasks import mysql_get
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -50,7 +51,10 @@ def make_app():
     return Application([
         (r"/", Index),
         (r"^/assets", Assets),
-        (r"^/assets/([a-zA-Z]+)", Assets)
+        (r"^/assets/([a-zA-Z]+)", Assets),
+        (r"^/assets/([a-zA-Z]+)/([a-zA-Z]+)", Assets),
+        (r"^/deploy", Deploy),
+        (r"^/deploy/([a-zA-Z]+)", Deploy)
     ], **settings)
 
 class Index(RequestHandler, object):
@@ -59,20 +63,43 @@ class Index(RequestHandler, object):
 
 class Assets(RequestHandler, object):
     @coroutine
-    def get(self, item=''):
-
+    def get(self, item ='', functions = ''):
         item_table = dict(host      = "t_assets_host",
                           hosttype  = "t_assets_hosttype",
                           hostgroup = "t_assets_hostgroup",
                           env       = "t_assets_env",
                           project   = "t_assets_project")
 
+        item_pages = dict(host      = "assets-host.html",
+                          hosttype  = "assets-hosttype.html",
+                          hostgroup = "assets-hostgroup.html",
+                          env       = "assets-env.html",
+                          project   = "assets-project.html")
+
+        if not functions:
+            if not item:
+                self.render("assets.html",result = '')
+            else:
+                result = mysql_query("SELECT * FROM {table_name}".format(table_name=item_table[item]))
+                self.render(item_pages[item], result = result)
+        else:
+            if functions == 'settings' and item == 'project':
+                id = self.get_argument('id')
+                project             = mysql_get("SELECT * FROM t_assets_project WHERE id='{id}'".format(id=id))
+                envs                = mysql_query("SELECT * FROM t_assets_env")
+                project_setting     = mysql_query("SELECT * FROM t_assets_project_deploy_settings")
+                self.render("assets-project-settings.html", project = project, envs = envs, settings = project_setting)
+
+class Deploy(RequestHandler, object):
+    def get(self, item=''):
+        item_table = dict(running="t_deploy_running",
+                          history="t_deploy_history")
+
         if not item:
-            print 'r'
-            self.render("assets.html",result = '')
+            self.render("deploy.html", result='')
         else:
             result = mysql_query("SELECT * FROM {table_name}".format(table_name=item_table[item]))
-            self.render("assets.html", result = result)
+            self.render("deploy.html", result=result)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()

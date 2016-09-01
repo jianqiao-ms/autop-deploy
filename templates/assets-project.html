@@ -1,12 +1,7 @@
-{% extends "base.html" %}
+{% extends "assets.html" %}
 
-{% block second-nav  %}
-<td><a href="/assets/host">host</a></td>
-<td><a href="/assets/hosttype">hosttype</a></td>
-<td><a href="/assets/hostgroup">hostgroup</a></td>
-<td><a href="/assets/env">env</a></td>
-<td><a href="/assets/project">project</a></td>
-{% end %}
+
+
 
 {% block content %}
 <table>
@@ -24,7 +19,10 @@
         <td>{{ data[key] }}</td>
     {% end %}
 
-    {% block botton-after-data %}{% end %}
+    {% block botton-after-data %}
+    <td><button><a href="/assets/project/settings?id={{ data.id }}">设置</a></button></td>
+    <td><button>发布</button></td>
+    {% end %}
 </tr>
 {% end %}
 </table>

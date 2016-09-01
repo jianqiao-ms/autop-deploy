@@ -1,0 +1,32 @@
+{% extends "assets.html" %}
+
+{% block content %}
+<div>
+    <h1>{{ project[0].name }}</h1>
+    <p>{{ project[0].repo }}</p>
+</div>
+
+    {% for env in envs %}
+        {% for setting in settings %}
+            {% if setting.project_id == project[0].id and setting.env_id == env.id%}
+                {% set project_setting = setting %}
+                {{ project_setting }}
+            {% end %}
+        {% end %}
+    <table border="0" cellpadding="5" cellspacing="1" >
+        <tr>
+            <td bgcolor="#cccccc" colspan="2"><h3>{{ env.name }}</h3></td>
+        </tr>
+
+        <tr>
+            <td>发布主机/主机组</td><td>{{ project_setting.host_id }}</td>
+        </tr>
+        <tr>
+            <td>更新方式</td><td>{{ project_setting.update_method }}</td>
+        </tr>
+        <tr>
+            <td>选择分支</td><td>{{ project_setting.branch }}</td>
+        </tr>
+    </table>
+    {% end %}
+{% end %}

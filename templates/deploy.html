@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block second-nav  %}
+<td><a href="/deploy/running">running</a></td>
+<td><a href="/deploy/history">history</a></td>
+{% end %}
+
+{% block content %}
+
+{% for data in result %}
+<div>{{ data }}</div>
+{% end %}
+
+{% end %}

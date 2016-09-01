@@ -12,3 +12,6 @@ db = torndb.Connection(host="192.168.0.195",database="autop",user='cupid',passwo
 @celery.task
 def mysql_query(cmd):
     return db.query(cmd)
+
+def mysql_get(cmd):
+    return db.query(cmd)
