@@ -19,8 +19,9 @@
     {% block botton-after-data %}
     {% for e in envs %}
         <td><button><a href="/assets/project/settings?id={{ data.id }}&env_id={{ e.id }}">{{ e.name }}设置</a></button></td>
+        <td><button><a href="/assets/deploy/new?id={{ data.id }}&env_id={{ e.id }}">{{ e.name }}发布</a></button></td>
     {% end %}
-    <td><button><a href="/assets/project/new?id={{ data.id }}&env_id={{ e.id }}">{{ e.name }}发布</a></button></td>
+
     {% end %}
 </tr>
 {% end %}
