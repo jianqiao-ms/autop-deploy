@@ -6,6 +6,7 @@ import json
 import traceback
 import time
 import datetime
+import subprocess
 
 import tornado.ioloop
 from tornado.web import RequestHandler
@@ -78,25 +79,45 @@ class Assets(RequestHandler, object):
 
         if not functions:
             if not item:
-                self.render("assets.html",result = '')
+                self.render("assets.html",result = [])
             else:
                 result = mysql_query("SELECT * FROM {table_name}".format(table_name=item_table[item]))
-                self.render(item_pages[item], result = result)
+
+                envs = None
+                if item == 'project':
+                    envs = mysql_query("SELECT * FROM t_assets_env")
+                self.render(item_pages[item], result = result, envs = envs)
         else:
             if functions == 'settings' and item == 'project':
-                id = self.get_argument('id')
+                pname_path          = dict(imanager_core        = 'imanager',
+                                           imanager_web         = 'imanager_web',
+                                           imanager_api         = 'imanager_api',
+                                           imanager_iservice    = 'imanager_iservice',
+                                           iservice             = 'iservice')
+                id                  = self.get_argument('id')
+                env_id              = self.get_argument('env_id')
+
                 project             = mysql_get("SELECT * FROM t_assets_project WHERE id='{id}'".format(id=id))
-                envs                = mysql_query("SELECT * FROM t_assets_env")
-                project_setting     = mysql_query("SELECT * FROM t_assets_project_deploy_settings")
-                self.render("assets-project-settings.html", project = project, envs = envs, settings = project_setting)
+                envs                = mysql_get("SELECT * FROM t_assets_env WHERE id={id}".format(id=env_id))
+                project_setting     = mysql_get("SELECT * FROM t_assets_project_deploy_settings WHERE "
+                                                "project_id={pid} AND env_id={eid}".format(pid=id, eid=env_id))
+                hosts               = mysql_query("SELECT * FROM t_assets_host WHERE env_id={eid}".format(eid=env_id))
+                hostgroups          = mysql_query("SELECT * FROM t_assets_hostgroup WHERE env_id={eid}".format(eid=env_id))
+                branches            = subprocess.check_output("cd /var/run/autop/%s;git branch -a|grep remotes|grep -v HEAD|awk -F '/' '{print $3}'"
+                                                              %pname_path[project[0].name],
+                                                              shell=True)
+                self.render("assets-project-settings.html", project = project, envs = envs, settings = project_setting ,
+                            hosts = hosts, hostgroups = hostgroups, branches = branches.split('\n')[:-1])
 
 class Deploy(RequestHandler, object):
-    def get(self, item=''):
+    def get(self, item = '', functions = ''):
         item_table = dict(running="t_deploy_running",
                           history="t_deploy_history")
 
         if not item:
             self.render("deploy.html", result='')
+        elif item == 'new':
+            self.render("deploy_new.html")
         else:
             result = mysql_query("SELECT * FROM {table_name}".format(table_name=item_table[item]))
             self.render("deploy.html", result=result)

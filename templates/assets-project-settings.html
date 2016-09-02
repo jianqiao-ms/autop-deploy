@@ -7,25 +7,68 @@
 </div>
 
     {% for env in envs %}
-        {% for setting in settings %}
-            {% if setting.project_id == project[0].id and setting.env_id == env.id%}
-                {% set project_setting = setting %}
-                {{ project_setting }}
-            {% end %}
-        {% end %}
     <table border="0" cellpadding="5" cellspacing="1" >
         <tr>
-            <td bgcolor="#cccccc" colspan="2"><h3>{{ env.name }}</h3></td>
-        </tr>
-
-        <tr>
-            <td>发布主机/主机组</td><td>{{ project_setting.host_id }}</td>
+            <td bgcolor="#cccccc" colspan="3"><h3>{{ env.name }}</h3></td>
         </tr>
         <tr>
-            <td>更新方式</td><td>{{ project_setting.update_method }}</td>
+            <td>发布主机/主机组</td>
+            <td>
+                {% if settings %}
+                    {{ settings[0].host_id }}
+                {% else %}
+                    无
+                {% end %}
+            </td>
+            <td>
+                <label>
+                    <select>
+                        {% for h in hosts %}
+                        <option>主 {{ h.ip_addr }}</option>
+                        {% end %}
+                        {% for hg in hostgroups %}
+                        <option>组 {{ hg.name }}</option>
+                        {% end %}
+                    </select>
+                </label>
+            </td>
         </tr>
         <tr>
-            <td>选择分支</td><td>{{ project_setting.branch }}</td>
+            <td>更新方式</td>
+            <td>
+                {% if settings %}
+                    {{ settings[0].update_method }}
+                {% else %}
+                    无
+                {% end %}
+            </td>
+            <td>
+                <label>
+                    <select>
+                        <option>增量更新</option>
+                        <option>全量更新</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>选择分支</td>
+            <td>
+                {% if settings %}
+                    {{ settings[0].branch }}
+                {% else %}
+                    无
+                {% end %}
+            </td>
+            <td>
+                <label>
+                    <select>
+                        {% for b in branches %}
+                        <option>{{ b }}</option>
+                        {% end %}
+                    </select>
+                </label>
+            </td>
         </tr>
     </table>
     {% end %}

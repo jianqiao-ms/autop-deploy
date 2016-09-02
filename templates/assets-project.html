@@ -1,8 +1,5 @@
 {% extends "assets.html" %}
 
-
-
-
 {% block content %}
 <table>
 <tr>
@@ -20,8 +17,10 @@
     {% end %}
 
     {% block botton-after-data %}
-    <td><button><a href="/assets/project/settings?id={{ data.id }}">设置</a></button></td>
-    <td><button>发布</button></td>
+    {% for e in envs %}
+        <td><button><a href="/assets/project/settings?id={{ data.id }}&env_id={{ e.id }}">{{ e.name }}设置</a></button></td>
+    {% end %}
+    <td><button><a href="/assets/project/new?id={{ data.id }}&env_id={{ e.id }}">{{ e.name }}发布</a></button></td>
     {% end %}
 </tr>
 {% end %}

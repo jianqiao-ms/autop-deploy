@@ -9,23 +9,25 @@
 {% end %}
 
 {% block content %}
-<table>
-<tr>
-{% for key in result[0] %}
-    {% if key == 'id' %}{% continue %}{% end %}
-    <td>{{ key }}</td>
-{% end %}
-</tr>
-
-{% for data in result %}
-<tr id="{{ data.id }}">
-    {% for key in data %}
+{% if result %}
+    <table>
+    <tr>
+    {% for key in result[0] %}
         {% if key == 'id' %}{% continue %}{% end %}
-        <td>{{ data[key] }}</td>
+        <td>{{ key }}</td>
     {% end %}
+    </tr>
 
-    {% block botton-after-data %}{% end %}
-</tr>
-{% end %}
-</table>
+    {% for data in result %}
+    <tr id="{{ data.id }}">
+        {% for key in data %}
+            {% if key == 'id' %}{% continue %}{% end %}
+            <td>{{ data[key] }}</td>
+        {% end %}
+
+        {% block botton-after-data %}{% end %}
+    </tr>
+    {% end %}
+    </table>
+    {% end %}
 {% end %}
