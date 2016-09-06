@@ -14,11 +14,11 @@ from tornado.web import RequestHandler
 from tornado.web import Application
 from tornado.web import asynchronous
 from tornado.gen import coroutine
+import torncelery
 
 from tasks import mysql_query
 from tasks import mysql_get
 from tasks import deploy
-from tasks import sleep
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -64,12 +64,12 @@ class Index(RequestHandler, object):
 
 
 class Deploy(RequestHandler, object):
-    @asynchronous
     @coroutine
     def get(self, pid = ''):
-        self.write(time.strftime("%Y-%d-%m %H:%M:%S"))
-        self.write(time.strftime("%Y-%d-%m %H:%M:%S"))
-        self.finish('Done')
+        print time.strftime("%Y-%m-%d %H:%M:%S")
+        pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
+        result = yield torncelery.async(deploy, pname)
+        self.write(result)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
