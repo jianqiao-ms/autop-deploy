@@ -9,9 +9,10 @@ PID=/var/run/autop.pid
 isRunning()
 {
     [ ! -f $PID ] && return 1
-    pid=`cat $pid`
-    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 1 ] && return 0
-    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && rm -rf $PID && return 1
+    pid=`cat $PID`
+    num_of_process=`ps -ef |grep "$pid"|grep -v grep|wc -l`
+    [ $num_of_process -eq 1 ] && return 0
+    [ $num_of_process -eq 0 ] && rm -rf $PID && return 1
 }
 
 start() {
