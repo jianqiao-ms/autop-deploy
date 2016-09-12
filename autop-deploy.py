@@ -79,9 +79,10 @@ class Deploy(curlRequestHandler, object):
         pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
         result = yield torncelery.async(deploy, pname)
 
-        self.getReturn(result['msg'])
+        self.getReturn('\n'.join(result['msg']))
 
 if __name__ == "__main__":
+    print 'Starting Server...'
     tornado.options.parse_command_line()
     app = make_app()
     app.listen(8888)
