@@ -58,18 +58,28 @@ def make_app():
         (r"^/deploy/([0-9]+)", Deploy)
     ], **settings)
 
+
+class curlRequestHandler(RequestHandler, object):
+    def getReturn(self, text):
+        if self.request.headers['User-Agent'] == 'autop':
+            self.write(text)
+        else:
+            self.write('<pre>{text}<pre>'.format(text = text))
+
+
 class Index(RequestHandler, object):
     def get(self):
+        # self.write('a\nb')
         self.render("base.html")
 
 
-class Deploy(RequestHandler, object):
+class Deploy(curlRequestHandler, object):
     @coroutine
     def get(self, pid = ''):
-        print time.strftime("%Y-%m-%d %H:%M:%S")
         pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
         result = yield torncelery.async(deploy, pname)
-        self.write(result)
+
+        self.getReturn(result['msg'])
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
