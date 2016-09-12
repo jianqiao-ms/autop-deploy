@@ -1,5 +1,5 @@
 #!/bin/bash
-# USAGE: autopctl [start/stop/restart]
+# USAGE: autopctl [start/stop/restart/status]
 
 LOG=/var/log/autop/autop.log
 E_LOG=/var/log/autop/autop-error.log
@@ -27,7 +27,8 @@ stop() {
 }
 
 restart() {
-    stop && start
+    stop && start && return 0
+    return 253
 }
 
 
@@ -38,4 +39,8 @@ case $1 in
 		stop;;
     "restart")
 		restartg;;
+	"status")
+	    [ isRunning -eq 0 ] && echo "程序正在运行" && return 0
+	    [ isRunning -eq 1 ] && echo "程序没有运行" && return 0
+	    echo "脚本发生错误" && return 252
 esac
