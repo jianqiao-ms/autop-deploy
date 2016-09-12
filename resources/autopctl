@@ -1,36 +1,36 @@
 #!/bin/bash
-# USAGE: autopctl [start/stop/restart/status]
+
+USAGE="USAGE : autopctl [start/stop/restart/status]"
 
 LOG=/var/log/autop/autop.log
 E_LOG=/var/log/autop/autop-error.log
 PID=/var/run/autop.pid
 
-int isRunning() {
+isRunning()
+{
     [ ! -f $PID ] && return 1
     pid=`cat $pid`
     [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 1 ] && return 0
-    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && return 1
-    return 255
+    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && rm -rf $PID && return 1
 }
 
 start() {
-    [ isRunning ] && echo "程序正在运行,PID $pid" && return 1
+    [ `isRunning` ] && echo "程序正在运行,PID $pid" && return 10
     nohup /usr/bin/python2 /opt/autop-deploy/autop-deploy.py > $LOG 2>$E_LOG &
     echo $! > $PID
     echo "程序启动,PID $!" && return 0
-    return 255
 }
 stop() {
-    [ isRunning -eq 1 ] echo "程序没有运行" && return 0
-    [ isRunning ] && kill -9 $pid && echo "停止$pid成功" && return 0
-    return 254
+    [ `isRunning` ] && kill -9 $pid && echo "停止$pid成功" && return 0
+     echo "程序没有运行" && return 0
 }
 
 restart() {
     stop && start && return 0
-    return 253
 }
 
+
+[ $# -ne 1 ] && clear && echo $USAGE && exit 16
 
 case $1 in 
     "start")
@@ -38,9 +38,8 @@ case $1 in
     "stop")
 		stop;;
     "restart")
-		restartg;;
+		restart;;
 	"status")
-	    [ isRunning -eq 0 ] && echo "程序正在运行" && return 0
-	    [ isRunning -eq 1 ] && echo "程序没有运行" && return 0
-	    echo "脚本发生错误" && return 252
+	    [ `isRunning` ] && echo "程序正在运行" && exit 0
+	    echo "程序没有运行" && exit 0
 esac
