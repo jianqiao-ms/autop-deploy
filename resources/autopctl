@@ -12,17 +12,17 @@ isRunning()
     pid=`cat $PID`
     num_of_process=`ps -ef |grep "$pid"|grep -v grep|wc -l`
     [ $num_of_process -eq 1 ] && return 0
-    [ $num_of_process -eq 0 ] && rm -rf $PID && return 1
+    [ $num_of_process -eq 0 ] && rm -rf $PID && return 16
 }
 
 start() {
-    [ `isRunning` ] && echo "程序正在运行,PID $pid" && return 10
+    isRunning && echo "程序正在运行,PID $pid" && return 10
     nohup /usr/bin/python2 /opt/autop-deploy/autop-deploy.py > $LOG 2>$E_LOG &
     echo $! > $PID
     echo "程序启动,PID $!" && return 0
 }
 stop() {
-    [ `isRunning` ] && kill -9 $pid && echo "停止$pid成功" && return 0
+     isRunning && kill -9 $pid && echo "停止$pid成功" && return 0
      echo "程序没有运行" && return 0
 }
 
@@ -41,6 +41,6 @@ case $1 in
     "restart")
 		restart;;
 	"status")
-	    [ `isRunning` ] && echo "程序正在运行" && exit 0
+	    isRunning && echo "程序正在运行,pid $pid" && exit 0
 	    echo "程序没有运行" && exit 0
 esac
