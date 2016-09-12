@@ -1,0 +1,42 @@
+#!/bin/bash
+# USAGE: autopctl [start/stop/restart]
+
+LOG     = /var/log/autop/autop.log
+E_LOG   = /var/log/autop/autop-error.log
+PID     = /var/run/autop.pid
+
+isRunning(){
+    [ ! -f $PID ] && return 1
+    pid=`cat $pid`
+    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` ] && return 1
+    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && return 0
+    return 255
+
+}
+
+start() {
+    [ isRunning ] && echo "程序正在运行,PID $pid" && return 1
+    nohup /usr/bin/python2 /opt/autop-deploy/autop-deploy.py > $LOG 2>$E_LOG &
+    echo $! > $PID
+    echo "程序启动,PID $!" && return 0
+    return 255
+}
+stop() {
+    [ isRunning -eq 1 ] echo "程序没有运行" && return 0
+    [ isRunning ] && kill -9 $pid && echo "停止$pid成功" && return 0
+    return 254
+}
+
+restart() {
+    stop && start
+}
+
+
+case $1 in 
+    "start")
+        start;;
+    "stop")
+		stop;;
+    "restart")
+		restart;;
+esac
