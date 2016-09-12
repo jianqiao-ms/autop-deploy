@@ -1,17 +1,16 @@
 #!/bin/bash
 # USAGE: autopctl [start/stop/restart]
 
-LOG     = /var/log/autop/autop.log
-E_LOG   = /var/log/autop/autop-error.log
-PID     = /var/run/autop.pid
+LOG=/var/log/autop/autop.log
+E_LOG=/var/log/autop/autop-error.log
+PID=/var/run/autop.pid
 
 isRunning(){
     [ ! -f $PID ] && return 1
     pid=`cat $pid`
-    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` ] && return 1
-    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && return 0
+    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 1 ] && return 0
+    [ `ps -ef |grep "$pid"|grep -v grep|wc -l` -eq 0 ] && return 1
     return 255
-
 }
 
 start() {
@@ -38,5 +37,5 @@ case $1 in
     "stop")
 		stop;;
     "restart")
-		restart;;
+		restartg;;
 esac
