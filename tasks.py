@@ -63,7 +63,7 @@ def deploy(pname):
         data['msg'].append('[WARNNING]项目repo 不存在，初始化项目')
         os.chdir('/var/autop/repo')
         try:
-            subprocess.check_output('git clone git@192.168.1.141:devs/{}.git'.format(pname))
+            subprocess.check_output('git clone git@192.168.1.141:devs/{}.git'.format(pname), shell=True)
             data['msg'].append('[OK]项目初始化成功')
             os.chdir(path)
             flag = 'newInit'
@@ -85,7 +85,7 @@ def deploy(pname):
         updated_file = []
         deleted_file = []
 
-        result = subprocess.check_output("git pull",shell=True).split('\n')
+        result = subprocess.check_output("git pull", shell=True).split('\n')
         data['msg'].append('[OK]git更新成功')
         if result[0] == 'Already up-to-date.':
             data['msg'].append('[WARN]已经是最新,发布取消')
