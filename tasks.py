@@ -34,7 +34,6 @@ def deploy(pname):
                  'iservice'         : 'imanager_iservice',
                  'actor'            : 'iservice',
                  'oa'               : 'oa',
-                 'git-learn'        : "git-learn"
                  }
 
     name_host = {'imanager_web'     : ['192.168.0.105', 'imanager'],
@@ -44,7 +43,6 @@ def deploy(pname):
                  'iservice'         : ['192.168.0.112','192.168.0.111','iservice'],
                  'actor'            : ['192.168.0.150', '192.168.0.151', '192.168.0.152', '192.168.0.153', '192.168.0.154', 'iservice'],
                  'oa'               : ['192.168.0.91', 'oa'],
-                 'git-learn'        : ['192.168.1.110']
                  }
 
     data = dict()
@@ -63,7 +61,7 @@ def deploy(pname):
         data['msg'].append('[WARNNING]项目repo 不存在，初始化项目')
         os.chdir('/var/autop/repo')
         try:
-            subprocess.check_output('git clone git@192.168.1.141:devs/{pname}.git'.format(pname = pname), shell=True)
+            subprocess.check_output('git clone http://192.168.1.141/devs/{pname}.git'.format(pname = name_path[pname]), shell=True)
             data['msg'].append('[OK]项目初始化成功')
             os.chdir(path)
             flag = 'newInit'
