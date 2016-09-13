@@ -41,7 +41,7 @@ def deploy(pname):
                  'imanager_core'    : ['ALL'],
                  'iclock'           : ['192.168.0.81','iclock'],
                  'iservice'         : ['192.168.0.112','192.168.0.111','iservice'],
-                 'actor'            : ['192.168.0.150', '192.168.0.151', '192.168.0.152', '192.168.0.153', '192.168.0.154', 'iservice'],
+                 'actor'            : ['192.168.0.150', '192.168.0.151', '192.168.0.152', 'iservice'],
                  'oa'               : ['192.168.0.91', 'oa'],
                  }
 
@@ -64,7 +64,6 @@ def deploy(pname):
             subprocess.check_output('git clone http://192.168.1.141/devs/{pname}.git'.format(pname = name_path[pname]), shell=True)
             data['msg'].append('[OK]项目初始化成功')
             os.chdir(path)
-            flag = 'newInit'
         except subprocess.CalledProcessError,e:
             data['msg'].append('[ERROR]clone项目失败')
             for line in e.output.split('\n'):
@@ -82,29 +81,20 @@ def deploy(pname):
     try:
         updated_file = []
         deleted_file = []
-        print '一万'
         result = subprocess.check_output("git pull", shell=True).split('\n')
-        print 0
         data['msg'].append('[OK]git更新成功')
-        print 1
         if result[0] == 'Already up-to-date.':
-            print 2
             data['msg'].append('[WARN]已经是最新,发布取消')
             return data
         else:
-            print 3
             commit_start = result[0].split()[1].split('..')[0]
-            print 4
             commit_stop = result[0].split()[1].split('..')[1]
-            print 5
+
             changes = subprocess.check_output("git diff --name-status {start} {stop}".
                                               format(start = commit_start, stop = commit_stop),
                                               shell= True).split('\n')
-            print 6
             deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
-            print 7
             updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
-            print 8
     except subprocess.CalledProcessError, e:
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
@@ -197,10 +187,6 @@ def deploy(pname):
                   '/usr/local/tomcat1/webapps/{webapp}/WEB-INF/lib'.\
                 format(hosts  = ' '.join(name_host[p][:-1]),
                        webapp = name_host[p][-1])
-
-            # print cmd
-
-
 
             try:
                 subprocess.check_output(cmd, shell=True)
