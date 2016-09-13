@@ -116,7 +116,7 @@ def deploy(pname):
             break
     if compile_flag:
         try:
-            subprocess.check_call("mvn clean install", shell = True)
+            subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
         except subprocess.CalledProcessError, e:
             data['msg'].append('[ERROR]编译失败')
