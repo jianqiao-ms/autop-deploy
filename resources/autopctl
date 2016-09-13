@@ -17,7 +17,7 @@ isRunning()
 
 start() {
     isRunning && echo "程序正在运行,PID $pid" && return 10
-    nohup /usr/bin/python2 /opt/autop-deploy/autop-deploy.py > $LOG 2>$E_LOG &
+    nohup /usr/bin/env python2.7 /opt/autop-deploy/autop-deploy.py > $LOG 2>$E_LOG &
     echo $! > $PID
     echo "程序启动,PID $!" && return 0
 }
