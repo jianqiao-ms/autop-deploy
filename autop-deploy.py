@@ -60,16 +60,19 @@ def make_app():
 
 
 class curlRequestHandler(RequestHandler, object):
-    def getReturn(self, text):
+    def getReturn(self, text ,code = 200):
         if self.request.headers['User-Agent'] == 'autop':
+            if code != 200:
+                self.set_status(404)
             self.write(text)
         else:
+            if code != 200:
+                self.set_status(404)
             self.write('<pre>{text}<pre>'.format(text = text))
 
 
 class Index(RequestHandler, object):
     def get(self):
-        # self.write('a\nb')
         self.render("base.html")
 
 
@@ -79,7 +82,7 @@ class Deploy(curlRequestHandler, object):
         pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
         result = yield torncelery.async(deploy, pname)
 
-        self.getReturn('\n'.join(result['msg']).encode('UTF-8'))
+        self.getReturn('\n'.join(result['msg']).encode('UTF-8'), result['code'])
 
 if __name__ == "__main__":
     print 'Starting Server...'

@@ -47,7 +47,7 @@ def deploy(pname):
 
     data = dict()
     data['msg']  = list()
-    data['code'] = 0
+    data['code'] = 200
     flag = None
 
     # 切换目录
