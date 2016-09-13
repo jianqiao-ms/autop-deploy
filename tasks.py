@@ -82,21 +82,29 @@ def deploy(pname):
     try:
         updated_file = []
         deleted_file = []
-
+        print '一万'
         result = subprocess.check_output("git pull", shell=True).split('\n')
+        print 0
         data['msg'].append('[OK]git更新成功')
+        print 1
         if result[0] == 'Already up-to-date.':
+            print 2
             data['msg'].append('[WARN]已经是最新,发布取消')
             return data
         else:
+            print 3
             commit_start = result[0].split()[1].split('..')[0]
+            print 4
             commit_stop = result[0].split()[1].split('..')[1]
-
+            print 5
             changes = subprocess.check_output("git diff --name-status {start} {stop}".
                                               format(start = commit_start, stop = commit_stop),
                                               shell= True).split('\n')
+            print 6
             deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
+            print 7
             updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
+            print 8
     except subprocess.CalledProcessError, e:
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
@@ -173,32 +181,41 @@ def deploy(pname):
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line=line))
                 data['code'] = sys._getframe().f_lineno
-                return data
+                pass
             except:
                 data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
                 for line in traceback.format_exc().split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
-                return data
+                pass
         return data
     else:
         for p in name_host:
+            if p == 'imanager_core':
+                continue
             cmd = 'pscp -H {hosts} -l root target/imanager_core-0.0.1-SNAPSHOT.jar ' \
                   '/usr/local/tomcat1/webapps/{webapp}/WEB-INF/lib'.\
                 format(hosts  = ' '.join(name_host[p][:-1]),
                        webapp = name_host[p][-1])
+
+            # print cmd
+
+
+
             try:
-                subprocess.check_call(cmd, shell=True)
-                data['msg'].append('[OK]发布到{project}成功'.format(project = p))
+                subprocess.check_output(cmd, shell=True)
+                data['msg'].append('[OK]发布到{project} @ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
             except subprocess.CalledProcessError, e:
                 data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project = p))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
-                return data
+                pass
             except:
                 data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project=p))
                 for line in traceback.format_exc().split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
-                return data
+                pass
+
+        return data
