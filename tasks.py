@@ -63,7 +63,7 @@ def deploy(pname):
         data['msg'].append('[WARNNING]项目repo 不存在，初始化项目')
         os.chdir('/var/autop/repo')
         try:
-            subprocess.check_output('git clone git@192.168.1.141:devs/{}.git'.format(pname), shell=True)
+            subprocess.check_output('git clone git@192.168.1.141:devs/{pname}.git'.format(pname = pname), shell=True)
             data['msg'].append('[OK]项目初始化成功')
             os.chdir(path)
             flag = 'newInit'
