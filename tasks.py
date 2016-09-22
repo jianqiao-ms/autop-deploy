@@ -114,16 +114,10 @@ def deploy(pname):
         if f.endswith('.java'):
             compile_flag = True
             break
-    a = subprocess.check_output("echo $PATH", shell=True)
-    print a
-    a = subprocess.check_output("echo $JAVA_HOME", shell=True)
-    print a
-    a = subprocess.check_output("mvn -version", shell=True)
-    print a
+
     if compile_flag:
         try:
-            a = subprocess.check_output("mvn clean install", shell = True)
-            print a
+            subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
         except subprocess.CalledProcessError, e:
             data['msg'].append('[ERROR]编译失败')
