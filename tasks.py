@@ -122,6 +122,8 @@ def deploy(pname):
             data['msg'].append('[OK]编译成功')
         except subprocess.CalledProcessError, e:
             data['msg'].append('[ERROR]编译失败')
+            for line in traceback.format_exc().split('\n'):
+                data['msg'].append('\t{line}'.format(line=line))
             for line in e.output.split('\n'):
                 data['msg'].append('\t{line}'.format(line = line))
             data['code'] = sys._getframe().f_lineno
