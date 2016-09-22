@@ -114,6 +114,8 @@ def deploy(pname):
         if f.endswith('.java'):
             compile_flag = True
             break
+    a = subprocess.check_output("echo $PATH", shell=True)
+    print a
     if compile_flag:
         try:
             subprocess.check_output("mvn clean install", shell = True)
