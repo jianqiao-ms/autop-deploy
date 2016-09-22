@@ -139,6 +139,8 @@ def deploy(pname):
     # # 发布项目
     if pname != 'imanager_core':
         for f in updated_file:
+            if f=='.gitlab-ci.yml':
+                continue
             cmd = None
             if f.endswith('.java') and f.startswith('src/main/java'):
                 f = 'target/class' + f.split('src/main/java')[1][:-4] + 'class'
