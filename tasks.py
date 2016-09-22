@@ -109,29 +109,31 @@ def deploy(pname):
         return data
 
     # 编译项目
-    compile_flag = False
-    for f in updated_file:
-        if f.endswith('.java'):
-            compile_flag = True
-            break
-    if compile_flag:
-        try:
-            subprocess.check_output("mvn clean install", shell = True)
-            data['msg'].append('[OK]编译成功')
-        except subprocess.CalledProcessError, e:
-            data['msg'].append('[ERROR]编译失败')
-            for line in e.output.split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
-        except:
-            data['msg'].append('[ERROR]编译失败')
-            for line in traceback.format_exc().split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
-    else:
-        data['msg'].append('[WARN]没有java文件更新,跳过编译')
+    a =  subprocess.check_output("mvn clean install", shell=True)
+    print a
+    # compile_flag = False
+    # for f in updated_file:
+    #     if f.endswith('.java'):
+    #         compile_flag = True
+    #         break
+    # if compile_flag:
+    #     try:
+    #
+    #         data['msg'].append('[OK]编译成功')
+    #     except subprocess.CalledProcessError, e:
+    #         data['msg'].append('[ERROR]编译失败')
+    #         for line in e.output.split('\n'):
+    #             data['msg'].append('\t{line}'.format(line = line))
+    #         data['code'] = sys._getframe().f_lineno
+    #         return data
+    #     except:
+    #         data['msg'].append('[ERROR]编译失败')
+    #         for line in traceback.format_exc().split('\n'):
+    #             data['msg'].append('\t{line}'.format(line = line))
+    #         data['code'] = sys._getframe().f_lineno
+    #         return data
+    # else:
+    #     data['msg'].append('[WARN]没有java文件更新,跳过编译')
 
     # # 发布项目
     if pname != 'imanager_core':
