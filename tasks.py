@@ -99,7 +99,6 @@ def deploy(pname):
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
             data['msg'].append('\t{line}'.format(line = line))
-        data['msg'].append('\t{returncode}'.format(returncode=e.returncode))
         data['code'] = sys._getframe().f_lineno
         return data
     except:
@@ -117,16 +116,12 @@ def deploy(pname):
             break
     if compile_flag:
         try:
-            a = subprocess.check_output("echo $PATH", shell=True)
-            print a
+            subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
         except subprocess.CalledProcessError, e:
             data['msg'].append('[ERROR]编译失败')
             for line in e.output.split('\n'):
                 data['msg'].append('\t{line}'.format(line = line))
-            for line in traceback.format_exc().split('\n'):
-                data['msg'].append('\t{line}'.format(line=line))
-            data['msg'].append('\t{returncode}'.format(returncode=e.returncode))
             data['code'] = sys._getframe().f_lineno
             return data
         except:
@@ -175,7 +170,6 @@ def deploy(pname):
                 data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line=line))
-                data['msg'].append('\t{returncode}'.format(returncode=e.returncode))
                 data['code'] = sys._getframe().f_lineno
                 pass
             except:
@@ -201,7 +195,6 @@ def deploy(pname):
                 data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project = p))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
-                data['msg'].append('\t{returncode}'.format(returncode=e.returncode))
                 data['code'] = sys._getframe().f_lineno
                 pass
             except:
