@@ -193,15 +193,15 @@ def deploy(pname):
 
             try:
                 subprocess.check_output(cmd, shell=True)
-                data['msg'].append('[OK]发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
+                data['msg'].append('[OK]imanager_core发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
             except subprocess.CalledProcessError, e:
-                data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project = p))
+                data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project = p))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
                 pass
             except:
-                data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project=p))
+                data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project=p))
                 for line in traceback.format_exc().split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
