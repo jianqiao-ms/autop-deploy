@@ -116,6 +116,10 @@ def deploy(pname):
             break
     a = subprocess.check_output("echo $PATH", shell=True)
     print a
+    a = subprocess.check_output("echo $JAVA_HOME", shell=True)
+    print a
+    a = subprocess.check_output("mvn -version", shell=True)
+    print a
     if compile_flag:
         try:
             a = subprocess.check_output("mvn clean install", shell = True)
