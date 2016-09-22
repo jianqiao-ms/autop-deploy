@@ -186,14 +186,14 @@ def deploy(pname):
         for p in name_host:
             if p == 'imanager_core':
                 continue
-            cmd = 'pscp -H {hosts} -l root target/imanager_core-0.0.1-SNAPSHOT.jar ' \
+            cmd = 'pscp -H "{hosts}" -l root target/imanager_core-0.0.1-SNAPSHOT.jar ' \
                   '/usr/local/tomcat1/webapps/{webapp}/WEB-INF/lib'.\
                 format(hosts  = ' '.join(name_host[p][:-1]),
                        webapp = name_host[p][-1])
 
             try:
                 subprocess.check_output(cmd, shell=True)
-                data['msg'].append('[OK]发布到{project} @ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
+                data['msg'].append('[OK]发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
             except subprocess.CalledProcessError, e:
                 data['msg'].append('[ERROR]imanager_core发布到{project}失败'.format(project = p))
                 for line in e.output.split('\n'):
