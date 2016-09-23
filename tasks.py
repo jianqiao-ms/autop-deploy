@@ -188,6 +188,8 @@ def deploy(pname):
         for p in name_host:
             if p == 'imanager_core':
                 continue
+            if p == 'oa':
+                continue
             cmd = 'pscp -H "{hosts}" -l root target/imanager_core-0.0.1-SNAPSHOT.jar ' \
                   '/usr/local/tomcat1/webapps/{webapp}/WEB-INF/lib'.\
                 format(hosts  = ' '.join(name_host[p][:-1]),
