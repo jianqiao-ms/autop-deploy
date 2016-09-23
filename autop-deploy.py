@@ -46,15 +46,14 @@ def getLocaltime():
 # 返回tornad app对象
 settings = dict(
     debug           = True,
-    gzip            =  True,
+    gzip            = True,
     template_path   = os.path.join(os.path.dirname(__file__), "templates"),
     static_path     = os.path.join(os.path.dirname(__file__), "static"),
 )
-
 def make_app():
     return Application([
-        (r"/", Index),
-        # (r"^/deploy", Deploy),
+        (r'/', Index),
+        (r'/admin', Admin),
         (r"^/deploy/([0-9]+)", Deploy)
     ], **settings)
 
@@ -70,11 +69,13 @@ class curlRequestHandler(RequestHandler, object):
                 self.set_status(404)
             self.write('<pre>{text}<pre>'.format(text = text))
 
-
 class Index(RequestHandler, object):
     def get(self):
-        self.render("base.html")
+        self.render("index.html")
 
+class Admin(RequestHandler, object):
+    def get(self):
+        self.render("admin.html")
 
 class Deploy(curlRequestHandler, object):
     @coroutine
