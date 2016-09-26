@@ -1,5 +1,9 @@
 {% extends base.html %}
 
+{% block css %}
+    <link rel="stylesheet" href="{{static_url("css/css-admin.css")}}">
+{% end %}
+
 {% block body %}
 
 
@@ -9,17 +13,17 @@
 
 
 
-
-
-
-
-<div class="ams-offcanvas">
-
+<div class="ams-container-offcanvas">
+    <div class="ams-offcanvas"></div>
+    <div class="ams-rectangle-right" id="data-offcanvas-toggle"><div class="ams-rectangle-right-in"></div></div>
+</div>
+<div class="ams-container-global ">
+{#<p>1asssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>#}
 </div>
 
 
 
-<p>asssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+
 
 
 
@@ -43,4 +47,7 @@
 
 
 {#jquery双向数据绑定#}
+{% end %}
+{% block js %}
+    <script src="{{static_url("js/js-admin.js")}}"></script>
 {% end %}

@@ -1,26 +1,108 @@
-/* Write your styles */
-
+/* Write your styles
+css 属性顺序
+    颜色
+    大小
+    位置
+    边框
+    z-index
+*/
 
 
 @media only screen and (min-width: 641px) {
-
+    div.ams-container-offcanvas {
+        left:0;
+    }
+    div.ams-rectangle-right {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 640px) {
-    .ams-offcanvas {
+    div.ams-container-offcanvas {
         left: -270px;
     }
 }
 
+body {
+    position: fixed;
+    top:0;
+    left:0;
+    right: 0;
+    bottom:0;
 
+    z-index:-100;
+}
+div.ams-container-global {
+    position: fixed;
+    top:calc(50px + 1.6rem);
+    left:0;
+    right: 0;
+    bottom:0;
 
+    z-index:-100;
+}
+div.ams-container-offcanvas {
+    position: fixed;
+    top:calc(50px + 1.6rem);
+    bottom:0;
 
-.ams-offcanvas {
+    z-index:100;
+}
+
+div.ams-offcanvas {
     background-color: #333333;
 
+    height: 100%;
     width: 270px;
 
-    position: fixed;
-    bottom:0;
-    top: 50px;
+    float: left;
+    position: absolute;
+
+    z-index: 100;
+}
+div.ams-rectangle-right {
+    background-color: #333333;
+    cursor: pointer;
+    opacity: 0.3;
+
+    width:11px;
+    height: 50px;
+
+    float: left;
+    position: absolute;
+    top:calc(50% - 25px);
+    left:270px;
+
+    border-radius: 0 4px 4px 0;
+    z-index:100;
+}
+div.ams-rectangle-right-in {
+    background-color:#dddddd;
+
+    width:2px;
+    height: 36px;
+
+    position: absolute;
+    top:7px;
+    left: 6px;
+
+    border-radius:1px;
+    z-index:100;
+}
+
+.test {
+    width: 400px;
+    height: 300px;
+    border:1px solid black;
+    background-color: #f8b47e;
+
+    float: right;
+    position: relative;
+    right: 30px;
+    top: 200px;
+}
+
+.ams-debug {
+    border:1px solid black;
+    background-color: #f8b47e;
 }
