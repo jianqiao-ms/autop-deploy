@@ -1,0 +1,14 @@
+{% extends admin.html %}
+
+{% block content %}
+<table class="am-table am-table-bordered">
+    <thead>
+        <tr><td><i class="am-icon-desktop"></i> admin-host</td></tr>
+    </thead>
+    <tbody>
+        {% for r in records %}
+        <tr><td>{{ r }}</td></tr>
+        {% end %}
+    </tbody>
+</table>
+{% end %}

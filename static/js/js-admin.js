@@ -12,19 +12,19 @@ $(document).ready(function () {
             offcanvas.css({left:0})
         }
         else {
-            offcanvas.css({left:'-270px'})
+            offcanvas.css({left:'-230px'})
         }
     });
 
     offcancasToggle.click(function () {
         var offcancasStatus = offcanvas.css('left');
-        if (offcancasStatus == '-270px'){
+        if (offcancasStatus == '-230px'){
             offcanvas.animate({left:'0px'});
             offcancasToggle.animate({opacity:'1'});
             offcancasToggleLine.animate({left:'2px'});
         }
         if (offcancasStatus == '0px'){
-            offcanvas.animate({left:'-270px'});
+            offcanvas.animate({left:'-230px'});
             offcancasToggle.animate({opacity:'0.3'});
             offcancasToggleLine.animate({left:'6px'});
         }

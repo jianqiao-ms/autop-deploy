@@ -19,7 +19,7 @@ css 属性顺序
 
 @media only screen and (max-width: 640px) {
     div.ams-container-offcanvas {
-        left: -270px;
+        left: -230px;
     }
 }
 
@@ -32,6 +32,7 @@ body {
 
     z-index:-100;
 }
+
 div.ams-container-global {
     position: fixed;
     top:calc(50px + 1.6rem);
@@ -49,17 +50,43 @@ div.ams-container-offcanvas {
     z-index:100;
 }
 
+/*侧边框*/
 div.ams-offcanvas {
     background-color: #333333;
 
     height: 100%;
-    width: 270px;
+    width: 230px;
+    padding: 1em 0.5em 0.5em;
 
     float: left;
     position: absolute;
 
     z-index: 100;
 }
+/*侧边框 标题*/
+.ams-offcanvas span {
+    color: #f8f8f8;
+    cursor:default;
+    font-size: 1.25em;
+    user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -webkit-user-select:none;
+}
+/*侧边框 列表*/
+.ams-offcanvas ul li {
+    background-color: #757575;
+    cursor: pointer;
+}
+.ams-offcanvas ul li a {
+    color: #f8f8f8;
+    padding-left: 0.7rem;
+    /*display: inline-block;*/
+}
+.ams-offcanvas ul li:hover {
+    background-color: #949494;
+}
+/*侧边框 箭头*/
 div.ams-rectangle-right {
     background-color: #333333;
     cursor: pointer;
@@ -71,11 +98,12 @@ div.ams-rectangle-right {
     float: left;
     position: absolute;
     top:calc(50% - 25px);
-    left:270px;
+    left:229px;
 
     border-radius: 0 4px 4px 0;
     z-index:100;
 }
+/*侧边框 箭头 装饰*/
 div.ams-rectangle-right-in {
     background-color:#dddddd;
 
@@ -88,6 +116,52 @@ div.ams-rectangle-right-in {
 
     border-radius:1px;
     z-index:100;
+}
+
+/*自定图标 主机组*/
+.ams-icon-desktop-group {
+    display: inline-block;
+    font-style: normal;
+    position: relative;
+}
+.ams-icon-desktop-group:before {
+    content: "\f108";
+
+    display: inline-block;
+    font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
+    /*font-weight: normal; // 2
+    font-style: normal; // 2
+    vertical-align: baseline; // 3
+    line-height: 1; // 4*/
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    transform: translate(-0.1em, 0) scale(0.9,0.9);
+}
+.ams-icon-desktop-group:after {
+    content: "\f108";
+
+    display: inline-block;
+    font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
+    /*font-weight: normal; // 2
+    font-style: normal; // 2
+    vertical-align: baseline; // 3
+    line-height: 1; // 4*/
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    transform: translate(-1.6rem, 0.2rem) scale(0.9,0.9);
+
+    position: absolute;
+}
+.ams-icon-bright {
+    color:#F8F8F8;
 }
 
 .test {

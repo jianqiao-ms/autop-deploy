@@ -54,6 +54,7 @@ def make_app():
     return Application([
         (r'/', Index),
         (r'/admin', Admin),
+        (r'/admin/?(?P<module>[a-z]+)', Admin),
         (r"^/deploy/([0-9]+)", Deploy)
     ], **settings)
 
@@ -74,8 +75,17 @@ class Index(RequestHandler, object):
         self.render("index.html")
 
 class Admin(RequestHandler, object):
-    def get(self):
-        self.render("admin.html")
+    @coroutine
+    def get(self, module=''):
+        module_db_table = dict(host         = 't_assets_host',
+                               hostgroup    = 't_assets_hostgroup',
+                               project      = 't_assets_project')
+
+        if len(module):
+            records = mysql_get('SELECT * FROM `{}`'.format(module_db_table[module]))
+            self.render("admin-{}.html".format(module),records = records)
+            return
+        self.render('admin.html')
 
 class Deploy(curlRequestHandler, object):
     @coroutine
