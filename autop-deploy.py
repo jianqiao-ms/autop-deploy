@@ -10,6 +10,7 @@ import subprocess
 
 import tornado.ioloop
 import tornado.options
+from tornado.websocket import WebSocketHandler
 from tornado.web import RequestHandler
 from tornado.web import Application
 from tornado.web import asynchronous
@@ -53,6 +54,7 @@ settings = dict(
 def make_app():
     return Application([
         (r'/', Index),
+        (r'/websocket',MsgSocket),
         (r'/admin', Admin),
         (r'/admin/?(?P<module>[a-z]+)', Admin),
         (r"^/deploy/([0-9]+)", Deploy)
@@ -74,6 +76,34 @@ class Index(RequestHandler, object):
     def get(self):
         self.render("index.html")
 
+class MsgSocket(WebSocketHandler, object):
+    def check_origin(self, origin):
+        return True
+
+    def open(self):
+        print("WebSocket opened")
+        time.sleep(1)
+        self.write_message("a")
+        time.sleep(1)
+        self.write_message("b")
+        time.sleep(1)
+        self.write_message("c")
+        time.sleep(1)
+        self.write_message("d")
+    def on_message(self, message):
+        self.write_message(u"You said: " + message)
+
+    def on_close(self):
+        print("WebSocket closed")
+
+class Deploy(curlRequestHandler, object):
+    @coroutine
+    def get(self, pid = ''):
+        pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
+        result = yield torncelery.async(deploy, pname)
+
+        self.getReturn('\n'.join(result['msg']).encode('UTF-8'), result['code'])
+
 class Admin(RequestHandler, object):
     @coroutine
     def get(self, module=''):
@@ -86,14 +116,6 @@ class Admin(RequestHandler, object):
             self.render("admin-{}.html".format(module),records = records)
             return
         self.render('admin.html')
-
-class Deploy(curlRequestHandler, object):
-    @coroutine
-    def get(self, pid = ''):
-        pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
-        result = yield torncelery.async(deploy, pname)
-
-        self.getReturn('\n'.join(result['msg']).encode('UTF-8'), result['code'])
 
 if __name__ == "__main__":
     print 'Starting Server...'
