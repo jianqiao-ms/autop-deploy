@@ -125,11 +125,11 @@ CREATE TABLE `t_assets_project` (
 -- ----------------------------
 -- Records of t_assets_project
 -- ----------------------------
-INSERT INTO `t_assets_project` VALUES ('1', 'http://192.168.1.141/devs/imanager.git', 'imanager_core');
-INSERT INTO `t_assets_project` VALUES ('2', 'http://192.168.1.141/devs/imanager_web.git', 'imanager_web');
-INSERT INTO `t_assets_project` VALUES ('3', 'http://192.168.1.141/devs/imanager_api.git', 'api');
-INSERT INTO `t_assets_project` VALUES ('4', 'http://192.168.1.141/devs/imanager_iservice.git', 'iservice');
-INSERT INTO `t_assets_project` VALUES ('5', 'http://192.168.1.141/devs/iservice.git', 'actor');
+INSERT INTO `t_assets_project` VALUES ('1', 'git@192.168.1.141:devs/imanager.git', 'imanager_core');
+INSERT INTO `t_assets_project` VALUES ('2', 'git@192.168.1.141:devs/imanager_web.git', 'imanager_web');
+INSERT INTO `t_assets_project` VALUES ('3', 'git@192.168.1.141:devs/imanager_api.git', 'api');
+INSERT INTO `t_assets_project` VALUES ('4', 'git@192.168.1.141:devs/imanager_iservice.git', 'iservice');
+INSERT INTO `t_assets_project` VALUES ('5', 'git@192.168.1.141:devs/iservice.git', 'actor');
 
 -- ----------------------------
 -- Table structure for t_assets_project_deploy_settings

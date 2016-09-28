@@ -33,6 +33,52 @@ body {
     z-index:-100;
 }
 
+/*标题栏 消息框 容器*/
+.am-topbar-collapse:after { /*修改原生标题栏css*/
+    display: inline;
+}
+div.ams-header-container {
+    padding:0;
+    width:auto;
+    height: 50px;
+    clear: none;
+}
+
+div.ams-header-msg-container {
+    background-color: #B1B1B1;
+
+    margin-left: 1em;
+    margin-top: 3px;
+
+    max-width: 60%;
+    min-width: 44px;
+    height: 44px;
+    line-height: 44px;
+    color: #f8f8f8;
+    padding: 0 1em;
+
+    float: left;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    border-radius: 10px;
+
+    -moz-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+
+    cursor: pointer;
+
+    transition: background-color 0.1s;
+    -moz-transition: background-color 0.1s;	/* Firefox 4 */
+    -webkit-transition: background-color 0.1s;	/* Safari 和 Chrome */
+    -o-transition: background-color 0.1s;
+}
+div.ams-header-msg-container:hover {
+    background-color: #757575;
+}
+
+/*body 主要内容 容器*/
 div.ams-container-global {
     position: fixed;
     top:calc(50px + 1.6rem);
@@ -42,6 +88,8 @@ div.ams-container-global {
 
     z-index:-100;
 }
+
+/*侧边框 容器*/
 div.ams-container-offcanvas {
     position: fixed;
     top:calc(50px + 1.6rem);
