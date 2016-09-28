@@ -60,7 +60,6 @@ def make_app():
         (r"^/deploy/([0-9]+)", Deploy)
     ], **settings)
 
-
 class curlRequestHandler(RequestHandler, object):
     def getReturn(self, text ,code = 200):
         if self.request.headers['User-Agent'] == 'autop':
@@ -82,14 +81,7 @@ class MsgSocket(WebSocketHandler, object):
 
     def open(self):
         print("WebSocket opened")
-        time.sleep(1)
-        self.write_message("a")
-        time.sleep(1)
-        self.write_message("b")
-        time.sleep(1)
-        self.write_message("c")
-        time.sleep(1)
-        self.write_message("d")
+
     def on_message(self, message):
         self.write_message(u"You said: " + message)
 
@@ -107,12 +99,23 @@ class Deploy(curlRequestHandler, object):
 class Admin(RequestHandler, object):
     @coroutine
     def get(self, module=''):
-        module_db_table = dict(host         = 't_assets_host',
+        module_db_sql = dict(host           = 'SELECT '
+                                                'H.`id`,'
+                                                'H.`alias`,'
+                                                'H.`ip_addr`,'
+                                                'H.`env_id`,'
+                                                'H.`type_id`,'
+                                                'H.`group_id`,'
+                                                'HG.`env_id`,'
+                                                'HG.`name`                      AS HGname '
+                                              'FROM `t_assets_host`             AS H '
+                                              'LEFT JOIN `t_assets_hostgroup`   AS HG '
+                                              'ON H.`group_id` = HG.`id`',
                                hostgroup    = 't_assets_hostgroup',
                                project      = 't_assets_project')
 
         if len(module):
-            records = mysql_get('SELECT * FROM `{}`'.format(module_db_table[module]))
+            records = mysql_get('{}'.format(module_db_sql[module]))
             self.render("admin-{}.html".format(module),records = records)
             return
         self.render('admin.html')

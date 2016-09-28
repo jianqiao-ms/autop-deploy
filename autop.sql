@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50626
 File Encoding         : 65001
 
-Date: 2016-09-27 18:09:20
+Date: 2016-09-28 18:13:28
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -58,6 +58,8 @@ INSERT INTO `t_assets_history` VALUES ('5', 'git@192.168.1.141:devs/iservice.git
 DROP TABLE IF EXISTS `t_assets_host`;
 CREATE TABLE `t_assets_host` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hostname` varchar(255) DEFAULT 'localhost.localdomain',
+  `alias` varchar(255) DEFAULT 'localhost',
   `ip_addr` varchar(15) NOT NULL,
   `env_id` int(11) NOT NULL,
   `type_id` varchar(255) DEFAULT '1',
@@ -69,12 +71,12 @@ CREATE TABLE `t_assets_host` (
 -- ----------------------------
 -- Records of t_assets_host
 -- ----------------------------
-INSERT INTO `t_assets_host` VALUES ('1', '192.168.0.105', '1', '1', '1');
-INSERT INTO `t_assets_host` VALUES ('2', '192.168.0.106', '1', '1', '1');
-INSERT INTO `t_assets_host` VALUES ('3', '192.168.0.111', '1', '1', '2');
-INSERT INTO `t_assets_host` VALUES ('4', '192.168.0.112', '1', '1', '2');
-INSERT INTO `t_assets_host` VALUES ('5', '192.168.0.81', '1', '1', null);
-INSERT INTO `t_assets_host` VALUES ('6', '192.168.0.61', '1', '1', null);
+INSERT INTO `t_assets_host` VALUES ('1', 'localhost', 'localhost', '192.168.0.105', '0', '1', '1');
+INSERT INTO `t_assets_host` VALUES ('2', 'localhost', 'localhost', '192.168.0.106', '0', '1', '1');
+INSERT INTO `t_assets_host` VALUES ('3', 'localhost', 'localhost', '192.168.0.111', '0', '1', '2');
+INSERT INTO `t_assets_host` VALUES ('4', 'localhost', 'localhost', '192.168.0.112', '0', '1', '2');
+INSERT INTO `t_assets_host` VALUES ('5', 'localhost', 'localhost', '192.168.0.81', '1', '1', null);
+INSERT INTO `t_assets_host` VALUES ('6', 'localhost', 'localhost', '192.168.0.61', '1', '1', null);
 
 -- ----------------------------
 -- Table structure for t_assets_hostgroup
@@ -125,11 +127,11 @@ CREATE TABLE `t_assets_project` (
 -- ----------------------------
 -- Records of t_assets_project
 -- ----------------------------
-INSERT INTO `t_assets_project` VALUES ('1', 'git@192.168.1.141:devs/imanager.git', 'imanager_core');
-INSERT INTO `t_assets_project` VALUES ('2', 'git@192.168.1.141:devs/imanager_web.git', 'imanager_web');
-INSERT INTO `t_assets_project` VALUES ('3', 'git@192.168.1.141:devs/imanager_api.git', 'api');
-INSERT INTO `t_assets_project` VALUES ('4', 'git@192.168.1.141:devs/imanager_iservice.git', 'iservice');
-INSERT INTO `t_assets_project` VALUES ('5', 'git@192.168.1.141:devs/iservice.git', 'actor');
+INSERT INTO `t_assets_project` VALUES ('1', 'http://192.168.1.141/devs/imanager.git', 'imanager_core');
+INSERT INTO `t_assets_project` VALUES ('2', 'http://192.168.1.141/devs/imanager_web.git', 'imanager_web');
+INSERT INTO `t_assets_project` VALUES ('3', 'http://192.168.1.141/devs/imanager_api.git', 'api');
+INSERT INTO `t_assets_project` VALUES ('4', 'http://192.168.1.141/devs/imanager_iservice.git', 'iservice');
+INSERT INTO `t_assets_project` VALUES ('5', 'http://192.168.1.141/devs/iservice.git', 'actor');
 
 -- ----------------------------
 -- Table structure for t_assets_project_deploy_settings
