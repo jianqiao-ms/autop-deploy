@@ -91,8 +91,8 @@ class MsgSocket(WebSocketHandler, object):
 class Deploy(curlRequestHandler, object):
     @coroutine
     def get(self, pid = ''):
-        pname = mysql_get("SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))[0]['name']
-        result = yield torncelery.async(deploy, pname)
+        pname = yield torncelery.async(mysql_get, "SELECT `name` FROM `t_assets_project` WHERE `id`={pid}".format(pid = pid))
+        result = yield torncelery.async(deploy, pname[0]['name'])
 
         self.getReturn('\n'.join(result['msg']).encode('UTF-8'), result['code'])
 
@@ -100,22 +100,38 @@ class Admin(RequestHandler, object):
     @coroutine
     def get(self, module=''):
         module_db_sql = dict(host           = 'SELECT '
-                                                'H.`id`,'
-                                                'H.`alias`,'
-                                                'H.`ip_addr`,'
-                                                'H.`env_id`,'
-                                                'H.`type_id`,'
-                                                'H.`group_id`,'
-                                                'HG.`env_id`,'
-                                                'HG.`name`                      AS HGname '
-                                              'FROM `t_assets_host`             AS H '
-                                              'LEFT JOIN `t_assets_hostgroup`   AS HG '
-                                              'ON H.`group_id` = HG.`id`',
-                               hostgroup    = 't_assets_hostgroup',
-                               project      = 't_assets_project')
+                                                'H.`id`                          AS HId,'
+                                                'H.`alias`                       AS HAlias,'
+                                                'H.`ip_addr`                     AS HIp,'
+                                                'ENV.`name`                      AS EName,'
+                                                'HType.`name`                    AS HTypeName,'
+                                                'H.`group_id`                    AS HGroupId,'
+                                                'HG.`name`                       AS HGName '
+                                              'FROM `t_assets_host`              AS H '
+                                              'LEFT JOIN `t_assets_hostgroup`    AS HG '
+                                              'ON H.`group_id` = HG.`id` '
+                                              'LEFT JOIN `t_assets_env`          AS ENV '
+                                              'ON ENV.`id`=H.`id`'
+                                              'LEFT JOIN `t_assets_hosttype`     AS HType '
+                                              'ON HType.`id`=H.`type_id`',
+                               hostgroup    = 'SELECT '
+                                                 'HG.id                          AS HGId,'
+                                                 'HG.`name`                      AS HGName,'
+                                                 'HG.description                 AS HGDes,'
+                                                 'ENV.`name`                     AS EName '
+                                               'FROM `t_assets_hostgroup`        AS HG '
+                                               'LEFT JOIN t_assets_env           AS ENV '
+                                               'ON ENV.id=HG.env_id',
+                               project      = 'SELECT '
+                                                 'id                             AS PId,'
+                                                 'repo                           AS PRepo,'
+                                                 'alias                          AS PAlias '
+                                               'FROM `t_assets_project`')
 
         if len(module):
-            records = mysql_get('{}'.format(module_db_sql[module]))
+            # records = mysql_get('{}'.format(module_db_sql[module]))
+            records = yield torncelery.async(mysql_get, module_db_sql[module])
+            print records
             self.render("admin-{}.html".format(module),records = records)
             return
         self.render('admin.html')

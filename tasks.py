@@ -29,7 +29,7 @@ def mysql_get(cmd):
 def deploy(pname):
     name_path = {'imanager_web'     : 'imanager_web',
                  'api'              : 'imanager_api',
-                 'imanager_core'    : 'imanager',
+                 'imanager_core'    :  'imanager',
                  'iclock'           : 'imanager_iclock',
                  'iservice'         : 'imanager_iservice',
                  'actor'            : 'iservice',
@@ -212,3 +212,8 @@ def deploy(pname):
                 pass
 
         return data
+
+@celery.task
+def sleep(n):
+    time.sleep(n)
+    return n

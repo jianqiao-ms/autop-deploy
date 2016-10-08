@@ -6,8 +6,19 @@
         <tr><td><i class="ams-icon-desktop-group"></i> admin-hostgroup</td></tr>
     </thead>
     <tbody>
+        <tr class="ams-table-header">
+            <td>环境</td>
+            <td>主机组名</td>
+            <td>描述</td>
+            <td>操作</td>
+        </tr>
         {% for r in records %}
-        <tr><td>{{ r }}</td></tr>
+        <tr id="{{ r['HGId'] }}">
+            <td>{{ r['EName'] }}</td>
+            <td>{{ r['HGName'] }}</td>
+            <td>{{ r['HGDes'] }}</td>
+            <td><i class="am-icon-times"></i> <i class="am-icon-pencil-square-o"></i></td>
+        </tr>
         {% end %}
     </tbody>
 </table>

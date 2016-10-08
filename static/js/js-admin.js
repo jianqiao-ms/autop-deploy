@@ -4,8 +4,10 @@
 
 $(document).ready(function () {
     var offcanvas               = $("div.ams-container-offcanvas");
-    var offcancasToggle        = $("div.ams-rectangle-right");
-    var offcancasToggleLine   = $("div.ams-rectangle-right-in");
+    var offcancasToggle         = $("div.ams-rectangle-right");
+    var offcancasToggleLine     = $("div.ams-rectangle-right-in");
+    var contentTable            = $("div.ams-container-global table.am-table-bordered");
+    var contentTableTd          = contentTable.find('td');
 
     $(window).resize(function () {
         if ($(window).width() > 640) {
@@ -29,6 +31,5 @@ $(document).ready(function () {
             offcancasToggleLine.animate({left:'6px'});
         }
     });
-
 
 });

@@ -212,6 +212,12 @@ div.ams-rectangle-right-in {
     color:#F8F8F8;
 }
 
+/*content table 操作按钮*/
+.am-table tbody tr td i {
+    cursor: pointer;
+}
+
+
 .test {
     width: 400px;
     height: 300px;

@@ -6,8 +6,15 @@
         <tr><td><i class="am-icon-cube"></i> admin-project</td></tr>
     </thead>
     <tbody>
+        <tr class="ams-table-header">
+            <td>repo</td>
+            <td>名称/别名</td>
+        </tr>
         {% for r in records %}
-        <tr><td>{{ r }}</td></tr>
+        <tr id="{{ r['PId'] }}">
+            <td>{{ r['PRepo'] }}</td>
+            <td>{{ r['PAlias'] }}</td>
+        </tr>
         {% end %}
     </tbody>
 </table>

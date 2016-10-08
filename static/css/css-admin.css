@@ -14,3 +14,7 @@ css 属性顺序
         padding-left: 230px;
     }
 }
+
+.ams-table-header {
+    background-color: #A5A5A5;
+}
