@@ -34,15 +34,23 @@
                 <td>
                     <select>
                         {% for r in data['env'] %}
-                        <option value="{{ r }}"></option>
+                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
                     </select>
                 </td>
                 <td><input type="text" placeholder="主机别名"></td>
                 <td><input type="text" placeholder="IP地址"></td>
-                <td id="{{ r['HGroupId'] }}">{{ r['HGName'] }}</td>
-                <td>{{ r['HTypeName'] }}</td>
-                <td><i class="am-icon-times"></i> <i class="am-icon-pencil-square-o"></i></td>
+                <td>
+                    <select>
+                        {% for r in data['hostgroup'] %}
+                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td>
+
+                </td>
+                <td><button type="button" class="am-btn am-btn-warning">Cancel</button></td>
             </tr>
         </tbody>
     </table>

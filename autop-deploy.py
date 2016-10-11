@@ -140,6 +140,9 @@ class Admin(RequestHandler, object):
                 data['hosttype'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_hosttype`')
                 data['hostgroup'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_hostgroup`')
 
+            if module == 'hostgroup':
+                data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
+
             self.render("admin-{}.html".format(module),data = data)
             return
         self.render('admin.html')

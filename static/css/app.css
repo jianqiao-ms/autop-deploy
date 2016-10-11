@@ -302,3 +302,11 @@ div.ams-rectangle-right-in {
     float: right;
     margin-right: 1.6rem;
 }
+
+/*主要内容表格最后一行内边距*/
+.am-table>tbody>tr#new>td {
+    padding: 0.1rem;
+}
+.am-table>tbody>tr#new {
+    display: none;
+}
