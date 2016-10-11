@@ -9,11 +9,13 @@
         <tr class="ams-table-header">
             <td>repo</td>
             <td>名称/别名</td>
+            <td>操作</td>
         </tr>
         {% for r in records %}
         <tr id="{{ r['PId'] }}">
             <td>{{ r['PRepo'] }}</td>
             <td>{{ r['PAlias'] }}</td>
+            <td><i class="am-icon-times"></i> <i class="am-icon-pencil-square-o"></i></td>
         </tr>
         {% end %}
     </tbody>

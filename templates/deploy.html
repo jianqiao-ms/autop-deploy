@@ -1,14 +1,122 @@
-{% extends "base.html" %}
+{% extends base.html %}
 
-{% block second-nav  %}
-<td><a href="/deploy/running">running</a></td>
-<td><a href="/deploy/history">history</a></td>
+{% block css %}
+    <link rel="stylesheet" href="{{static_url("css/css-deploy.css")}}">
 {% end %}
 
+{% block body %}
+
+
+
+
+
+
+
+
+<div class="ams-container-offcanvas">
+    <div class="ams-offcanvas">
+        <span class="am-icon-upload"> Deploy</span>
+        <ul class="am-list">
+            <li><a href="/deploy/autohistory"><i class="am-icon-history"></i> 自动发布历史</a></li>
+        </ul>
+    </div>
+    <div class="ams-rectangle-right" id="data-offcanvas-toggle"><div class="ams-rectangle-right-in"></div></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="ams-container-global ">
 {% block content %}
+    <div class="am-g">
+        <div class="am-u-sm-12">主机</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
 
-{% for data in result %}
-<div>{{ data }}</div>
+    <div class="am-g">
+        <div class="am-u-sm-12">主机组</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">项目</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
 {% end %}
+</div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{#jquery双向数据绑定#}
+{% end %}
+{% block js %}
+    <script src="{{static_url("js/js-deploy.js")}}"></script>
 {% end %}

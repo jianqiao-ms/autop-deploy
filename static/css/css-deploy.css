@@ -18,10 +18,3 @@ css 属性顺序
 .ams-table-header {
     background-color: #A5A5A5;
 }
-
-.am-table-bordered .am-btn-primary {
-    min-width: 98px;
-    position: absolute;
-    right: 2.3rem;
-    top:0.2rem;
-}

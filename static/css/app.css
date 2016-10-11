@@ -60,7 +60,7 @@ div.ams-header-msg-container {
     float: left;
     text-overflow:ellipsis;
     overflow:hidden;
-    border-radius: 10px;
+    border-radius: 3px;
 
     -moz-user-select:none;
     -webkit-user-select:none;
@@ -217,20 +217,88 @@ div.ams-rectangle-right-in {
     cursor: pointer;
 }
 
+/*提示框 global container*/
+.ams-msg-global-container {
+    background-color: transparent;
+    position: fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    right: 0;
+    z-index: 200;
 
-.test {
-    width: 400px;
-    height: 300px;
-    border:1px solid black;
-    background-color: #f8b47e;
-
-    float: right;
-    position: relative;
-    right: 30px;
-    top: 200px;
+    display: none;
 }
 
-.ams-debug {
-    border:1px solid black;
-    background-color: #f8b47e;
+/*提示框*/
+.ams-global-dialog {
+    background-color: #B1B1B1;
+    position: absolute;
+    left:calc(50% - 170px);
+    top:calc(50% - 97px);
+
+    width: 360px;
+    height: 194px;
+    border-radius: 4px;
+}
+
+.ams-global-dialog .title{
+    background-color: #4bad4b;
+    position: absolute;
+    left:0;
+    top:0;
+
+    width: 100%;
+    height: 40px;
+    border-radius: 4px 4px 0 0;
+
+    line-height: 32px;
+    padding: 4px 4px 4px 12px;
+}
+.ams-global-dialog .content{
+    background-color: #ffad6d;
+    position: absolute;
+    left:0;
+    top:40px;
+
+    width: 100%;
+    height: 110px;
+    border-radius: 4px 4px 0 0;
+
+    padding:25px;
+}
+.ams-global-dialog .confirm {
+    display: none;
+    background-color: #4bad4b;
+    position: absolute;
+    left:0;
+    bottom:0;
+
+    width: 100%;
+    height: 44px;
+    border-radius: 0 0 4px 4px ;
+}
+.ams-global-dialog .info {
+    display: none;
+    background-color: #4bad4b;
+    position: absolute;
+    left:0;
+    bottom:0;
+
+    width: 100%;
+    height: 44px;
+    border-radius: 0 0 4px 4px ;
+}
+.active {
+    display: block!important;
+}
+.ams-global-dialog .confirm button {
+    min-width: 98px;
+    float: right;
+    margin-right: 1.6rem;
+}
+.ams-global-dialog .info button {
+    min-width: 98px;
+    float: right;
+    margin-right: 1.6rem;
 }

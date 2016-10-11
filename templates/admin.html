@@ -15,7 +15,7 @@
 
 <div class="ams-container-offcanvas">
     <div class="ams-offcanvas">
-        <span class="am-icon-bars am-icon-sm"> 管理模块</span>
+        <span class="am-icon-wrench"> Admin</span>
         <ul class="am-list">
             <li><a href="/admin/host"><i class="am-icon-desktop"></i> 主机</a></li>
             <li><a href="/admin/hostgroup"><i class="ams-icon-desktop-group"></i> 主机组</a></li>
@@ -74,7 +74,22 @@
 
 
 <div class="ams-container-global ">
-{% block content %}{% end %}
+{% block content %}
+    <div class="am-g">
+        <div class="am-u-sm-12">主机</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">主机组</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">项目</div>
+        <div class="am-u-sm-12">OK</div>
+    </div>
+{% end %}
 </div>
 
 
