@@ -44,6 +44,18 @@ def fdumps(obj, status_code, request_method):
 def getLocaltime():
     return time.strftime("%Y-%m-%d %H:%M:%S")
 
+# websockets connections
+liveWebSockets = set()
+def webSocketSendMessage(message):
+    removable = set()
+    for ws in liveWebSockets:
+        if not ws.ws_connection or not ws.ws_connection.stream.socket:
+            removable.add(ws)
+        else:
+            ws.write_message(message)
+    for ws in removable:
+        liveWebSockets.remove(ws)
+
 # 返回tornad app对象
 settings = dict(
     debug           = True,
@@ -58,7 +70,9 @@ def make_app():
         (r'/admin', Admin),
         (r'/admin/?(?P<module>[a-z]+)', Admin),
         (r"/deploy", Deploy),
-        (r"/deploy/?(?P<module>[a-z]+)", Deploy)
+        (r"/deploy/?(?P<module>[a-z]+)", Deploy),
+
+        (r'/new/host', NewHost)
     ], **settings)
 
 class curlRequestHandler(RequestHandler, object):
@@ -81,6 +95,7 @@ class MsgSocket(WebSocketHandler, object):
         return True
 
     def open(self):
+        liveWebSockets.add(self)
         print("WebSocket opened")
 
     def on_message(self, message):
@@ -146,6 +161,11 @@ class Admin(RequestHandler, object):
             self.render("admin-{}.html".format(module),data = data)
             return
         self.render('admin.html')
+class NewHost(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        print self.get_arguments('env')
+        webSocketSendMessage('OK')
 
 if __name__ == "__main__":
     print 'Starting Server...'

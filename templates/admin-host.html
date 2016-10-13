@@ -1,13 +1,13 @@
 {% extends admin.html %}
 
 {% block content %}
-<form class="am-form">
+<form class="am-form" action="/new/host" method="post">
     <table class="am-table am-table-bordered">
         <thead>
             <tr>
                 <td>
                     <i class="am-icon-desktop"></i> admin-host
-                    <button type="button" class="am-btn am-btn-primary">New</button>
+                    <button type="button" class="am-btn am-btn-primary" id="new">New</button>
                 </td>
             </tr>
         </thead>
@@ -32,16 +32,16 @@
             {% end %}
             <tr id="new">
                 <td>
-                    <select>
+                    <select name="env">
                         {% for r in data['env'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
                     </select>
                 </td>
-                <td><input type="text" placeholder="主机别名"></td>
-                <td><input type="text" placeholder="IP地址"></td>
+                <td><input type="text" placeholder="主机别名" name="alias"></td>
+                <td><input type="text" placeholder="IP地址" name="ipaddr"></td>
                 <td>
-                    <select>
+                    <select name="hostgroup">
                         {% for r in data['hostgroup'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
@@ -50,7 +50,10 @@
                 <td>
 
                 </td>
-                <td><button type="button" class="am-btn am-btn-warning">Cancel</button></td>
+                <td>
+                    <button type="submit" class="am-btn am-btn-success" id="save">Save</button>
+                    <button type="button" class="am-btn am-btn-warning" id="cancel">Cancel</button>
+                </td>
             </tr>
         </tbody>
     </table>

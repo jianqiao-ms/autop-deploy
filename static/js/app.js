@@ -16,18 +16,13 @@
 $(document).ready(function (){
     // websocket 消息框
     var msgBox = $(".ams-header-msg-container");
-    var ws = new WebSocket("ws://localhost:8888/websocket");
+    ws = new WebSocket("ws://localhost:8888/websocket");
 
     ws.onmessage = function (evt) {
         msgBox.text(evt.data);
     };
 
-    // 管理页新建按钮
-    var btnNew  = $('.am-form .am-table button.am-btn-primary');
-    var trNew   = $('.am-form .am-table tr#new');
-    btnNew.click(function () {
-        trNew.show();
-    });
+    
 });
 
 //消息提示框变量

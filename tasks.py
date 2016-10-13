@@ -10,6 +10,7 @@ import sys
 import time
 import traceback
 import subprocess
+import ipaddress
 
 celery = Celery("task")
 celery.config_from_object('celeryconf')
@@ -210,10 +211,8 @@ def deploy(pname):
                     data['msg'].append('\t{line}'.format(line = line))
                 data['code'] = sys._getframe().f_lineno
                 pass
-
         return data
 
 @celery.task
-def sleep(n):
-    time.sleep(n)
-    return n
+def new_host(ip):
+    pass

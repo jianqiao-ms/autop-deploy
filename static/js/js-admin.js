@@ -32,4 +32,17 @@ $(document).ready(function () {
         }
     });
 
+    // 新建按钮
+    var btnNew  = $('.am-form .am-table button.am-btn-primary');
+    var trNew   = $('.am-form .am-table tr#new');
+    btnNew.click(function () {
+        trNew.show();
+    });
+
+    
+    //新建form
+    var formNew = $('.am-form');
+    formNew.ajaxForm(function () {
+    });
+
 });
