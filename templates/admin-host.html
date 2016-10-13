@@ -38,10 +38,11 @@
                         {% end %}
                     </select>
                 </td>
-                <td><input type="text" placeholder="主机别名" name="alias"></td>
+                <td></td>
                 <td><input type="text" placeholder="IP地址" name="ipaddr"></td>
                 <td>
                     <select name="hostgroup">
+                        <option value="">无</option>
                         {% for r in data['hostgroup'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
@@ -57,5 +58,38 @@
             </tr>
         </tbody>
     </table>
+    <input type="text" id='real-username' name="username" style='display:none' />
+    <input type="text" id='real-password' name="password" style='display:none' />
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% end %}
+{% block modal %}
+{# 用户名密码 modal #}
+<div class="am-modal am-modal-prompt" tabindex="-1" id="userinfoModal">
+    <div class="am-modal-dialog">
+        <div class="am-modal-bd">
+            <label class="am-form-label" for="input-username">用户名</label>
+            <input type="text" id='input-username' class="am-modal-prompt-input" placeholder="root" disabled />
+            <label class="am-form-label" for="input-password">密码</label>
+            <input type="password" id='input-password' class="am-modal-prompt-input" />
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+        </div>
+  </div>
+</div>
 {% end %}

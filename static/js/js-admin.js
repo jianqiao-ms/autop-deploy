@@ -39,10 +39,37 @@ $(document).ready(function () {
         trNew.show();
     });
 
-    
+
+    function newHost(data) {
+        switch(data['code'])
+        {
+            case 100:
+                alert('无法连接到主机,请检查主机alive状态');
+                break;
+            case 200:
+            case 101:
+                alert('ip 地址格式错误');
+                break;
+            case 300:
+                userinfoModal.modal({
+                    onConfirm:function () {
+                        $('#real-username').val($('#input-username').val());
+                        $('#real-password').val($('#input-password').val());
+                        formNew.ajaxSubmit(newHost);
+                    }
+                });
+                break;
+            case 301:
+                alert('端口不正确');
+                break;
+            case 400:
+                alert(data['info'], data['type']);
+                break;
+        }
+    }
+    //用户名密码输入框
+    var userinfoModal = $('#userinfoModal');
     //新建form
     var formNew = $('.am-form');
-    formNew.ajaxForm(function () {
-    });
-
+    formNew.ajaxForm(newHost);
 });

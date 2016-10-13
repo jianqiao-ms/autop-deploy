@@ -20,6 +20,7 @@ import torncelery
 from tasks import mysql_query
 from tasks import mysql_get
 from tasks import deploy
+from tasks import new_host
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -164,8 +165,16 @@ class Admin(RequestHandler, object):
 class NewHost(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        print self.get_arguments('env')
-        webSocketSendMessage('OK')
+        envId   = self.get_argument('env')
+        ipaddr  = self.get_argument('ipaddr')
+        hgId    = self.get_argument('hostgroup')
+        uName   = self.get_argument('username')
+        uPwd    = self.get_argument('password')
+
+        print uName
+
+        rData = yield torncelery.async(new_host, envId, ipaddr, hgId)
+        self.write(rData)
 
 if __name__ == "__main__":
     print 'Starting Server...'

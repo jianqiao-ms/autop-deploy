@@ -11,11 +11,15 @@ import time
 import traceback
 import subprocess
 import ipaddress
+import paramiko
+import socket
 
 celery = Celery("task")
 celery.config_from_object('celeryconf')
 
 db = torndb.Connection(host="192.168.0.195",database="autop",user='cupid',password='everyone2xhfz')
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 p_git_updated_file = re.compile(r'^(?!D)\t*.+$')
 p_git_deleted_file = re.compile(r'^(?=D)\t*.+$')
@@ -214,5 +218,22 @@ def deploy(pname):
         return data
 
 @celery.task
-def new_host(ip):
-    pass
+def new_host(envId, ipaddr, hgId):
+    response = os.system('ping -c 1 {}'.format(ipaddr))
+    response >>= 8
+    if response == 1:
+        return dict(code=100)
+    if response == 2:
+        return dict(code=101)
+
+    try:
+        ssh.connect(ipaddr, port=22, username='root', timeout=5)
+        ssh.close()
+    except socket.gaierror:
+        return dict(code=200)
+    except paramiko.AuthenticationException:
+        return dict(code=300)
+    except paramiko.ssh_exception.NoValidConnectionsError:
+        return dict(code=301)
+    except Exception,e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
