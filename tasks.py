@@ -143,7 +143,7 @@ def deploy(pname):
                 continue
             cmd = None
             if f.endswith('.java') and f.startswith('src/main/java'):
-                f = 'target/class' + f.split('src/main/java')[1][:-4] + 'class'
+                f = 'target/classes' + f.split('src/main/java')[1][:-4] + 'class'
                 cmd = 'pscp -H "{hosts}" -l root {file} /usr/local/tomcat1/webapps/{webapp}/{path}'.\
                     format(hosts    = ' '.join(name_host[pname][:-1]),
                            file     = f,
