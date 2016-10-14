@@ -72,7 +72,7 @@ $(document).ready(function () {
                     confirm.toggle(this);
                 } else {
                     $confirm.modal({
-                        onConfirm: onConfirm,
+                        onConfirm: onConfirm
                     });
                 }
                 console.log('走了');
