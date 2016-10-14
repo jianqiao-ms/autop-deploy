@@ -18,8 +18,6 @@ celery = Celery("task")
 celery.config_from_object('celeryconf')
 
 db = torndb.Connection(host="192.168.0.195",database="autop",user='cupid',password='everyone2xhfz')
-ssh = paramiko.SSHClient()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 p_git_updated_file = re.compile(r'^(?!D)\t*.+$')
 p_git_deleted_file = re.compile(r'^(?=D)\t*.+$')
@@ -227,13 +225,20 @@ def new_host(envId, ipaddr, hgId):
         return dict(code=101)
 
     try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ipaddr, port=22, username='root', timeout=5)
+        stdin, stdout, stderr = ssh.exec_command("hostname")
+        for line in stdout.readlines():
+            print line
         ssh.close()
     except socket.gaierror:
         return dict(code=200)
     except paramiko.AuthenticationException:
         return dict(code=300)
     except paramiko.ssh_exception.NoValidConnectionsError:
+        return dict(code=310)
+    except paramiko.SSHException:
         return dict(code=301)
     except Exception,e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)

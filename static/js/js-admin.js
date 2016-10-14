@@ -40,7 +40,15 @@ $(document).ready(function () {
     });
 
 
+    //用户名密码输入框
+    var userinfoModal = $('#userinfoModal');
+    //new-host form
+    var formNewHost = $('.am-form,#new-host');
+    formNewHost.ajaxForm(newHost);
+
+
     function newHost(data) {
+        console.log(data['code']);
         switch(data['code'])
         {
             case 100:
@@ -51,15 +59,25 @@ $(document).ready(function () {
                 alert('ip 地址格式错误');
                 break;
             case 300:
-                userinfoModal.modal({
-                    onConfirm:function () {
-                        $('#real-username').val($('#input-username').val());
-                        $('#real-password').val($('#input-password').val());
-                        formNew.ajaxSubmit(newHost);
-                    }
-                });
-                break;
             case 301:
+                var $confirm = $('#userinfoModal');
+                var confirm = $confirm.data('amui.modal');
+                var onConfirm = function() {
+                    $('#real-username').val($('#input-username').val());
+                    $('#real-password').val($('#input-password').val());
+                    formNewHost.ajaxSubmit(newHost);
+                };
+                if (confirm) {
+                    confirm.options.onConfirm =  onConfirm;
+                    confirm.toggle(this);
+                } else {
+                    $confirm.modal({
+                        onConfirm: onConfirm,
+                    });
+                }
+                console.log('走了');
+                break;
+            case 310:
                 alert('端口不正确');
                 break;
             case 400:
@@ -67,9 +85,4 @@ $(document).ready(function () {
                 break;
         }
     }
-    //用户名密码输入框
-    var userinfoModal = $('#userinfoModal');
-    //新建form
-    var formNew = $('.am-form');
-    formNew.ajaxForm(newHost);
 });
