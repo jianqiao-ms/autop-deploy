@@ -1,18 +1,14 @@
 {% extends admin.html %}
 
+{% block page-header %}Admin Host{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
+
 {% block content %}
-<form class="am-form" id="new-host" action="/new/host" method="post">
-    <table class="am-table am-table-bordered">
+<form role="form" id="new-host" action="/new/host" method="post">
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <td>
-                    <i class="am-icon-desktop"></i> admin-host
-                    <button type="button" class="am-btn am-btn-primary" id="new">New</button>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="ams-table-header">
                 <td>环境</td>
                 <td>主机名/别名</td>
                 <td>IP地址</td>
@@ -20,6 +16,9 @@
                 <td>类型</td>
                 <td>操作</td>
             </tr>
+        </thead>
+        <tbody>
+
             {% for r in data['main_content'] %}
             <tr id="{{ r['HId'] }}">
                 <td>{{ r['EName'] }}</td>
@@ -32,34 +31,32 @@
             {% end %}
             <tr id="new">
                 <td>
-                    <select name="env">
+                    <select class="form-control" name="env">
                         {% for r in data['env'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
                     </select>
                 </td>
                 <td></td>
-                <td><input type="text" placeholder="IP地址" name="ipaddr"></td>
+                <td><input type="text" class="form-control" placeholder="IP地址" name="ipaddr"></td>
                 <td>
-                    <select name="hostgroup">
+                    <select class="form-control" name="hostgroup">
                         <option value="">无</option>
                         {% for r in data['hostgroup'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
                     </select>
                 </td>
+                <td></td>
                 <td>
-
-                </td>
-                <td>
-                    <button type="submit" class="am-btn am-btn-success" id="save">Save</button>
-                    <button type="button" class="am-btn am-btn-warning" id="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
                 </td>
             </tr>
         </tbody>
     </table>
-    <input type="text" id='real-username' name="username" style='display:none' />
-    <input type="text" id='real-password' name="password" style='display:none' />
+    <input type="text" id='real-username' placeholder="root" value='root' name="username" style='display:none' />
+    <input type="text" id='real-password' placeholder=""     value=''     name="password" style='display:none' />
 </form>
 
 
@@ -78,18 +75,35 @@
 {% end %}
 {% block modal %}
 {# 用户名密码 modal #}
-<div class="am-modal am-modal-prompt" tabindex="-1" id="userinfoModal">
-    <div class="am-modal-dialog">
-        <div class="am-modal-bd">
-            <label class="am-form-label" for="input-username">用户名</label>
-            <input type="text" id='input-username' class="am-modal-prompt-input" placeholder="root" disabled />
-            <label class="am-form-label" for="input-password">密码</label>
-            <input type="password" id='input-password' class="am-modal-prompt-input" />
-        </div>
-        <div class="am-modal-footer">
-            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
-            <span class="am-modal-btn" data-am-modal-confirm>提交</span>
-        </div>
-  </div>
+<div class="modal" id="userInfoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Autop</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="input-username" class="col-sm-2 control-label">用户名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input-username" placeholder="root" value='root' disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-password" class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="input-password" placeholder="password" value="' '">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Commit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
 {% end %}

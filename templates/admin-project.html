@@ -1,22 +1,19 @@
 {% extends admin.html %}
 
+{% block page-header %}Admin Project{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
 {% block content %}
-<form class="am-form" action="/new/project" method="post">
-    <table class="am-table am-table-bordered">
+<form role="form" action="/new/project" method="post">
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <td>
-                    <i class="am-icon-cube"></i> admin-project
-                    <button type="button" class="am-btn am-btn-primary">New</button>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="ams-table-header">
                 <td>repo</td>
                 <td>名称/别名</td>
                 <td>操作</td>
             </tr>
+        </thead>
+        <tbody>
             {% for r in data['main_content'] %}
             <tr id="{{ r['PId'] }}">
                 <td>{{ r['PRepo'] }}</td>
@@ -25,8 +22,8 @@
             </tr>
             {% end %}
             <tr id="new">
-                <td><input type="text" placeholder="Project Repo"></td>
-                <td><input type="text" placeholder="Alias"></td>
+                <td><input type="text" class="form-control"  placeholder="Project Repo" ></td>
+                <td><input type="text" class="form-control"  placeholder="Alias"></td>
                 <td>
                     <button type="submit" class="am-btn am-btn-success">Save</button>
                     <button type="button" class="am-btn am-btn-warning">Cancel</button>

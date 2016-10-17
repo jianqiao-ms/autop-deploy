@@ -6,23 +6,26 @@
 
 {% block body %}
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="/admin">Admin Dashboard</a></li>
+                <li><a href="/admin/host">host</a></li>
+                <li><a href="/admin/hostgroup">hostgroup</a></li>
+                <li><a href="/admin/project">project</a></li>
+            </ul>
+        </div>
 
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="container-fluid page-header-container">
+                <h1 class="page-header">{% block page-header %}Admin Dashboard{% end %}</h1>
+                {% block button-new %}{% end %}
+            </div>
 
-
-
-
-
-
-<div class="ams-container-offcanvas">
-    <div class="ams-offcanvas">
-        <span class="am-icon-wrench"> Admin</span>
-        <ul class="am-list">
-            <li><a href="/admin/host"><i class="am-icon-desktop"></i> 主机</a></li>
-            <li><a href="/admin/hostgroup"><i class="ams-icon-desktop-group"></i> 主机组</a></li>
-            <li><a href="/admin/project"><i class="am-icon-cube"></i> 项目</a></li>
-        </ul>
+            {% block content %}{% end %}
+        </div>
     </div>
-    <div class="ams-rectangle-right" id="data-offcanvas-toggle"><div class="ams-rectangle-right-in"></div></div>
 </div>
 
 
@@ -61,36 +64,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="ams-container-global ">
-{% block content %}
-    <div class="am-g">
-        <div class="am-u-sm-12">主机</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-
-    <div class="am-g">
-        <div class="am-u-sm-12">主机组</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-
-    <div class="am-g">
-        <div class="am-u-sm-12">项目</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-{% end %}
-</div>
 
 
 
@@ -100,25 +73,9 @@
 
 
 {% block modal %}{% end %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {#jquery双向数据绑定#}
 {% end %}
+
 {% block js %}
     <script src="{{static_url("js/js-admin.js")}}"></script>
 {% end %}

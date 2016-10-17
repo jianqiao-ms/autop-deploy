@@ -1,23 +1,21 @@
 {% extends admin.html %}
 
+{% block page-header %}Admin HostGroup{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
 {% block content %}
 <form class="am-form" action="/new/hostgroup" method="post">
-    <table class="am-table am-table-bordered">
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <td>
-                    <i class="ams-icon-desktop-group"></i> admin-hostgroup
-                    <button type="button" class="am-btn am-btn-primary">New</button>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="ams-table-header">
                 <td>环境</td>
                 <td>主机组名</td>
                 <td>描述</td>
                 <td>操作</td>
             </tr>
+        </thead>
+        <tbody>
+
             {% for r in data['main_content'] %}
             <tr id="{{ r['HGId'] }}">
                 <td>{{ r['EName'] }}</td>

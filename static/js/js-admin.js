@@ -3,86 +3,77 @@
  */
 
 $(document).ready(function () {
-    var offcanvas               = $("div.ams-container-offcanvas");
-    var offcancasToggle         = $("div.ams-rectangle-right");
-    var offcancasToggleLine     = $("div.ams-rectangle-right-in");
-    var contentTable            = $("div.ams-container-global table.am-table-bordered");
-    var contentTableTd          = contentTable.find('td');
+    var btnNew                  = $('button#new');                  // 新建按钮
+    var trNew                   = $('tr#new');                      // 新建行
+    var btnSave                 = $('button#save');                 // save按钮
+    var btnCancel               = $('button#cancel');               // cancel 按钮
 
-    $(window).resize(function () {
-        if ($(window).width() > 640) {
-            offcanvas.css({left:0})
-        }
-        else {
-            offcanvas.css({left:'-230px'})
-        }
-    });
+    var formNewHost             = $('form#new-host');               //new-host form
 
-    offcancasToggle.click(function () {
-        var offcancasStatus = offcanvas.css('left');
-        if (offcancasStatus == '-230px'){
-            offcanvas.animate({left:'0px'});
-            offcancasToggle.animate({opacity:'1'});
-            offcancasToggleLine.animate({left:'2px'});
-        }
-        if (offcancasStatus == '0px'){
-            offcanvas.animate({left:'-230px'});
-            offcancasToggle.animate({opacity:'0.3'});
-            offcancasToggleLine.animate({left:'6px'});
-        }
-    });
+    var modalUser               = $('#userInfoModal');              //用户名密码输入框
+    var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //modal 提交按钮
 
-    // 新建按钮
-    var btnNew  = $('.am-form .am-table button.am-btn-primary');
-    var trNew   = $('.am-form .am-table tr#new');
+    // formNewHost.ajaxForm(newHost);                                  // 绑定ajaxForm方法到form
+
     btnNew.click(function () {
         trNew.show();
     });
+    btnCancel.click(function () {
+        trNew.hide();
+    });
+    btnModalUserConfirm.click(function () {
+        $('#real-username').val($('#input-username').val());
+        $('#real-password').val($('#input-password').val());
 
-
-    //用户名密码输入框
-    var userinfoModal = $('#userinfoModal');
-    //new-host form
-    var formNewHost = $('.am-form,#new-host');
-    formNewHost.ajaxForm(newHost);
-
-
-    function newHost(data) {
-        console.log(data['code']);
-        switch(data['code'])
-        {
-            case 100:
-                alert('无法连接到主机,请检查主机alive状态');
-                break;
-            case 200:
-            case 101:
-                alert('ip 地址格式错误');
-                break;
-            case 300:
-            case 301:
-                var $confirm = $('#userinfoModal');
-                var confirm = $confirm.data('amui.modal');
-                var onConfirm = function() {
-                    $('#real-username').val($('#input-username').val());
-                    $('#real-password').val($('#input-password').val());
-                    formNewHost.ajaxSubmit(newHost);
-                };
-                if (confirm) {
-                    confirm.options.onConfirm =  onConfirm;
-                    confirm.toggle(this);
-                } else {
-                    $confirm.modal({
-                        onConfirm: onConfirm
-                    });
-                }
-                console.log('走了');
-                break;
-            case 310:
-                alert('端口不正确');
-                break;
-            case 400:
-                alert(data['info'], data['type']);
-                break;
+        console.log($('#real-username').val());
+        console.log($('#real-password').val());
+        console.log($('#input-username').val());
+        if ($('#input-password').val()=='  ') {
+            console.log('空格');
         }
-    }
+
+        formNewHost.ajaxSubmit(newHost);
+        modalUser.modal('hide');
+    });
+
+
 });
+
+function newHost(data) {
+    console.log(data['code']);
+    switch(data['code'])
+    {
+        case 100:
+            alert('无法连接到主机,请检查主机alive状态');
+            break;
+        case 200:
+        case 101:
+            alert('ip 地址格式错误');
+            break;
+        case 300:
+        case 301:
+            console.log('来了');
+            modal($('#userInfoModal'),'认证失败');
+            console.log('走了');
+            break;
+        case 310:
+            alert('端口不正确');
+            break;
+        case 400:
+            alert(data['info'], data['type']);
+            break;
+    }
+}
+
+function modal($modal, title, reset) {
+    if(!arguments[1]) title = "Autop";
+    if(!arguments[2]) reset = true;
+
+    if(reset) {
+        $modal.find('form').resetForm();
+    }
+    if($modal.find('.modal-title').text()!=title) {
+        $modal.find('.modal-title').text(title);
+    }
+    $modal.modal('show');
+}

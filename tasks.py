@@ -216,7 +216,7 @@ def deploy(pname):
         return data
 
 @celery.task
-def new_host(envId, ipaddr, hgId):
+def new_host(envId, ipaddr, hgId, uName, uPwd):
     response = os.system('ping -c 1 {}'.format(ipaddr))
     response >>= 8
     if response == 1:
@@ -224,14 +224,18 @@ def new_host(envId, ipaddr, hgId):
     if response == 2:
         return dict(code=101)
 
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ipaddr, port=22, username='root', timeout=5)
+        if len(uPwd):
+            print 'password'
+            ssh.connect(ipaddr, port=22, username='root', password=uPwd, timeout=5)
+        else:
+            print 'none password'
+            ssh.connect(ipaddr, port=22, username='root', timeout=5)
         stdin, stdout, stderr = ssh.exec_command("hostname")
         for line in stdout.readlines():
             print line
-        ssh.close()
     except socket.gaierror:
         return dict(code=200)
     except paramiko.AuthenticationException:
@@ -242,3 +246,5 @@ def new_host(envId, ipaddr, hgId):
         return dict(code=301)
     except Exception,e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+    finally:
+        ssh.close()

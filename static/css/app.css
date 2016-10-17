@@ -303,10 +303,19 @@ div.ams-rectangle-right-in {
     margin-right: 1.6rem;
 }
 
-/*主要内容表格最后一行内边距*/
-.am-table>tbody>tr#new>td {
+/*.main表格*/
+.table thead td {
+    background-color: #B1B1B1;
+    border-bottom: 0!important;
+}
+.table>tbody>tr#new>td {
     padding: 0.1rem;
 }
-.am-table>tbody>tr#new {
+.table>tbody>tr#new {
     display: none;
+}
+
+/*标准按钮*/
+button.btn-std {
+    min-width: 96px;
 }

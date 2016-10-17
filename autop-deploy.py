@@ -171,9 +171,10 @@ class NewHost(RequestHandler, object):
         uName   = self.get_argument('username')
         uPwd    = self.get_argument('password')
 
-        print uName
+        if uPwd==' ':
+            print '空格'
 
-        rData = yield torncelery.async(new_host, envId, ipaddr, hgId)
+        rData = yield torncelery.async(new_host, envId, ipaddr, hgId, uName, uPwd)
         self.write(rData)
 
 if __name__ == "__main__":
