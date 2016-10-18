@@ -165,14 +165,11 @@ class Admin(RequestHandler, object):
 class NewHost(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        envId   = self.get_argument('env')
-        ipaddr  = self.get_argument('ipaddr')
-        hgId    = self.get_argument('hostgroup')
-        uName   = self.get_argument('username')
-        uPwd    = self.get_argument('password')
-
-        if uPwd==' ':
-            print '空格'
+        envId   = self.get_argument('env',      strip=False)
+        ipaddr  = self.get_argument('ipaddr',   strip=False)
+        hgId    = self.get_argument('hostgroup',strip=False)
+        uName   = self.get_argument('username', strip=False)
+        uPwd    = self.get_argument('password', strip=False)
 
         rData = yield torncelery.async(new_host, envId, ipaddr, hgId, uName, uPwd)
         self.write(rData)

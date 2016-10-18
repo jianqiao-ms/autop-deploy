@@ -13,7 +13,7 @@ $(document).ready(function () {
     var modalUser               = $('#userInfoModal');              //用户名密码输入框
     var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //modal 提交按钮
 
-    // formNewHost.ajaxForm(newHost);                                  // 绑定ajaxForm方法到form
+    formNewHost.ajaxForm(newHost);                                  // 绑定ajaxForm方法到form
 
     btnNew.click(function () {
         trNew.show();
