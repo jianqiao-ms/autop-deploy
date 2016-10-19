@@ -224,8 +224,9 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
     if response == 2:
         return dict(code=101)
 
-    ssh = paramiko.SSHClient()
+    ssh = paramiko.SSHClient()                                  # 初始化SSHClient对象
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    hostname=None                                               # 初始化hostname
     try:
         if len(uPwd):
             print 'password'
@@ -234,8 +235,7 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
             print 'none password'
             ssh.connect(ipaddr, port=22, username='root', timeout=5)
         stdin, stdout, stderr = ssh.exec_command("hostname")
-        for line in stdout.readlines():
-            print line
+        hostname = stdout.readlines()[0]
     except socket.gaierror:
         return dict(code=200)
     except paramiko.AuthenticationException:
@@ -248,3 +248,12 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
     finally:
         ssh.close()
+
+    try:
+        sql = "INSERT INTO `t_assets_host` (`hostname`, `ip_addr`, `env_id`, `group_id`) " \
+              "VALUES ('{}', '{}', '{}', '{}')".format(hostname, ipaddr, envId, hgId)
+        print sql
+        db.insert(sql)
+        return dict(code=0)
+    except Exception, e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)

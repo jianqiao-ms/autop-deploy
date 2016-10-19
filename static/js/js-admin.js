@@ -13,9 +13,24 @@ $(document).ready(function () {
     var modalUser               = $('#userInfoModal');              //用户名密码输入框
     var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //modal 提交按钮
 
-    formNewHost.ajaxForm(newHost);                                  // 绑定ajaxForm方法到form
+    var userFormOptions         = {
+        beforeSubmit:function (arr, $form, options) {
+            if (formNewHost.find('[name=env]').val()=='') {
+                alert('请选择主机环境 或 属组');
+                return false;
+            }
+            if (formNewHost.find('[name=ipaddr]').val()=='') {
+                alert('IP地址不能为空');
+                return false;
+            }
+        },
+        success:newHost
+    };
+
+    formNewHost.ajaxForm(userFormOptions);       // 绑定ajaxForm方法到form
 
     btnNew.click(function () {
+        formNewHost.resetForm();
         trNew.show();
     });
     btnCancel.click(function () {
@@ -25,24 +40,18 @@ $(document).ready(function () {
         $('#real-username').val($('#input-username').val());
         $('#real-password').val($('#input-password').val());
 
-        console.log($('#real-username').val());
-        console.log($('#real-password').val());
-        console.log($('#input-username').val());
-        if ($('#input-password').val()=='  ') {
-            console.log('空格');
-        }
-
-        formNewHost.ajaxSubmit(newHost);
         modalUser.modal('hide');
+        formNewHost.ajaxSubmit(userFormOptions);
     });
-
 
 });
 
 function newHost(data) {
-    console.log(data['code']);
     switch(data['code'])
     {
+        case 0:
+            window.location.reload();
+            break;
         case 100:
             alert('无法连接到主机,请检查主机alive状态');
             break;
@@ -52,9 +61,7 @@ function newHost(data) {
             break;
         case 300:
         case 301:
-            console.log('来了');
-            modal($('#userInfoModal'),'认证失败');
-            console.log('走了');
+            $('#userInfoModal').modal('show');
             break;
         case 310:
             alert('端口不正确');
@@ -63,17 +70,4 @@ function newHost(data) {
             alert(data['info'], data['type']);
             break;
     }
-}
-
-function modal($modal, title, reset) {
-    if(!arguments[1]) title = "Autop";
-    if(!arguments[2]) reset = true;
-
-    if(reset) {
-        $modal.find('form').resetForm();
-    }
-    if($modal.find('.modal-title').text()!=title) {
-        $modal.find('.modal-title').text(title);
-    }
-    $modal.modal('show');
 }

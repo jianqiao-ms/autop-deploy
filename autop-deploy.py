@@ -118,19 +118,16 @@ class Admin(RequestHandler, object):
         main_content_sql = dict(
                                host        = "SELECT "
                                                 "H.`id`                          AS HId,"
-                                                "H.`alias`                       AS HAlias,"
                                                 "H.`ip_addr`                     AS HIp,"
+                                                "H.`hostname`                    AS HName,"
                                                 "IFNULL(ENV.`name`,'')           AS EName,"
-                                                "HType.`name`                    AS HTypeName,"
                                                 "IFNULL(HG.`id`,'')              AS HGroupId,"
                                                 "IFNULL(HG.`name`,'')            AS HGName "
                                               "FROM `t_assets_host`              AS H "
                                               "LEFT JOIN `t_assets_hostgroup`    AS HG "
                                               "ON H.`group_id` = HG.`id` "
                                               "LEFT JOIN `t_assets_env`          AS ENV "
-                                              "ON ENV.`id`=H.`id` "
-                                              "LEFT JOIN `t_assets_hosttype`     AS HType "
-                                              "ON HType.`id`=H.`type_id`",
+                                              "ON ENV.`id`=H.`env_id`",
                                hostgroup    = 'SELECT '
                                                  'HG.id                          AS HGId,'
                                                  'HG.`name`                      AS HGName,'

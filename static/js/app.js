@@ -1,18 +1,4 @@
-(function($) {
-    'use strict';
-
-    $(function() {
-        var $fullText = $('.admin-fullText');
-        $('#admin-fullscreen').on('click', function() {
-            $.AMUI.fullscreen.toggle();
-        });
-
-        $(document).on($.AMUI.fullscreen.raw.fullscreenchange, function() {
-            $fullText.text($.AMUI.fullscreen.isFullscreen ? '退出全屏' : '开启全屏');
-        });
-    });
-})(jQuery);
-
+// websockets 方法
 $(document).ready(function (){
     // websocket 消息框
     var msgBox = $(".ams-header-msg-container");
@@ -21,40 +7,43 @@ $(document).ready(function (){
     ws.onmessage = function (evt) {
         msgBox.text(evt.data);
     };
-
-    
 });
 
-//消息提示框变量
-var confirmModal            = $("#confirm");
-var confirmMoadlHead        = confirmModal.find(".am-modal-hd");
-var confirmMoadlBody        = confirmModal.find(".am-modal-bd");
+$(document).ready(function () {
+    //消息提示框变量
+    var confirmModal = $("#confirm");
+    var confirmMoadlHead = confirmModal.find(".am-modal-hd");
+    var confirmMoadlBody = confirmModal.find(".am-modal-bd");
 
-//alert框
-var alertModal              = $('#alert');
-var alertModalHead          = alertModal.find('.am-modal-hd');
-var alertModalBody          = alertModal.find('.am-modal-bd');
+    //alert框
+    var alertModal = $('#alertModal');
+    var alertModalHead = alertModal.find('#alertModalLabel');
+    var alertModalBody = alertModal.find('.modal-body');
 
-function confirm(msg, title, callback) {
-    if(!arguments[2]) title = "Autop";
-    confirmMoadlHead.text(title);
-    confirmMoadlBody.text(msg);
+    function confirm(msg, title, callback) {
+        if (!arguments[2]) title = "Autop";
+        confirmMoadlHead.text(title);
+        confirmMoadlBody.text(msg);
 
 
-    confirmModal.modal({
-        relatedTarget: this,
-        onConfirm:function () {
-            if (typeof(callback) == "function") {
-                callback();
+        confirmModal.modal({
+            relatedTarget: this,
+            onConfirm: function () {
+                if (typeof(callback) == "function") {
+                    callback();
+                }
             }
+        });
+    }
+
+
+    function alert(msg, title) {
+        if (arguments[1]) {
+            alertModalHead.text(title);
         }
-    });
-}
+        alertModalBody.text(msg);
+        alertModal.modal('show');
+    }
 
-
-function alert(msg, title) {
-    if(!arguments[2]) title = "Autop";
-    alertModalHead.text(title);
-    alertModalBody.text(msg);
-    alertModal.modal();
-}
+    window.alert=alert;
+});
