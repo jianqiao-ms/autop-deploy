@@ -41,7 +41,7 @@ $(document).ready(function () {
         if (arguments[1]) {
             alertModalHead.text(title);
         }
-        alertModalBody.text(msg);
+        alertModalBody.html(msg);
         alertModal.modal('show');
     }
 

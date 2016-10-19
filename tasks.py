@@ -267,3 +267,18 @@ def new_hostgroup(envId, hgName, hgDes):
         return dict(code=0)
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+@celery.task
+def new_project(repo, alias):
+    try:
+        response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
+        if response!=0:
+            return dict(code=100)
+    except Exception, e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+    try:
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`) " \
+              "VALUES ('{}', '{}', '{}')".format(repo, repo.split('\\')[-1].split('.')[0], alias)
+        db.insert(sql)
+        return dict(code=0)
+    except Exception, e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)

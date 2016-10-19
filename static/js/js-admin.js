@@ -9,6 +9,7 @@ $(document).ready(function () {
 
     var formNewHost             = $('form#new-host');               //new-host form
     var formNewHg               = $('form#new-hg');                 //new-hg form
+    var formNewProj             = $('form#new-proj');             //new-hg form
 
     var modalUser               = $('#userInfoModal');              //用户名密码输入框
     var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //用户名密码输 modal 提交按钮
@@ -39,6 +40,15 @@ $(document).ready(function () {
         },
         success:newHostgroup
     };
+    var projFormOptions         = {
+        beforeSubmit:function (arr, $form, options) {
+            if (formNewProj.find('[name=repo]').val()=='') {
+                alert('请输入repo地址');
+                return false;
+            }
+        },
+        success:newProject
+    };
 
     // 按钮行为
     btnNew.click(function () {
@@ -52,6 +62,7 @@ $(document).ready(function () {
     // 绑定ajaxForm方法到form
     formNewHost.ajaxForm(hostormOptions);
     formNewHg.ajaxForm(hgFormOptions);
+    formNewProj.ajaxForm(projFormOptions);
 
 
     btnModalUserConfirm.click(function () {
@@ -98,6 +109,17 @@ function newHostgroup(data) {
             break;
         case 400:
             alert(data['info'], data['type']);
+            break;
+    }
+}
+function newProject(data) {
+    switch(data['code'])
+    {
+        case 0:
+            window.location.reload();
+            break;
+        case 400:
+            alert("<code>"+data['info']+"</code>", data['type']);
             break;
     }
 }

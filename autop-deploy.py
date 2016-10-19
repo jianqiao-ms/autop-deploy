@@ -22,6 +22,7 @@ from tasks import mysql_get
 from tasks import deploy
 from tasks import new_host
 from tasks import new_hostgroup
+from tasks import new_project
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -75,7 +76,8 @@ def make_app():
         (r"/deploy/?(?P<module>[a-z]+)", Deploy),
 
         (r'/new/host', NewHost),
-        (r'/new/hostgroup', NewHostgroup)
+        (r'/new/hostgroup', NewHostgroup),
+        (r'/new/project', NewProject)
     ], **settings)
 
 class curlRequestHandler(RequestHandler, object):
@@ -181,6 +183,15 @@ class NewHostgroup(RequestHandler, object):
 
         rData = yield torncelery.async(new_hostgroup, envId, hgName, hgDes)
         self.write(rData)
+class NewProject(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        repo   = self.get_argument('repo',      strip=False)
+        pAlias = self.get_argument('alias',     strip=False)
+
+        rData = yield torncelery.async(new_project, repo, pAlias)
+        self.write(rData)
+
 
 if __name__ == "__main__":
     print 'Starting Server...'
