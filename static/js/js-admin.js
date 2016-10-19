@@ -5,15 +5,15 @@
 $(document).ready(function () {
     var btnNew                  = $('button#new');                  // 新建按钮
     var trNew                   = $('tr#new');                      // 新建行
-    var btnSave                 = $('button#save');                 // save按钮
     var btnCancel               = $('button#cancel');               // cancel 按钮
 
     var formNewHost             = $('form#new-host');               //new-host form
+    var formNewHg               = $('form#new-hg');                 //new-hg form
 
     var modalUser               = $('#userInfoModal');              //用户名密码输入框
-    var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //modal 提交按钮
+    var btnModalUserConfirm     = $('.modal-footer .btn-primary');  //用户名密码输 modal 提交按钮
 
-    var userFormOptions         = {
+    var hostormOptions          = {
         beforeSubmit:function (arr, $form, options) {
             if (formNewHost.find('[name=env]').val()=='') {
                 alert('请选择主机环境 或 属组');
@@ -26,9 +26,21 @@ $(document).ready(function () {
         },
         success:newHost
     };
+    var hgFormOptions           = {
+        beforeSubmit:function (arr, $form, options) {
+            if (formNewHg.find('[name=env]').val()=='') {
+                alert('请选择主机组环境');
+                return false;
+            }
+            if (formNewHg.find('[name=name]').val()=='') {
+                alert('主机组名不能为空');
+                return false;
+            }
+        },
+        success:newHostgroup
+    };
 
-    formNewHost.ajaxForm(userFormOptions);       // 绑定ajaxForm方法到form
-
+    // 按钮行为
     btnNew.click(function () {
         formNewHost.resetForm();
         trNew.show();
@@ -36,12 +48,18 @@ $(document).ready(function () {
     btnCancel.click(function () {
         trNew.hide();
     });
+
+    // 绑定ajaxForm方法到form
+    formNewHost.ajaxForm(hostormOptions);
+    formNewHg.ajaxForm(hgFormOptions);
+
+
     btnModalUserConfirm.click(function () {
         $('#real-username').val($('#input-username').val());
         $('#real-password').val($('#input-password').val());
 
         modalUser.modal('hide');
-        formNewHost.ajaxSubmit(userFormOptions);
+        formNewHost.ajaxSubmit(hostormOptions);
     });
 
 });
@@ -65,6 +83,18 @@ function newHost(data) {
             break;
         case 310:
             alert('端口不正确');
+            break;
+        case 400:
+            alert(data['info'], data['type']);
+            break;
+    }
+}
+
+function newHostgroup(data) {
+    switch(data['code'])
+    {
+        case 0:
+            window.location.reload();
             break;
         case 400:
             alert(data['info'], data['type']);

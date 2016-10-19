@@ -257,3 +257,13 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         return dict(code=0)
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+
+@celery.task
+def new_hostgroup(envId, hgName, hgDes):
+    try:
+        sql = "INSERT INTO `t_assets_hostgroup` (`env_id`, `name`, `description`) " \
+              "VALUES ('{}', '{}', '{}')".format(envId, hgName, hgDes)
+        db.insert(sql)
+        return dict(code=0)
+    except Exception, e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)

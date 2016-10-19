@@ -21,6 +21,7 @@ from tasks import mysql_query
 from tasks import mysql_get
 from tasks import deploy
 from tasks import new_host
+from tasks import new_hostgroup
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -73,7 +74,8 @@ def make_app():
         (r"/deploy", Deploy),
         (r"/deploy/?(?P<module>[a-z]+)", Deploy),
 
-        (r'/new/host', NewHost)
+        (r'/new/host', NewHost),
+        (r'/new/hostgroup', NewHostgroup)
     ], **settings)
 
 class curlRequestHandler(RequestHandler, object):
@@ -169,6 +171,15 @@ class NewHost(RequestHandler, object):
         uPwd    = self.get_argument('password', strip=False)
 
         rData = yield torncelery.async(new_host, envId, ipaddr, hgId, uName, uPwd)
+        self.write(rData)
+class NewHostgroup(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        envId   = self.get_argument('env',      strip=False)
+        hgName  = self.get_argument('hg-name',  strip=False)
+        hgDes   = self.get_argument('hg-des',   strip=False)
+
+        rData = yield torncelery.async(new_hostgroup, envId, hgName, hgDes)
         self.write(rData)
 
 if __name__ == "__main__":

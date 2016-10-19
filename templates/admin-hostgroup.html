@@ -4,7 +4,7 @@
 {% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
 
 {% block content %}
-<form class="am-form" action="/new/hostgroup" method="post">
+<form role="form" id="new-hg" action="/new/hostgroup" method="post">
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -15,7 +15,6 @@
             </tr>
         </thead>
         <tbody>
-
             {% for r in data['main_content'] %}
             <tr id="{{ r['HGId'] }}">
                 <td>{{ r['EName'] }}</td>
@@ -26,17 +25,18 @@
             {% end %}
             <tr id="new">
                 <td>
-                    <select>
+                    <select class="form-control" name="env">
+                        <option value="">无</option>
                         {% for r in data['env'] %}
                         <option value="{{ r['id'] }}">{{ r['name'] }}</option>
                         {% end %}
                     </select>
                 </td>
-                <td><input type="text" placeholder="主机组名"></td>
-                <td><input type="text" placeholder="Description"></td>
+                <td><input type="text" class="form-control" name="hg-name" placeholder="主机组名"></td>
+                <td><input type="text" class="form-control" name="hg-des"placeholder="Description"></td>
                 <td>
-                    <button type="submit" class="am-btn am-btn-success">Save</button>
-                    <button type="button" class="am-btn am-btn-warning">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
                 </td>
             </tr>
         </tbody>
