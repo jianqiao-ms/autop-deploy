@@ -31,3 +31,7 @@ td .fa {
 td .fa:hover {
     color: #a94442;
 }
+
+.nav-tabs {
+    margin-bottom: 3rem;
+}

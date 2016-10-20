@@ -5,118 +5,32 @@
 {% end %}
 
 {% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="/deploy">Deploy Dashboard</a></li>
+                <li><a href="/deploy/auto">定义自动发布</a></li>
+                <li><a href="/deploy/manual">开始手动发布</a></li>
+            </ul>
+        </div>
 
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block page-header %}
+            <div class="container-fluid page-header-container">
+                <h1 class="page-header">Deploy Dashboard</h1>
+            </div>
+            {% end %}
 
-
-
-
-
-
-
-<div class="ams-container-offcanvas">
-    <div class="ams-offcanvas">
-        <span class="am-icon-upload"> Deploy</span>
-        <ul class="am-list">
-            <li><a href="/deploy/autohistory"><i class="am-icon-history"></i> 自动发布历史</a></li>
-        </ul>
+            <div class="container-fluid ">
+                {% block content %}{% end %}
+            </div>
+        </div>
     </div>
-    <div class="ams-rectangle-right" id="data-offcanvas-toggle"><div class="ams-rectangle-right-in"></div></div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="ams-container-global ">
-{% block content %}
-    <div class="am-g">
-        <div class="am-u-sm-12">主机</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-
-    <div class="am-g">
-        <div class="am-u-sm-12">主机组</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-
-    <div class="am-g">
-        <div class="am-u-sm-12">项目</div>
-        <div class="am-u-sm-12">OK</div>
-    </div>
-{% end %}
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {#jquery双向数据绑定#}
 {% end %}
+
 {% block js %}
     <script src="{{static_url("js/js-deploy.js")}}"></script>
 {% end %}

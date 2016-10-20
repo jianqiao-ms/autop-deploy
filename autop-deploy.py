@@ -112,15 +112,29 @@ class MsgSocket(WebSocketHandler, object):
 class Deploy(curlRequestHandler, object):
     @coroutine
     def get(self, module = ''):
+        data = dict()
         if len(module):
-            self.render("deploy-{}.html".format(module))
+            data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
+            data['rules'] = yield torncelery.async(mysql_get,
+                                                "SELECT \
+                                                    P.`name`                AS PName, \
+                                                    ENV.`name`              AS EName,\
+                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container \
+                                                FROM \
+                                                    `t_deploy_auto_rule` AS AR \
+                                                LEFT JOIN `t_assets_project` AS P ON AR.`project_id` = P.`id` \
+                                                LEFT JOIN `t_assets_hostgroup` AS HG ON AR.`hg_id` = HG.`id` AND AR.`hg_id` IS NOT NULL \
+                                                LEFT JOIN `t_assets_host` AS H ON AR.`host_id` = H.`id` AND AR.`host_id` IS NOT NULL \
+                                                LEFT JOIN `t_assets_env` AS ENV ON ENV.`id` = HG.`env_id` \
+                                                OR ENV.id = H.env_id")
+            self.render("deploy-{}.html".format(module), data = data)
+            return
         self.render('deploy.html')
 
 class Admin(RequestHandler, object):
     @coroutine
     def get(self, module=''):
-        main_content_sql = dict(
-                               host        = "SELECT "
+        main_content_sql = dict(host        = "SELECT "
                                                 "H.`id`                          AS HId,"
                                                 "H.`ip_addr`                     AS HIp,"
                                                 "H.`hostname`                    AS HName,"
@@ -132,7 +146,7 @@ class Admin(RequestHandler, object):
                                               "ON H.`group_id` = HG.`id` "
                                               "LEFT JOIN `t_assets_env`          AS ENV "
                                               "ON ENV.`id`=H.`env_id`",
-                               hostgroup    = 'SELECT '
+                                hostgroup    = 'SELECT '
                                                  'HG.id                          AS HGId,'
                                                  'HG.`name`                      AS HGName,'
                                                  'HG.description                 AS HGDes,'
@@ -140,7 +154,7 @@ class Admin(RequestHandler, object):
                                                'FROM `t_assets_hostgroup`        AS HG '
                                                'LEFT JOIN t_assets_env           AS ENV '
                                                'ON ENV.id=HG.env_id',
-                               project      = 'SELECT '
+                                project      = 'SELECT '
                                                  'id                             AS PId,'
                                                  'repo                           AS PRepo,'
                                                  'alias                          AS PAlias '

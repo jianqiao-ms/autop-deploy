@@ -1,0 +1,42 @@
+{% extends deploy.html %}
+
+{% block page-header %}{% end %}
+
+{% block content %}
+<ul class="nav nav-tabs" role="tablist">
+    {% for env in data['env'] %}
+    <li role="presentation"><a href="#{{ env['id'] }}" role="tab" data-toggle="tab">{{ env['name'] }}</a></li>
+    {% end %}
+</ul>
+
+<div class="tab-content">
+    {% for env in data['env'] %}
+    <div role="tabpanel" class="tab-pane" id="{{ env['id'] }}">
+        <form role="form" id="new-host" action="/new/host" method="post">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>环境</td>
+                        <td>项目</td>
+                        <td>主机/主机组</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in data['rules'] %}
+                        {% if r['EName']== env['name']%}
+                            <tr>
+                                <td>{{ r['EName'] }}</td>
+                                <td>{{ r['PName'] }}</td>
+                                <td>{{ r['Container'] }}</td>
+                            </tr>
+                        {% else %}
+                            {% continue %}
+                        {% end %}
+                    {% end %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+    {% end %}
+</div>
+{% end %}
