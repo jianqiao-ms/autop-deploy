@@ -255,6 +255,8 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         print sql
         db.insert(sql)
         return dict(code=0)
+    except torndb.IntegrityError:
+        return dict(code=11)
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
@@ -265,6 +267,8 @@ def new_hostgroup(envId, hgName, hgDes):
               "VALUES ('{}', '{}', '{}')".format(envId, hgName, hgDes)
         db.insert(sql)
         return dict(code=0)
+    except torndb.IntegrityError:
+        return dict(code=11)
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 @celery.task
@@ -276,9 +280,14 @@ def new_project(repo, alias):
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
     try:
+        name = repo.split('.git')[0].split('/')[-1]
+        if len(alias)==0:
+            alias=name
         sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`) " \
-              "VALUES ('{}', '{}', '{}')".format(repo, repo.split('\\')[-1].split('.')[0], alias)
+              "VALUES ('{}', '{}', '{}')".format(repo, name, alias)
         db.insert(sql)
         return dict(code=0)
+    except torndb.IntegrityError,e:
+        return dict(code=11, column=e.args[1].split()[-1][1:-1])
     except Exception, e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)

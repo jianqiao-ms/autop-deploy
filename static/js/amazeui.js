@@ -3470,7 +3470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// default options
 	ath.defaults = {
 	  appID: 'org.cubiq.addtohome',		// local storage name (no need to change)
-	  fontSize: 15,				// base font size, used to properly resize the popup based on viewport scale factor
+	  fontSize: 15,				// base fonts size, used to properly resize the popup based on viewport scale factor
 	  debug: false,				// override browser checks
 	  logging: false,				// log reasons for showing or not showing to js console; defaults to true when debug is true
 	  modal: false,				// prevent further actions until the message is closed

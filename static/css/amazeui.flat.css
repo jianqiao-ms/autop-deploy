@@ -146,7 +146,7 @@ q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
 /**
- * Address inconsistent and variable font size in all browsers.
+ * Address inconsistent and variable fonts size in all browsers.
  */
 small {
   font-size: 80%;
@@ -200,7 +200,7 @@ figure {
   margin: 0;
 }
 /**
- * Correct font family set oddly in Safari 5 and Chrome.
+ * Correct fonts family set oddly in Safari 5 and Chrome.
  */
 code,
 kbd,
@@ -232,7 +232,7 @@ legend {
 /**
  * 1. Correct color not being inherited.
  *    Known issue: affects color of disabled elements.
- * 2. Correct font properties not being inherited.
+ * 2. Correct fonts properties not being inherited.
  * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
  */
 button,
@@ -319,7 +319,7 @@ input::-moz-focus-inner {
 }
 /**
  * Fix the cursor style for Chrome's increment/decrement buttons. For certain
- * `font-size` values of the `input`, it causes the cursor style of the
+ * `fonts-size` values of the `input`, it causes the cursor style of the
  * decrement button to change from `default` to `text`.
  */
 input[type="number"]::-webkit-inner-spin-button,
@@ -358,7 +358,7 @@ textarea {
   resize: vertical;
 }
 /**
- * Don't inherit the `font-weight` (applied by a rule above).
+ * Don't inherit the `fonts-weight` (applied by a rule above).
  * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.
  */
 optgroup {
@@ -380,9 +380,9 @@ th {
 /* AMUI Base
    ========================================================================== */
 /**
- * `font-size` is set in `html` element to support the `rem` unit for font-sizes
+ * `fonts-size` is set in `html` element to support the `rem` unit for fonts-sizes
  * NOTE: IE9 & IE10 do not recognize `rem` units when used with the
-   `font` shorthand property.
+   `fonts` shorthand property.
  */
 html {
   font-size: 10px;
@@ -4633,8 +4633,8 @@ a.am-close:hover {
 [class*="am-icon-"]:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -8213,7 +8213,7 @@ img.am-thumbnail,
 }
 /*
 .@{ns}text-xxs {
-  font-size: @font-size-xxs;
+  fonts-size: @fonts-size-xxs;
 }
 */
 .am-text-xs {
@@ -8866,8 +8866,8 @@ ul.am-dropdown-content > .am-disabled > a:focus {
 .am-slider-default .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -8928,8 +8928,8 @@ ul.am-dropdown-content > .am-disabled > a:focus {
 }
 .am-slider-default .am-pauseplay a::before {
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -9958,8 +9958,8 @@ TODO:
 .am-pureview-slider .am-pinch-zoom:after {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -10425,8 +10425,8 @@ label.am-radio {
 .am-radio-inline .am-icon-unchecked:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -10935,8 +10935,8 @@ tbody.am-collapse.am-in {
 .am-datepicker-prev-icon:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -10951,8 +10951,8 @@ tbody.am-collapse.am-in {
 .am-datepicker-next-icon:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -11314,8 +11314,8 @@ tbody.am-collapse.am-in {
   content: "\f0da";
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -11365,8 +11365,8 @@ tbody.am-collapse.am-in {
 .am-accordion-basic .am-accordion-title:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -11423,8 +11423,8 @@ tbody.am-collapse.am-in {
 .am-accordion-gapped .am-accordion-title:after {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -11490,8 +11490,8 @@ tbody.am-collapse.am-in {
 .am-figure-zoomable:after {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -12141,8 +12141,8 @@ tbody.am-collapse.am-in {
 .am-menu a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -12515,8 +12515,8 @@ tbody.am-collapse.am-in {
 .am-menu-slide1 .am-menu-nav.am-in:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -13406,8 +13406,8 @@ tbody.am-collapse.am-in {
 .am-slider-b1 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -13497,8 +13497,8 @@ tbody.am-collapse.am-in {
 .am-slider-b2 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -13581,8 +13581,8 @@ tbody.am-collapse.am-in {
 .am-slider-b3 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -13668,8 +13668,8 @@ tbody.am-collapse.am-in {
 .am-slider-b4 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -13910,8 +13910,8 @@ tbody.am-collapse.am-in {
 .am-slider-c3 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -14012,8 +14012,8 @@ tbody.am-collapse.am-in {
 .am-slider-c4 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
@@ -14118,8 +14118,8 @@ tbody.am-collapse.am-in {
 .am-slider-d1 .am-direction-nav a:before {
   display: inline-block;
   font: normal normal normal 1.6rem/1 "FontAwesome", sans-serif;
-  /*font-weight: normal; // 2
-  font-style: normal; // 2
+  /*fonts-weight: normal; // 2
+  fonts-style: normal; // 2
   vertical-align: baseline; // 3
   line-height: 1; // 4*/
   font-size: inherit;
