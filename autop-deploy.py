@@ -23,6 +23,7 @@ from tasks import deploy
 from tasks import new_host
 from tasks import new_hostgroup
 from tasks import new_project
+from tasks import new_autorule
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -77,7 +78,8 @@ def make_app():
 
         (r'/new/host', NewHost),
         (r'/new/hostgroup', NewHostgroup),
-        (r'/new/project', NewProject)
+        (r'/new/project', NewProject),
+        (r'/new/autorule', NewAutoRule)
     ], **settings)
 
 class curlRequestHandler(RequestHandler, object):
@@ -108,28 +110,6 @@ class MsgSocket(WebSocketHandler, object):
 
     def on_close(self):
         print("WebSocket closed")
-
-class Deploy(curlRequestHandler, object):
-    @coroutine
-    def get(self, module = ''):
-        data = dict()
-        if len(module):
-            data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
-            data['rules'] = yield torncelery.async(mysql_get,
-                                                "SELECT \
-                                                    P.`name`                AS PName, \
-                                                    ENV.`name`              AS EName,\
-                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container \
-                                                FROM \
-                                                    `t_deploy_auto_rule` AS AR \
-                                                LEFT JOIN `t_assets_project` AS P ON AR.`project_id` = P.`id` \
-                                                LEFT JOIN `t_assets_hostgroup` AS HG ON AR.`hg_id` = HG.`id` AND AR.`hg_id` IS NOT NULL \
-                                                LEFT JOIN `t_assets_host` AS H ON AR.`host_id` = H.`id` AND AR.`host_id` IS NOT NULL \
-                                                LEFT JOIN `t_assets_env` AS ENV ON ENV.`id` = HG.`env_id` \
-                                                OR ENV.id = H.env_id")
-            self.render("deploy-{}.html".format(module), data = data)
-            return
-        self.render('deploy.html')
 
 class Admin(RequestHandler, object):
     @coroutine
@@ -168,7 +148,6 @@ class Admin(RequestHandler, object):
 
             if module=='host':
                 data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
-                data['hosttype'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_hosttype`')
                 data['hostgroup'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_hostgroup`')
 
             if module == 'hostgroup':
@@ -177,6 +156,42 @@ class Admin(RequestHandler, object):
             self.render("admin-{}.html".format(module),data = data)
             return
         self.render('admin.html')
+
+class Deploy(curlRequestHandler, object):
+    @coroutine
+    def get(self, module = ''):
+        data = dict()
+        if len(module):
+            data['env']     = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
+            data['rules']   = yield torncelery.async(mysql_get,
+                                                "SELECT \
+                                                    P.`name`                AS PName, \
+                                                    ENV.`name`              AS EName,\
+                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container \
+                                                FROM \
+                                                    `t_deploy_auto_rule` AS AR \
+                                                LEFT JOIN `t_assets_project` AS P ON AR.`project_id` = P.`id` \
+                                                LEFT JOIN `t_assets_hostgroup` AS HG ON AR.`hg_id` = HG.`id` AND AR.`hg_id` IS NOT NULL \
+                                                LEFT JOIN `t_assets_host` AS H ON AR.`host_id` = H.`id` AND AR.`host_id` IS NOT NULL \
+                                                LEFT JOIN `t_assets_env` AS ENV ON ENV.`id` = HG.`env_id` \
+                                                OR ENV.id = H.env_id")
+            data['host']    = yield torncelery.async(mysql_get,
+                                                  "SELECT "
+                                                  "* "
+                                                  "FROM `t_assets_host` AS H "
+                                                  "WHERE H.`group_id`=''")
+            data['hg']      = yield torncelery.async(mysql_get,
+                                                  "SELECT "
+                                                  "* "
+                                                  "FROM `t_assets_hostgroup`")
+            data['proj'] = yield torncelery.async(mysql_get,
+                                                "SELECT "
+                                                "* "
+                                                "FROM `t_assets_project`")
+            self.render("deploy-{}.html".format(module), data = data)
+            return
+        self.render('deploy.html')
+
 class NewHost(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
@@ -198,6 +213,15 @@ class NewHostgroup(RequestHandler, object):
         rData = yield torncelery.async(new_hostgroup, envId, hgName, hgDes)
         self.write(rData)
 class NewProject(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        repo   = self.get_argument('repo',      strip=False)
+        pAlias = self.get_argument('alias',     strip=False)
+
+        rData = yield torncelery.async(new_project, repo, pAlias)
+        self.write(rData)
+
+class NewAutoRule(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
         repo   = self.get_argument('repo',      strip=False)

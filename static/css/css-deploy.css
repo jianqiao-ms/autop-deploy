@@ -18,3 +18,13 @@ css 属性顺序
 .ams-table-header {
     background-color: #A5A5A5;
 }
+
+.nav-tabs {
+    /*float: left;*/
+    /*clear: left;*/
+    display: inline-block;
+}
+
+button#new {
+    float: right;
+}
