@@ -35,3 +35,6 @@ td .fa:hover {
 .nav-tabs {
     margin-bottom: 3rem;
 }
+select {
+  font: normal normal normal 14px/1 FontAwesome;
+}

@@ -167,7 +167,8 @@ class Deploy(curlRequestHandler, object):
                                                 "SELECT \
                                                     P.`name`                AS PName, \
                                                     ENV.`name`              AS EName,\
-                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container \
+                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container, \
+                                                    AR.`token`               AS ARToken \
                                                 FROM \
                                                     `t_deploy_auto_rule` AS AR \
                                                 LEFT JOIN `t_assets_project` AS P ON AR.`project_id` = P.`id` \
@@ -224,12 +225,11 @@ class NewProject(RequestHandler, object):
 class NewAutoRule(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        repo   = self.get_argument('repo',      strip=False)
-        pAlias = self.get_argument('alias',     strip=False)
+        pId         = self.get_argument('project',      strip=False)
+        container   = self.get_argument('Container',    strip=False)
 
-        rData = yield torncelery.async(new_project, repo, pAlias)
+        rData = yield torncelery.async(new_autorule, pId, container)
         self.write(rData)
-
 
 if __name__ == "__main__":
     print 'Starting Server...'

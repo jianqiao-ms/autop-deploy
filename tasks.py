@@ -294,19 +294,15 @@ def new_project(repo, alias):
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @celery.task
-def new_autorule(repo, alias):
+def new_autorule(pid, container):
     try:
-        response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
-        if response != 0:
-            return dict(code=100)
-    except Exception, e:
-        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
-    try:
-        name = repo.split('.git')[0].split('/')[-1]
-        if len(alias) == 0:
-            alias = name
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`) " \
-              "VALUES ('{}', '{}', '{}')".format(repo, name, alias)
+        sql=None
+        if container.startswith('g'):
+            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `hg_id`) " \
+                  "VALUES ('{}', '{}', '{}')".format(pid, 'master', container[1:])
+        else:
+            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `host_id`) " \
+                  "VALUES ('{}', '{}', '{}')".format(pid, 'master', container[1:])
         db.insert(sql)
         return dict(code=0)
     except torndb.IntegrityError, e:
