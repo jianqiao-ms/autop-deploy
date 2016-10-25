@@ -6,9 +6,15 @@ $(document).ready(function () {
     trNew = $('tr#new');                      // 新建行
     var btnNew = $('button#new');                  // 新建按钮
     var btnCancel = $('button#cancel');               // cancel 按钮
+    var btnDel = $('i.fa-times');
     var formNewAutoRule = $('#new-auto-rule');              // new auto rule form
+    var formDelAutoRule = $('#del-auto-rule');
+
+    var confirmModal = $("#confirmModal");
+
     var navTabs = $('.nav-tabs');
     var tabContent = $('.tab-content');
+    var inputDelForm = $('input#arid');
 
     var autoRuleFormOptions = {
         beforeSubmit: function (arr, $form, options) {
@@ -23,6 +29,9 @@ $(document).ready(function () {
         },
         success: newAutoRule
     };
+    var delAutoRuleFormOptions = {
+        success: delAutoRule
+    };
 
     // 按钮行为
     btnNew.click(function () {
@@ -32,9 +41,21 @@ $(document).ready(function () {
     btnCancel.click(function () {
         trNew.hide();
     });
+    btnDel.click(function () {
+        var _t_proj_id=$(this).parent().parent().attr('id');
+        inputDelForm.val(_t_proj_id);
+        confirm();
+    });
+
+    confirmModal.on('hide.bs.modal',function () {
+        formDelAutoRule.ajaxSubmit(delAutoRuleFormOptions);
+    });
 
     // 绑定ajaxForm方法到form
     formNewAutoRule.ajaxForm(autoRuleFormOptions);
+    formDelAutoRule.ajaxForm(delAutoRuleFormOptions);
+
+
     function newAutoRule(data) {
         switch (data['code']) {
             case 0:
@@ -47,6 +68,16 @@ $(document).ready(function () {
                         alert('项目 ' + _t_proj + ' 已经存在', '数据冲突');
                         break;
                 }
+                break;
+            case 400:
+                alert("<pre>" + data['info'] + "</pre>", data['type']);
+                break;
+        }
+    }
+    function delAutoRule(data) {
+        switch (data['code']) {
+            case 0:
+                window.location.reload();
                 break;
             case 400:
                 alert("<pre>" + data['info'] + "</pre>", data['type']);

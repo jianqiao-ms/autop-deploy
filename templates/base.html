@@ -53,12 +53,30 @@
 
     {% block body %}{% end %}
     {% block modal %}{% end %}
+    <div class="modal" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title text-danger" id="alertModalLabel">Autop</h4>
+                </div>
+                <div class="modal-body">
+                    {% block confirmbody %}{% end %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-std" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning btn-std">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title text-danger" id="alertModalLabel">Alert</h4>
+                    <h4 class="modal-title text-danger" id="alertModalLabel">Autop</h4>
                 </div>
                 <div class="modal-body"></div>
                 <div class="modal-footer">

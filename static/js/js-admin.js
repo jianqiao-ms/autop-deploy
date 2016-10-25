@@ -121,13 +121,17 @@ function newHostgroup(data) {
     }
 }
 function newProject(data) {
+    var _t_repo = trNew.find('input[name=repo]').val();
+    var _t_name = trNew.find('input[name=alias]').val();
     switch(data['code']) {
         case 0:
             window.location.reload();
             break;
+        case 1:
+            alert('项目 '+_t_name+' 本地repo已存在,请手动删除再重新添加');
+            break;
         case 11:
-            var _t_repo = trNew.find('input[name=repo]').val();
-            var _t_name = trNew.find('input[name=alias]').val();
+
             switch(data['column']) {
                 case 'alias':
                     alert('名称 '+_t_name+' 已经存在', '数据冲突');

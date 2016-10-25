@@ -24,6 +24,7 @@ from tasks import new_host
 from tasks import new_hostgroup
 from tasks import new_project
 from tasks import new_autorule
+from tasks import del_autorule
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -79,7 +80,10 @@ def make_app():
         (r'/new/host', NewHost),
         (r'/new/hostgroup', NewHostgroup),
         (r'/new/project', NewProject),
-        (r'/new/autorule', NewAutoRule)
+        (r'/new/autorule', NewAutoRule),
+        (r'/auto/(?P<token>.+)', Auto),
+
+        (r'/del/autorule',DelAutoRule)
     ], **settings)
 
 class curlRequestHandler(RequestHandler, object):
@@ -163,12 +167,14 @@ class Deploy(curlRequestHandler, object):
         data = dict()
         if len(module):
             data['env']     = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
+            print data['env']
             data['rules']   = yield torncelery.async(mysql_get,
                                                 "SELECT \
                                                     P.`name`                AS PName, \
                                                     ENV.`name`              AS EName,\
                                                     IFNULL(H.`ip_addr`,HG.`name`) AS Container, \
-                                                    AR.`token`               AS ARToken \
+                                                    AR.`token`               AS ARToken, \
+                                                    AR.`id`                  AS ARId \
                                                 FROM \
                                                     `t_deploy_auto_rule` AS AR \
                                                 LEFT JOIN `t_assets_project` AS P ON AR.`project_id` = P.`id` \
@@ -229,6 +235,20 @@ class NewAutoRule(RequestHandler, object):
         container   = self.get_argument('Container',    strip=False)
 
         rData = yield torncelery.async(new_autorule, pId, container)
+        self.write(rData)
+
+class Auto(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        token = kwargs['token']
+        print self.request.body
+
+class DelAutoRule(RequestHandler, object):
+    @coroutine
+    def post(self, *args, **kwargs):
+        arId = self.get_argument('arid')
+
+        rData = yield torncelery.async(del_autorule, arId)
         self.write(rData)
 
 if __name__ == "__main__":

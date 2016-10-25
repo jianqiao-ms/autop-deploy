@@ -13,11 +13,19 @@ import subprocess
 import ipaddress
 import paramiko
 import socket
+import random
+import string
 
 celery = Celery("task")
 celery.config_from_object('celeryconf')
 
-db = torndb.Connection(host="192.168.0.195",database="autop",user='cupid',password='everyone2xhfz')
+class Connection(torndb.Connection):
+    def execute_rowcount(self, query, *parameters, **kwparameters):
+        super(Connection, self).execute_rowcount(query, *parameters, **kwparameters)
+
+    update = delete = execute_rowcount
+
+db = Connection(host="192.168.0.195",database="autop",user='cupid',password='everyone2xhfz')
 
 p_git_updated_file = re.compile(r'^(?!D)\t*.+$')
 p_git_deleted_file = re.compile(r'^(?=D)\t*.+$')
@@ -284,6 +292,12 @@ def new_project(repo, alias):
         name = repo.split('.git')[0].split('/')[-1]
         if len(alias)==0:
             alias=name
+        pPath = '/var/autop/repo/{}___master'.format(alias)
+        if os.path.exists(pPath):
+            return dict(code=1)
+        else:
+            os.system('git clone {} {}'.format(repo,pPath))
+
         sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`) " \
               "VALUES ('{}', '{}', '{}')".format(repo, name, alias)
         db.insert(sql)
@@ -298,12 +312,29 @@ def new_autorule(pid, container):
     try:
         sql=None
         if container.startswith('g'):
-            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `hg_id`) " \
-                  "VALUES ('{}', '{}', '{}')".format(pid, 'master', container[1:])
+            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `hg_id`, `token`) " \
+                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
         else:
-            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `host_id`) " \
-                  "VALUES ('{}', '{}', '{}')".format(pid, 'master', container[1:])
+            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `host_id`, `token`) " \
+                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
         db.insert(sql)
+        return dict(code=0)
+    except torndb.IntegrityError, e:
+        return dict(code=11, column=e.args[1].split()[-1][1:-1])
+    except Exception, e:
+        return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+
+
+@celery.task
+def del_autorule(arid):
+    try:
+        sql = 'SELECT alias FROM `t_assets_project` p LEFT JOIN `t_deploy_auto_rule` ar ON ar.project_id=p.id WHERE ar.id={}'.format(arid)
+        pAlias = db.get(sql)['alias']
+        pPath = '/var/autop/repo/{}___master'.format(pAlias)
+        if os.path.exists(pPath):
+            os.system('rm -rf {}'.format(pPath))
+        sql = "DELETE FROM `t_deploy_auto_rule` WHERE id={}".format(arid)
+        db.delete(sql)
         return dict(code=0)
     except torndb.IntegrityError, e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])

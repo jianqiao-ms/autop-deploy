@@ -26,10 +26,10 @@
                 <tbody>
                     {% for r in data['rules'] %}
                         {% if r['EName']== env['name'] %}
-                            <tr>
+                            <tr id="{{ r['ARId'] }}">
                                 <td>{{ r['PName'] }}</td>
                                 <td>{{ r['Container'] }}</td>
-                                <td>{{ r['ARToken'] }}</td>
+                                <td>http://SERVERNAME/auto/{{ r['ARToken'] }}</td>
                                 <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
                             </tr>
                         {% else %}
@@ -71,5 +71,19 @@
         </form>
     </div>
     {% end %}
+</div>
+{% end %}
+
+
+
+
+{% block confirmbody %}
+<form role="form" id="del-auto-rule" action="/del/autorule" method="post">
+    <input type="text" id='arid' placeholder="" name="arid" style='display:none' />
+</form>
+<div class="row">
+    <div class="col-sm-12">
+        是否确认删除
+    </div>
 </div>
 {% end %}

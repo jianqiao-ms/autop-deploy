@@ -11,30 +11,25 @@ $(document).ready(function (){
 
 $(document).ready(function () {
     //消息提示框变量
-    var confirmModal = $("#confirm");
-    var confirmMoadlHead = confirmModal.find(".am-modal-hd");
-    var confirmMoadlBody = confirmModal.find(".am-modal-bd");
+    var confirmModal = $("#confirmModal");
+    var confirmMoadlHead = confirmModal.find(".modal-title");
+    var confirmMoadlBody = confirmModal.find(".modal-body");
+    var btnConfirmModal = confirmModal.find(".btn-warning");
 
     //alert框
     var alertModal = $('#alertModal');
     var alertModalHead = alertModal.find('#alertModalLabel');
     var alertModalBody = alertModal.find('.modal-body');
 
-    function confirm(msg, title, callback) {
-        if (!arguments[2]) title = "Autop";
+    function confirm(msg, title) {
+        if (!arguments[1]) title = "Autop";
         confirmMoadlHead.text(title);
         confirmMoadlBody.text(msg);
-
-
-        confirmModal.modal({
-            relatedTarget: this,
-            onConfirm: function () {
-                if (typeof(callback) == "function") {
-                    callback();
-                }
-            }
-        });
+        confirmModal.modal('show');
     }
+    btnConfirmModal.click(function () {
+        confirmModal.modal('hide');
+    });
 
 
     function alert(msg, title) {
@@ -46,4 +41,5 @@ $(document).ready(function () {
     }
 
     window.alert=alert;
+    window.confirm=confirm;
 });
