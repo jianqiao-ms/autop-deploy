@@ -25,6 +25,7 @@ from tasks import new_hostgroup
 from tasks import new_project
 from tasks import new_autorule
 from tasks import del_autorule
+from tasks import auto_deploy
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -241,7 +242,15 @@ class Auto(RequestHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
         token = kwargs['token']
-        print self.request.body
+        rbody = json.loads(self.request.body)
+        before = rbody['before']
+        after = rbody['after']
+
+        # print self.request.body
+
+        rData = yield torncelery.async(auto_deploy, token, before, after)
+        # self.write(rData)
+
 
 class DelAutoRule(RequestHandler, object):
     @coroutine
