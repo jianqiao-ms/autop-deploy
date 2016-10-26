@@ -1,0 +1,93 @@
+{% extends admin.html %}
+
+{% block page-header %}Admin Host{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
+{% block content %}
+<form role="form" id="new-host" action="/new/host" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>环境</td>
+                <td>主机名</td>
+                <td>IP地址</td>
+                <td>属组</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for r in data['main_content'] %}
+            <tr id="{{ r['HId'] }}">
+                <td>{{ r['EName'] }}</td>
+                <td>{{ r['HName'] }}</td>
+                <td>{{ r['HIp'] }}</td>
+                <td id="{{ r['HGroupId'] }}">{{ r['HGName'] }}</td>
+                <td><i class="fa fa-times fa-lg" aria-hidden="true" module="host"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
+            </tr>
+            {% end %}
+            <tr id="new">
+                <td>
+                    <select class="form-control" name="env">
+                        <option value="">无</option>
+                        {% for r in data['env'] %}
+                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td></td>
+                <td><input type="text" class="form-control" placeholder="IP地址" name="ipaddr"></td>
+                <td>
+                    <select class="form-control" name="hostgroup">
+                        <option value="">无</option>
+                        {% for r in data['hostgroup'] %}
+                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="text" id='real-username' placeholder="root" name="username" style='display:none' />
+    <input type="text" id='real-password' placeholder=""     name="password" style='display:none' />
+</form>
+{% end %}
+
+{% block modal %}
+{# 用户名密码 modal #}
+<div class="modal" id="userInfoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">认证失败</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="input-username" class="col-sm-2 control-label">用户名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input-username" placeholder="root" value='root' disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-password" class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="input-password" placeholder="password" value=''>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Commit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+{% end %}

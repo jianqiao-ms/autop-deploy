@@ -1,0 +1,35 @@
+{% extends admin.html %}
+
+{% block page-header %}Admin Project{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
+{% block content %}
+<form role="form" id="new-proj" action="/new/project" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>repo</td>
+                <td>别名</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in data['main_content'] %}
+            <tr id="{{ r['PId'] }}">
+                <td>{{ r['PRepo'] }}</td>
+                <td>{{ r['PAlias'] }}</td>
+                <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
+            </tr>
+            {% end %}
+            <tr id="new">
+                <td><input type="text" class="form-control"  name='repo' placeholder="Project Repo" ></td>
+                <td><input type="text" class="form-control"  name='alias' placeholder="Alias"></td>
+                <td>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% end %}

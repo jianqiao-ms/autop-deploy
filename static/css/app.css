@@ -1,0 +1,40 @@
+/* Write your styles
+css 属性顺序
+    颜色
+    大小
+    位置
+    边框
+    z-index
+*/
+
+/*.main表格*/
+.table thead td {
+    background-color: #B1B1B1;
+    border-bottom: 0!important;
+}
+.table>tbody>tr#new>td {
+    padding: 0.1rem;
+}
+.table>tbody>tr#new {
+    display: none;
+}
+
+/*标准按钮*/
+button.btn-std {
+    min-width: 96px;
+}
+
+/*fontawesome 操作按钮 鼠标样式*/
+td .fa {
+    cursor: pointer;
+}
+td .fa:hover {
+    color: #a94442;
+}
+
+.nav-tabs {
+    margin-bottom: 3rem;
+}
+select {
+  font: normal normal normal 14px/1 FontAwesome;
+}

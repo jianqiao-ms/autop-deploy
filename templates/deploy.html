@@ -1,14 +1,36 @@
-{% extends "base.html" %}
+{% extends base.html %}
 
-{% block second-nav  %}
-<td><a href="/deploy/running">running</a></td>
-<td><a href="/deploy/history">history</a></td>
+{% block css %}
+    <link rel="stylesheet" href="{{static_url("css/css-deploy.css")}}">
 {% end %}
 
-{% block content %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="/deploy">Deploy Dashboard</a></li>
+                <li><a href="/deploy/auto">定义自动发布</a></li>
+                <li><a href="/deploy/manual">开始手动发布</a></li>
+            </ul>
+        </div>
 
-{% for data in result %}
-<div>{{ data }}</div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block page-header %}
+            <div class="container-fluid page-header-container">
+                <h1 class="page-header">Deploy Dashboard</h1>
+            </div>
+            {% end %}
+
+            <div class="container-fluid ">
+                {% block content %}{% end %}
+            </div>
+        </div>
+    </div>
+</div>
+{#jquery双向数据绑定#}
 {% end %}
 
+{% block js %}
+    <script src="{{static_url("js/js-deploy.js")}}"></script>
 {% end %}

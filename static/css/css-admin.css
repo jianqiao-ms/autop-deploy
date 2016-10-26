@@ -1,0 +1,38 @@
+/* Created at 2016-09-26
+   by
+   jianqiao
+css 属性顺序
+    颜色
+    大小
+    位置
+    边框
+    z-index
+*/
+
+@media only screen and (min-width: 641px) {
+    div.ams-container-global {
+        padding-left: 230px;
+    }
+}
+
+.as-table-header {
+    background-color: #A5A5A5;
+}
+
+/*页面内容标题*/
+.page-header-container {
+    border-bottom: 1px solid #eee;
+
+    padding-bottom: 9px;
+    margin:0 0 20px;
+}
+.main .page-header {
+    float: left;
+    border: none;
+
+    padding-bottom: 0;
+    margin:0;
+}
+.main .page-header-container button {
+    float: right;
+}
