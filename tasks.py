@@ -283,7 +283,7 @@ def new_hostgroup(envId, hgName, hgDes):
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @celery.task
-def new_project(repo, alias):
+def new_project(repo, alias, rely):
     try:
         response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
         if response!=0:
@@ -300,8 +300,8 @@ def new_project(repo, alias):
         else:
             os.system('git clone {} {}'.format(repo,pPath))
 
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`) " \
-              "VALUES ('{}', '{}', '{}')".format(repo, name, alias)
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, rely) " \
+              "VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, rely)
         db.insert(sql)
         return dict(code=0)
     except torndb.IntegrityError,e:

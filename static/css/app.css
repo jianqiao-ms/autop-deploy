@@ -25,10 +25,10 @@ button.btn-std {
 }
 
 /*fontawesome 操作按钮 鼠标样式*/
-td .fa {
+td .fa-lg {
     cursor: pointer;
 }
-td .fa:hover {
+td .fa-lg:hover {
     color: #a94442;
 }
 

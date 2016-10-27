@@ -142,7 +142,11 @@ class Admin(RequestHandler, object):
                                 project      = 'SELECT '
                                                  'id                             AS PId,'
                                                  'repo                           AS PRepo,'
-                                                 'alias                          AS PAlias '
+                                                 'alias                          AS PAlias, '
+                                                 'deploy_alone                   AS PDeployAlone, '
+                                                 'IFNULL(`rely_id`,"")           AS PRely, '
+                                                 'IFNULL(`webapp_name`,"")       AS PWebapp, '
+                                                 'able_to_be_rely                AS PIsRely '
                                                'FROM `t_assets_project`')
 
         if len(module):
@@ -225,8 +229,9 @@ class NewProject(RequestHandler, object):
     def post(self, *args, **kwargs):
         repo   = self.get_argument('repo',      strip=False)
         pAlias = self.get_argument('alias',     strip=False)
+        rely   = self.get_argument('rely',      strip=False)
 
-        rData = yield torncelery.async(new_project, repo, pAlias)
+        rData = yield torncelery.async(new_project, repo, pAlias, rely)
         self.write(rData)
 
 class NewAutoRule(RequestHandler, object):

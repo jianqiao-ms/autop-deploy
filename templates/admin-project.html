@@ -9,7 +9,11 @@
         <thead>
             <tr>
                 <td>repo</td>
+                <td>webapp</td>
                 <td>别名</td>
+                <td>允许单独发布</td>
+                <td>可被依赖</td>
+                <td>依赖</td>
                 <td>操作</td>
             </tr>
         </thead>
@@ -17,13 +21,43 @@
             {% for r in data['main_content'] %}
             <tr id="{{ r['PId'] }}">
                 <td>{{ r['PRepo'] }}</td>
+                <td>{{ r['PWebapp'] }}</td>
                 <td>{{ r['PAlias'] }}</td>
+                <td>
+                    {% if r['PDeployAlone'] == 1 %}
+                    <i class="fa fa-toggle-on " aria-hidden="true"></i>
+                    {% else %}
+                    <i class="fa fa-toggle-off " aria-hidden="true"></i>
+                    {% end %}
+                </td>
+                <td>
+                    {% if r['PIsRely'] == 1 %}
+                    <i class="fa fa-toggle-on " aria-hidden="true"></i>
+                    {% else %}
+                    <i class="fa fa-toggle-off " aria-hidden="true"></i>
+                    {% end %}
+                </td>
+                <td>{{ r['PRely'] }}</td>
                 <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
             </tr>
             {% end %}
             <tr id="new">
                 <td><input type="text" class="form-control"  name='repo' placeholder="Project Repo" ></td>
                 <td><input type="text" class="form-control"  name='alias' placeholder="Alias"></td>
+                <td><input type="text" class="form-control"  name='alias' placeholder="Alias"></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <select class="form-control" name="rely">
+                        <option value="">无</option>
+                        {% for r in data['main_content'] %}
+                            {% if r['PIsRely']==0 %}
+                                {% continue %}
+                            {% end %}
+                        <option value="{{ r['PId'] }}">{{ r['PAlias'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
                 <td>
                     <button type="submit" class="btn btn-success" id="save">Save</button>
                     <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
