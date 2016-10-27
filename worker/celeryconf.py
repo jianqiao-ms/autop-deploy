@@ -1,10 +1,9 @@
 #!/usr/bin/env python2.7
 # -*- coding:UTF-8 -*-
-#
+
 # BROKER_URL                  = 'redis://localhost:6379/0'
 # CELERY_RESULT_BACKEND       = 'redis://localhost:6379/1'
-
-BROKER_URL                  = 'amqp://celeryadmin:jianqiaoA1@localhost:5672/celery'
+BROKER_URL                  = 'amqp://celeryadmin:jianqiaoA1@localhost:5672/worker'
 CELERY_RESULT_BACKEND       = 'amqp'
 
 CELERY_TASK_SERIALIZER      = 'json'

@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding:utf-8 -*-
 
+from __future__ import print_function
 import os
 import json
 import traceback
@@ -20,7 +21,8 @@ import torncelery
 from tasks import mysql_query
 from tasks import mysql_get
 from tasks import deploy
-from tasks import new_host
+# from tasks import new_host
+from worker.tasks_new import new_host
 from tasks import new_hostgroup
 from tasks import new_project
 from tasks import new_autorule
@@ -172,7 +174,6 @@ class Deploy(curlRequestHandler, object):
         data = dict()
         if len(module):
             data['env']     = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
-            print data['env']
             data['rules']   = yield torncelery.async(mysql_get,
                                                 "SELECT \
                                                     P.`name`                AS PName, \
@@ -266,7 +267,7 @@ class DelAutoRule(RequestHandler, object):
         self.write(rData)
 
 if __name__ == "__main__":
-    print 'Starting Server...'
+    print('Starting Server...')
     tornado.options.parse_command_line()
     app = make_app()
     app.listen(8888)

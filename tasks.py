@@ -1,6 +1,8 @@
 #!/usr/bin/env python2.7
 # -*- coding:UTF-8 -*-
 
+from __future__ import print_function
+from __future__ import print_function
 import torndb
 from celery import Celery
 
@@ -10,7 +12,6 @@ import sys
 import time
 import traceback
 import subprocess
-import ipaddress
 import paramiko
 import socket
 import random
@@ -77,7 +78,7 @@ def deploy(pname):
             subprocess.check_output('git clone http://192.168.1.141/devs/{pname}.git'.format(pname = name_path[pname]), shell=True)
             data['msg'].append('[OK]项目初始化成功')
             os.chdir(path)
-        except subprocess.CalledProcessError,e:
+        except subprocess.CalledProcessError as e:
             data['msg'].append('[ERROR]clone项目失败')
             for line in e.output.split('\n'):
                 data['msg'].append('\t{line}'.format(line = line))
@@ -108,7 +109,7 @@ def deploy(pname):
                                               shell= True).split('\n')
             deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
             updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
-    except subprocess.CalledProcessError, e:
+    except subprocess.CalledProcessError as e:
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
             data['msg'].append('\t{line}'.format(line = line))
@@ -132,7 +133,7 @@ def deploy(pname):
         try:
             subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             data['msg'].append('[ERROR]编译失败')
             for line in traceback.format_exc().split('\n'):
                 data['msg'].append('\t{line}'.format(line=line))
@@ -184,7 +185,7 @@ def deploy(pname):
             try:
                 subprocess.check_output(cmd, shell=True)
                 data['msg'].append('[OK]发布成功\t{file}'.format(file = f))
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line=line))
@@ -211,7 +212,7 @@ def deploy(pname):
             try:
                 subprocess.check_output(cmd, shell=True)
                 data['msg'].append('[OK]imanager_core发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project = p))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
@@ -239,10 +240,10 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
     hostname=None                                               # 初始化hostname
     try:
         if len(uPwd):
-            print 'password'
+            print('password')
             ssh.connect(ipaddr, port=22, username='root', password=uPwd, timeout=5)
         else:
-            print 'none password'
+            print('none password')
             ssh.connect(ipaddr, port=22, username='root', timeout=5)
         stdin, stdout, stderr = ssh.exec_command("hostname")
         hostname = stdout.readlines()[0]
@@ -254,7 +255,7 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         return dict(code=310)
     except paramiko.SSHException:
         return dict(code=301)
-    except Exception,e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
     finally:
         ssh.close()
@@ -262,12 +263,11 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
     try:
         sql = "INSERT INTO `t_assets_host` (`hostname`, `ip_addr`, `env_id`, `group_id`) " \
               "VALUES ('{}', '{}', '{}', '{}')".format(hostname, ipaddr, envId, hgId)
-        print sql
         db.insert(sql)
         return dict(code=0)
     except torndb.IntegrityError:
         return dict(code=11)
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @celery.task
@@ -279,7 +279,7 @@ def new_hostgroup(envId, hgName, hgDes):
         return dict(code=0)
     except torndb.IntegrityError:
         return dict(code=11)
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @celery.task
@@ -288,7 +288,7 @@ def new_project(repo, alias, rely):
         response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
         if response!=0:
             return dict(code=100)
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
     try:
         name = repo.split('.git')[0].split('/')[-1]
@@ -304,9 +304,9 @@ def new_project(repo, alias, rely):
               "VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, rely)
         db.insert(sql)
         return dict(code=0)
-    except torndb.IntegrityError,e:
+    except torndb.IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @celery.task
@@ -321,9 +321,9 @@ def new_autorule(pid, container):
                   "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
         db.insert(sql)
         return dict(code=0)
-    except torndb.IntegrityError, e:
+    except torndb.IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 
@@ -338,9 +338,9 @@ def del_autorule(arid):
         sql = "DELETE FROM `t_deploy_auto_rule` WHERE id={}".format(arid)
         db.delete(sql)
         return dict(code=0)
-    except torndb.IntegrityError, e:
+    except torndb.IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
-    except Exception, e:
+    except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 
@@ -484,7 +484,7 @@ def auto_deploy1(token, before, after):
         deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
         updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
 
-    except subprocess.CalledProcessError, e:
+    except subprocess.CalledProcessError as e:
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
             data['msg'].append('\t{line}'.format(line = line))
@@ -508,7 +508,7 @@ def auto_deploy1(token, before, after):
         try:
             subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             data['msg'].append('[ERROR]编译失败')
             for line in traceback.format_exc().split('\n'):
                 data['msg'].append('\t{line}'.format(line=line))
@@ -629,7 +629,7 @@ def auto_deploy(token, before, after):
                                               shell= True).split('\n')
             deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
             updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
-    except subprocess.CalledProcessError, e:
+    except subprocess.CalledProcessError as e:
         data['msg'].append('[ERROR]git更新失败')
         for line in e.output.split('\n'):
             data['msg'].append('\t{line}'.format(line = line))
@@ -653,7 +653,7 @@ def auto_deploy(token, before, after):
         try:
             subprocess.check_output("mvn clean install", shell = True)
             data['msg'].append('[OK]编译成功')
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             data['msg'].append('[ERROR]编译失败')
             for line in traceback.format_exc().split('\n'):
                 data['msg'].append('\t{line}'.format(line=line))
@@ -705,7 +705,7 @@ def auto_deploy(token, before, after):
             try:
                 subprocess.check_output(cmd, shell=True)
                 data['msg'].append('[OK]发布成功\t{file}'.format(file = f))
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line=line))
@@ -732,7 +732,7 @@ def auto_deploy(token, before, after):
             try:
                 subprocess.check_output(cmd, shell=True)
                 data['msg'].append('[OK]imanager_core发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project = p))
                 for line in e.output.split('\n'):
                     data['msg'].append('\t{line}'.format(line = line))
