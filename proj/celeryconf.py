@@ -3,7 +3,7 @@
 
 # BROKER_URL                  = 'redis://localhost:6379/0'
 # CELERY_RESULT_BACKEND       = 'redis://localhost:6379/1'
-BROKER_URL                  = 'amqp://celeryadmin:jianqiaoA1@localhost:5672/worker'
+BROKER_URL                  = 'amqp://celeryadmin:jianqiaoA1@localhost:5672/celery'
 CELERY_RESULT_BACKEND       = 'amqp'
 
 CELERY_TASK_SERIALIZER      = 'json'

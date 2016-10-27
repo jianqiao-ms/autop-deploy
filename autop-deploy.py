@@ -22,7 +22,7 @@ from tasks import mysql_query
 from tasks import mysql_get
 from tasks import deploy
 # from tasks import new_host
-from worker.tasks_new import new_host
+from proj.tasks_new import new_host
 from tasks import new_hostgroup
 from tasks import new_project
 from tasks import new_autorule

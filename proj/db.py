@@ -2,22 +2,11 @@
 # -*- coding:UTF-8 -*-
 
 from __future__ import absolute_import
-from worker.app import App
+from proj.celery import App
 
-from worker.customTorndb import Connection
+from proj._customTorndb import Connection
 from celery.signals import worker_process_init
 from celery.signals import worker_process_shutdown
-
-import os
-import re
-import sys
-import time
-import traceback
-import subprocess
-import paramiko
-import socket
-import random
-import string
 
 db_conn = None
 db_conf = dict(
