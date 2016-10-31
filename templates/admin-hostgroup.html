@@ -17,21 +17,12 @@
         <tbody>
             {% for r in data['main_content'] %}
             <tr id="{{ r['HGId'] }}">
-                <td>{{ r['EName'] }}</td>
                 <td>{{ r['HGName'] }}</td>
                 <td>{{ r['HGDes'] }}</td>
                 <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
             </tr>
             {% end %}
             <tr id="new">
-                <td>
-                    <select class="form-control" name="env">
-                        <option value="">无</option>
-                        {% for r in data['env'] %}
-                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
-                        {% end %}
-                    </select>
-                </td>
                 <td><input type="text" class="form-control" name="hg-name" placeholder="主机组名"></td>
                 <td><input type="text" class="form-control" name="hg-des"placeholder="Description"></td>
                 <td>

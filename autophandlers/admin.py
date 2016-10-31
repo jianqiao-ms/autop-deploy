@@ -9,7 +9,7 @@ from tornado.gen import coroutine
 import torncelery
 
 # 自定义包
-from server import BaseHandler
+from ._handler import BaseHandler
 
 from proj.db import mysql_insert
 from proj.db import mysql_delete
@@ -31,22 +31,16 @@ class Admin(BaseHandler, object):
                                                 "H.`id`                          AS HId,"
                                                 "H.`ip_addr`                     AS HIp,"
                                                 "H.`hostname`                    AS HName,"
-                                                "IFNULL(ENV.`name`,'')           AS EName,"
                                                 "IFNULL(HG.`id`,'')              AS HGroupId,"
                                                 "IFNULL(HG.`name`,'')            AS HGName "
                                               "FROM `t_assets_host`              AS H "
                                               "LEFT JOIN `t_assets_hostgroup`    AS HG "
-                                              "ON H.`group_id` = HG.`id` "
-                                              "LEFT JOIN `t_assets_env`          AS ENV "
-                                              "ON ENV.`id`=H.`env_id`",
+                                              "ON H.`group_id` = HG.`id` ",
                                 hostgroup    = 'SELECT '
                                                  'HG.id                          AS HGId,'
                                                  'HG.`name`                      AS HGName,'
-                                                 'HG.description                 AS HGDes,'
-                                                 'ENV.`name`                     AS EName '
-                                               'FROM `t_assets_hostgroup`        AS HG '
-                                               'LEFT JOIN t_assets_env           AS ENV '
-                                               'ON ENV.id=HG.env_id',
+                                                 'HG.description                 AS HGDes '
+                                               'FROM `t_assets_hostgroup`        AS HG ',
                                 project      = 'SELECT '
                                                  'id                             AS PId,'
                                                  'repo                           AS PRepo,'
@@ -60,15 +54,15 @@ class Admin(BaseHandler, object):
         if len(module):
             data = dict()
 
-            main_content = yield torncelery.async(mysql_get, main_content_sql[module])
+            main_content = yield torncelery.async(mysql_query, main_content_sql[module])
             data['main_content'] = main_content
 
             if module=='host':
-                data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
-                data['hostgroup'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_hostgroup`')
+                data['env'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_env`')
+                data['hostgroup'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_hostgroup`')
 
             if module == 'hostgroup':
-                data['env'] = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
+                data['env'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_env`')
 
             self.render("admin-{}.html".format(module),data = data)
             return

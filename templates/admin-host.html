@@ -8,7 +8,6 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <td>环境</td>
                 <td>主机名</td>
                 <td>IP地址</td>
                 <td>属组</td>
@@ -19,7 +18,6 @@
 
             {% for r in data['main_content'] %}
             <tr id="{{ r['HId'] }}">
-                <td>{{ r['EName'] }}</td>
                 <td>{{ r['HName'] }}</td>
                 <td>{{ r['HIp'] }}</td>
                 <td id="{{ r['HGroupId'] }}">{{ r['HGName'] }}</td>
@@ -27,14 +25,6 @@
             </tr>
             {% end %}
             <tr id="new">
-                <td>
-                    <select class="form-control" name="env">
-                        <option value="">无</option>
-                        {% for r in data['env'] %}
-                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
-                        {% end %}
-                    </select>
-                </td>
                 <td></td>
                 <td><input type="text" class="form-control" placeholder="IP地址" name="ipaddr"></td>
                 <td>

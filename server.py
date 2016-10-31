@@ -8,7 +8,6 @@ import tornado.options
 from tornado.web import RequestHandler
 from tornado.web import Application
 
-
 from autophandlers import index
 from autophandlers import admin
 from autophandlers import deploy
@@ -38,11 +37,6 @@ def make_app():
 
         (r'/del/autorule',admin.DelAutoRule)
     ], **settings)
-
-class BaseHandler(RequestHandler, object):
-    def __init__(self):
-        super(BaseHandler, self).__init__()
-
 
 if __name__ == "__main__":
     print('Starting Server...')

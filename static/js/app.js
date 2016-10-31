@@ -1,12 +1,12 @@
 // websockets 方法
 $(document).ready(function (){
     // websocket 消息框
-    var msgBox = $(".ams-header-msg-container");
-    ws = new WebSocket("ws://localhost:8888/websocket");
-
-    ws.onmessage = function (evt) {
-        msgBox.text(evt.data);
-    };
+    // var msgBox = $(".ams-header-msg-container");
+    // ws = new WebSocket("ws://localhost:8888/websocket");
+    //
+    // ws.onmessage = function (evt) {
+    //     msgBox.text(evt.data);
+    // };
 });
 
 $(document).ready(function () {
