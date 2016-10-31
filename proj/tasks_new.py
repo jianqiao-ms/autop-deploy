@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding:UTF-8 -*-
 
-# celery App 子模块必须引入的包
+# celery app 子模块必须引入的包
 from __future__ import absolute_import
-from proj.celery import App
+from proj.celery import app
 from proj.db import db_conn
 
 # 异常
@@ -17,7 +17,7 @@ import traceback
 import random
 import string
 
-@App.task
+@app.task
 def new_host(envId, ipaddr, hgId, uName, uPwd):
     response = os.system('ping -c 1 {}'.format(ipaddr))
     response >>= 8
@@ -62,7 +62,7 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 
-@App.task
+@app.task
 def new_hostgroup(envId, hgName, hgDes):
     try:
         sql = "INSERT INTO `t_assets_hostgroup` (`env_id`, `name`, `description`) " \
@@ -74,7 +74,7 @@ def new_hostgroup(envId, hgName, hgDes):
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
-@App.task
+@app.task
 def new_project(repo, alias, rely):
     try:
         response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
@@ -101,7 +101,7 @@ def new_project(repo, alias, rely):
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
-@App.task
+@app.task
 def new_autorule(pid, container):
     try:
         sql=None

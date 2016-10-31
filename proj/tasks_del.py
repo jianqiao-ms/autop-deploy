@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding:UTF-8 -*-
 
-# celery App 子模块必须引入的包
+# celery app 子模块必须引入的包
 from __future__ import absolute_import
-from proj.celery import App
+from proj.celery import app
 from proj.db import db_conn
 
 # 异常
@@ -14,7 +14,7 @@ from socket import gaierror
 import traceback
 import os
 
-@App.task
+@app.task
 def del_autorule(arid):
     try:
         sql = 'SELECT alias FROM `t_assets_project` p LEFT JOIN `t_deploy_auto_rule` ar ON ar.project_id=p.id WHERE ar.id={}'.format(arid)

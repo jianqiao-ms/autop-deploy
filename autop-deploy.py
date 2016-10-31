@@ -1,7 +1,6 @@
 #!/usr/bin/env python2.7
 # -*- coding:utf-8 -*-
 
-from __future__ import print_function
 import os
 import json
 import traceback
@@ -18,16 +17,7 @@ from tornado.web import asynchronous
 from tornado.gen import coroutine
 import torncelery
 
-from tasks import mysql_query
-from tasks import mysql_get
-from tasks import deploy
-# from tasks import new_host
-from proj.tasks_new import new_host
-from tasks import new_hostgroup
-from tasks import new_project
-from tasks import new_autorule
-from tasks import del_autorule
-from tasks import auto_deploy
+
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):

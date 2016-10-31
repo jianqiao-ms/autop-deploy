@@ -2,7 +2,7 @@
 # -*- coding:UTF-8 -*-
 
 from __future__ import absolute_import
-from proj.celery import App
+from proj.celery import app
 
 from proj._customTorndb import Connection
 from celery.signals import worker_process_init
@@ -19,7 +19,7 @@ db_conf = dict(
 @worker_process_init.connect
 def init_worker(**kwargs):
     global db_conn
-    print('Initializing database connection for worker.')
+    print('Initializing database connection for autop-handlers.')
     db_conn = Connection(**db_conf)
 
 
@@ -27,13 +27,26 @@ def init_worker(**kwargs):
 def shutdown_worker(**kwargs):
     global db_conn
     if db_conn:
-        print('Closing database connectionn for worker.')
+        print('Closing database connectionn for autop-handlers.')
         db_conn.close()
 
-@App.task
+
+@app.task
+def mysql_insert(cmd):
+    return db_conn.insert(cmd)
+
+@app.task
+def mysql_delete(cmd):
+    return db_conn.delete(cmd)
+
+@app.task
+def mysql_update(cmd):
+    return db_conn.update(cmd)
+
+@app.task
 def mysql_query(cmd):
     return db_conn.query(cmd)
 
-@App.task
+@app.task
 def mysql_get(cmd):
-    return db_conn.query(cmd)
+    return db_conn.get(cmd)

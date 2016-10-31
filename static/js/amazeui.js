@@ -1955,7 +1955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {String} value
 	   */
 	  set: function(value) {
-	    // find out the touch-action by the event handlers
+	    // find out the touch-action by the event autop-handlers
 	    if (value == TOUCH_ACTION_COMPUTE) {
 	      value = this.compute();
 	    }
@@ -3212,7 +3212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  /**
-	   * unbind event, leave emit blank to remove all handlers
+	   * unbind event, leave emit blank to remove all autop-handlers
 	   * @param {String} events
 	   * @param {Function} [handler]
 	   * @returns {EventEmitter} this
@@ -3244,7 +3244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      triggerDomEvent(event, data);
 	    }
 
-	    // no handlers, so skip it all
+	    // no autop-handlers, so skip it all
 	    var handlers = this.handlers[event] && this.handlers[event].slice();
 	    if (!handlers || !handlers.length) {
 	      return;
