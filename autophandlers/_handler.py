@@ -6,3 +6,6 @@ from tornado.web import RequestHandler
 class BaseHandler(RequestHandler, object):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request, **kwargs)
+
+    # def write_error(self, status_code, **kwargs):
+    #     self.render('error.html', error_code=status_code)

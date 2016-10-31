@@ -1,0 +1,21 @@
+/* Created at 2016-09-26
+   by
+   jianqiao
+css 属性顺序
+    颜色
+    大小
+    位置
+    边框
+    z-index
+*/
+
+body {
+    vertical-align: middle;
+    padding: 0;
+}
+
+p {
+    font-size: 400px;
+    text-align: center;
+    display: block;
+}

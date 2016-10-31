@@ -3,11 +3,11 @@
 
 import os
 
-import tornado.ioloop
-import tornado.options
-from tornado.web import RequestHandler
+from tornado import options
+from tornado import ioloop
 from tornado.web import Application
 
+from autophandlers._handler import BaseHandler
 from autophandlers import index
 from autophandlers import admin
 from autophandlers import deploy
@@ -25,7 +25,7 @@ def make_app():
     return Application([
         (r'/', index.Index),
         (r'/admin', admin.Admin),
-        (r'/admin/?(?P<module>[a-z]+)', admin.Admin),
+        (r'/admin/(?P<module>[a-z]+)', admin.Admin),
         (r"/deploy", deploy.Deploy),
         (r"/deploy/?(?P<module>[a-z]+)", deploy.Deploy),
 
@@ -35,12 +35,14 @@ def make_app():
         (r'/new/autorule', admin.NewAutoRule),
         (r'/auto/(?P<token>.+)', deploy.Auto),
 
-        (r'/del/autorule',admin.DelAutoRule)
+        (r'/del/autorule',admin.DelAutoRule),
+
+        (r".*", BaseHandler)
     ], **settings)
 
 if __name__ == "__main__":
     print('Starting Server...')
-    tornado.options.parse_command_line()
+    options.parse_command_line()
     app = make_app()
     app.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()
+    ioloop.IOLoop.instance().start()

@@ -68,6 +68,64 @@ class Admin(BaseHandler, object):
             return
         self.render('admin.html')
 
+    def get_dashboard(self):
+        self.render('admin.html')
+
+    @coroutine
+    def get_host(self):
+        data = dict()
+
+        sql_host = "SELECT \
+                    H.`id` AS HId, \
+                    H.`ip_addr` AS HIp, \
+                    H.`hostname` AS HName, \
+                    IFNULL(HG.`id`, '') AS HGroupId, \
+                    IFNULL(HG.`name`, '') AS HGName \
+                FROM \
+                    `t_assets_host` AS H \
+                LEFT JOIN `t_assets_hostgroup` AS HG ON H.`group_id` = HG.`id`"
+        sql_hg  = "SELECT \
+                    HG.`id` AS HGId, \
+                    HG.`name` AS HGName, \
+                    HG.`description` AS HGDes \
+                FROM \
+                    `t_assets_hostgroup` AS HG"
+
+        data['host']    = yield torncelery.async(mysql_query, sql_host)
+        data['hg']      = yield torncelery.async(mysql_query, sql_hg)
+        self.render('admin_host.html', data=data)
+
+    @coroutine
+    def get_hg(self):
+        data = dict()
+
+        sql_hg = "SELECT \
+                    HG.id AS HGId, \
+                    HG.`name` AS HGName, \
+                    HG.description AS HGDes \
+                FROM \
+                    `t_assets_hostgroup` AS HG"
+
+        data['hg'] = yield torncelery.async(mysql_query, sql_hg)
+        self.render('admin_hostgroup.html', data=data)
+
+    @coroutine
+    def get_proj(self):
+        data = dict()
+
+        sql_proj = "SELECT \
+                        id AS PId, \
+                        repo AS PRepo, \
+                        alias AS PAlias, \
+                        deploy_alone AS PDeployAlone, \
+                        IFNULL(`rely_id`, '') AS PRely, \
+                        IFNULL(`webapp_name`, '') AS PWebapp, \
+                        able_to_be_rely AS PIsRely \
+                    FROM \
+                        `t_assets_project`"
+
+        data['hg'] = yield torncelery.async(mysql_query, sql_proj)
+        self.render('admin_project.html', data=data)
 
 class NewHost(BaseHandler, object):
     @coroutine
