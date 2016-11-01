@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for r in data['main_content'] %}
+            {% for r in data['proj'] %}
             <tr id="{{ r['PId'] }}">
                 <td>{{ r['PRepo'] }}</td>
                 <td>{{ r['PWebapp'] }}</td>
@@ -50,7 +50,7 @@
                 <td>
                     <select class="form-control" name="rely">
                         <option value="">无</option>
-                        {% for r in data['main_content'] %}
+                        {% for r in data['proj'] %}
                             {% if r['PIsRely']==0 %}
                                 {% continue %}
                             {% end %}

@@ -16,7 +16,7 @@
         </thead>
         <tbody>
 
-            {% for r in data['main_content'] %}
+            {% for r in data['host'] %}
             <tr id="{{ r['HId'] }}">
                 <td>{{ r['HName'] }}</td>
                 <td>{{ r['HIp'] }}</td>
@@ -30,8 +30,8 @@
                 <td>
                     <select class="form-control" name="hostgroup">
                         <option value="">无</option>
-                        {% for r in data['hostgroup'] %}
-                        <option value="{{ r['id'] }}">{{ r['name'] }}</option>
+                        {% for r in data['hg'] %}
+                        <option value="{{ r['HGId'] }}">{{ r['HGName'] }}</option>
                         {% end %}
                     </select>
                 </td>

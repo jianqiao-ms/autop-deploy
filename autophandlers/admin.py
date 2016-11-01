@@ -27,46 +27,17 @@ from proj.tasks_del import del_autorule
 class Admin(BaseHandler, object):
     @coroutine
     def get(self, module=''):
-        main_content_sql = dict(host        = "SELECT "
-                                                "H.`id`                          AS HId,"
-                                                "H.`ip_addr`                     AS HIp,"
-                                                "H.`hostname`                    AS HName,"
-                                                "IFNULL(HG.`id`,'')              AS HGroupId,"
-                                                "IFNULL(HG.`name`,'')            AS HGName "
-                                              "FROM `t_assets_host`              AS H "
-                                              "LEFT JOIN `t_assets_hostgroup`    AS HG "
-                                              "ON H.`group_id` = HG.`id` ",
-                                hostgroup    = 'SELECT '
-                                                 'HG.id                          AS HGId,'
-                                                 'HG.`name`                      AS HGName,'
-                                                 'HG.description                 AS HGDes '
-                                               'FROM `t_assets_hostgroup`        AS HG ',
-                                project      = 'SELECT '
-                                                 'id                             AS PId,'
-                                                 'repo                           AS PRepo,'
-                                                 'alias                          AS PAlias, '
-                                                 'deploy_alone                   AS PDeployAlone, '
-                                                 'IFNULL(`rely_id`,"")           AS PRely, '
-                                                 'IFNULL(`webapp_name`,"")       AS PWebapp, '
-                                                 'able_to_be_rely                AS PIsRely '
-                                               'FROM `t_assets_project`')
+        function_map = dict(
+            host = self.get_host,
+            hostgroup = self.get_hg,
+            project = self.get_proj
+        )
 
-        if len(module):
-            data = dict()
+        if not len(module):
+            self.get_dashboard()
+        else:
+            yield function_map[module]()
 
-            main_content = yield torncelery.async(mysql_query, main_content_sql[module])
-            data['main_content'] = main_content
-
-            if module=='host':
-                data['env'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_env`')
-                data['hostgroup'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_hostgroup`')
-
-            if module == 'hostgroup':
-                data['env'] = yield torncelery.async(mysql_query, 'SELECT * FROM `t_assets_env`')
-
-            self.render("admin-{}.html".format(module),data = data)
-            return
-        self.render('admin.html')
 
     def get_dashboard(self):
         self.render('admin.html')
@@ -124,7 +95,7 @@ class Admin(BaseHandler, object):
                     FROM \
                         `t_assets_project`"
 
-        data['hg'] = yield torncelery.async(mysql_query, sql_proj)
+        data['proj'] = yield torncelery.async(mysql_query, sql_proj)
         self.render('admin_project.html', data=data)
 
 class NewHost(BaseHandler, object):

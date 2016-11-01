@@ -7,7 +7,7 @@ from tornado import options
 from tornado import ioloop
 from tornado.web import Application
 
-from autophandlers._handler import BaseHandler
+from autophandlers._handler import ErrorHandler
 from autophandlers import index
 from autophandlers import admin
 from autophandlers import deploy
@@ -37,7 +37,7 @@ def make_app():
 
         (r'/del/autorule',admin.DelAutoRule),
 
-        (r".*", BaseHandler)
+        (r".*", ErrorHandler)
     ], **settings)
 
 if __name__ == "__main__":
