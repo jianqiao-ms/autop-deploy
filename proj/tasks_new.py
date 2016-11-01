@@ -12,6 +12,8 @@ from socket import gaierror
 
 # 功能性import
 import os
+import time
+import subprocess
 import paramiko
 import traceback
 import random
@@ -74,27 +76,43 @@ def new_hostgroup(envId, hgName, hgDes):
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
+# Description of return code
+#
+# 1 : project directory exist
+# 11 : database error
+# 100 : error reading repo infomation
 @app.task
 def new_project(repo, alias, rely):
     try:
-        response = os.system('export GIT_TERMINAL_PROMPT=0;git ls-remote {}'.format(repo))
-        if response!=0:
-            return dict(code=100)
+        result = subprocess.check_output('export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.format('git@192.168.1.141:devs/imanager.git'), shell=True).split('\n')
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
-    try:
-        name = repo.split('.git')[0].split('/')[-1]
-        if len(alias)==0:
-            alias=name
-        pPath = '/var/autop/repo/{}___master'.format(alias)
-        if os.path.exists(pPath):
-            return dict(code=1)
-        else:
-            os.system('git clone {} {}'.format(repo,pPath))
 
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, rely) " \
-              "VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, rely)
-        db_conn.insert(sql)
+    name = get_proj_name(repo)
+
+    try:
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, rely) \
+              VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, rely)
+        pid = db_conn.insert(sql)
+
+        p_path = prepare_proj_dir(name, alias, 'master')
+        os.system('git clone {} {}'.format(repo, p_path))
+
+        for r in result:
+            branch = r.split('\t')[1].split('/')[2]
+            pb_path = prepare_proj_dir(name, alias, branch)
+            os.system('cp -r {} {}'.format(p_path, pb_path))
+            os.chdir(pb_path)
+            os.system('git checkout -b {} -t origin/{}'.format(branch, branch))
+
+            sql = "INSERT INTO `t_assets_proj_branch` (`proj_id`, `branch`) " \
+                  "VALUES ('{}', '{}')".format(pid, branch)
+            pbid = db_conn.insert(sql)
+
+            sql = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `after_commit`) " \
+                  "VALUES ('{}', 'INIT', 'manual', '{}', '{}')".format(pbid, time.strftime('%Y-%m-%d %H:%M:%S'),r.split('t')[0])
+            db_conn.insert(sql)
+
         return dict(code=0)
     except IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
@@ -117,3 +135,18 @@ def new_autorule(pid, container):
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
+
+
+
+
+# Functions used in tasks above
+
+def get_proj_name(_repo):
+    return _repo.split('.git')[0].split('/')[-1]
+def prepare_proj_dir(_name, _alias, branch):
+    if len(_alias) == 0:
+        _alias = _name
+    _p_path = '/var/autop/repo/{}___{}'.format(_alias, branch)
+    if os.path.exists(_p_path):
+        os.system('rm -rf {}'.format(_p_path))
+    return _p_path

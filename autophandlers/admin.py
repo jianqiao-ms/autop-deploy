@@ -38,7 +38,6 @@ class Admin(BaseHandler, object):
         else:
             yield function_map[module]()
 
-
     def get_dashboard(self):
         self.render('admin.html')
 
