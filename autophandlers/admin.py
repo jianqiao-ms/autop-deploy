@@ -48,12 +48,12 @@ class Admin(BaseHandler, object):
         sql_host = "SELECT \
                     H.`id` AS HId, \
                     H.`ip_addr` AS HIp, \
-                    H.`hostname` AS HName, \
+                    H.`name` AS HName, \
                     IFNULL(HG.`id`, '') AS HGroupId, \
                     IFNULL(HG.`name`, '') AS HGName \
                 FROM \
                     `t_assets_host` AS H \
-                LEFT JOIN `t_assets_hostgroup` AS HG ON H.`group_id` = HG.`id`"
+                LEFT JOIN `t_assets_hostgroup` AS HG ON H.`hg_id` = HG.`id`"
         sql_hg  = "SELECT \
                     HG.`id` AS HGId, \
                     HG.`name` AS HGName, \
@@ -84,15 +84,14 @@ class Admin(BaseHandler, object):
         data = dict()
 
         sql_proj = "SELECT \
-                        id AS PId, \
-                        repo AS PRepo, \
-                        alias AS PAlias, \
-                        deploy_alone AS PDeployAlone, \
-                        IFNULL(`rely_id`, '') AS PRely, \
-                        IFNULL(`webapp_name`, '') AS PWebapp, \
-                        able_to_be_rely AS PIsRely \
+                        P.`id` AS PId, \
+                        P.`repo` AS PRepo, \
+                        P.`alias` AS PAlias, \
+                        P.`reliable` AS PReliable, \
+                        IFNULL(P.`webapp_name`, '') AS PWebapp, \
+                        IFNULL(P.`rely_id`, '') AS PRely \
                     FROM \
-                        `t_assets_project`"
+                        `t_assets_project` AS P"
 
         data['proj'] = yield torncelery.async(mysql_query, sql_proj)
         self.render('admin_project.html', data=data)

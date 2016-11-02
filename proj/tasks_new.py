@@ -4,7 +4,11 @@
 # celery app 子模块必须引入的包
 from __future__ import absolute_import
 from proj.celery import app
-from proj.db import db_conn
+from proj.db import mysql_insert
+from proj.db import mysql_delete
+from proj.db import mysql_update
+from proj.db import mysql_query
+from proj.db import mysql_get
 
 # 异常
 from torndb import IntegrityError
@@ -56,7 +60,7 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
     try:
         sql = "INSERT INTO `t_assets_host` (`hostname`, `ip_addr`, `env_id`, `group_id`) " \
               "VALUES ('{}', '{}', '{}', '{}')".format(hostname, ipaddr, envId, hgId)
-        db_conn.insert(sql)
+        mysql_insert(sql)
         return dict(code=0)
     except IntegrityError:
         return dict(code=11)
@@ -69,7 +73,7 @@ def new_hostgroup(envId, hgName, hgDes):
     try:
         sql = "INSERT INTO `t_assets_hostgroup` (`env_id`, `name`, `description`) " \
               "VALUES ('{}', '{}', '{}')".format(envId, hgName, hgDes)
-        db_conn.insert(sql)
+        mysql_insert(sql)
         return dict(code=0)
     except IntegrityError:
         return dict(code=11)
@@ -84,22 +88,28 @@ def new_hostgroup(envId, hgName, hgDes):
 @app.task
 def new_project(repo, alias, rely):
     try:
-        result = subprocess.check_output('export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.format('git@192.168.1.141:devs/imanager.git'), shell=True).split('\n')
+        result = subprocess.check_output(
+                'export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.
+                    format(repo), shell=True).split('\n')
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
     name = get_proj_name(repo)
 
     try:
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, rely) \
-              VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, rely)
-        pid = db_conn.insert(sql)
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, `rely_id`) \
+              VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, int(rely))
+        pid = mysql_insert(sql)
 
         p_path = prepare_proj_dir(name, alias, 'master')
-        os.system('git clone {} {}'.format(repo, p_path))
+        subprocess.check_call('git clone {} {}'.format(repo, p_path), shell=True)
 
         for r in result:
+            if not r.lstrip().rstrip():
+                continue
             branch = r.split('\t')[1].split('/')[2]
+            if branch=='master':
+                continue
             pb_path = prepare_proj_dir(name, alias, branch)
             os.system('cp -r {} {}'.format(p_path, pb_path))
             os.chdir(pb_path)
@@ -107,16 +117,22 @@ def new_project(repo, alias, rely):
 
             sql = "INSERT INTO `t_assets_proj_branch` (`proj_id`, `branch`) " \
                   "VALUES ('{}', '{}')".format(pid, branch)
-            pbid = db_conn.insert(sql)
+            pbid = mysql_insert(sql)
 
             sql = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `after_commit`) " \
                   "VALUES ('{}', 'INIT', 'manual', '{}', '{}')".format(pbid, time.strftime('%Y-%m-%d %H:%M:%S'),r.split('t')[0])
-            db_conn.insert(sql)
+            dhid = mysql_insert(sql)
 
         return dict(code=0)
     except IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
     except Exception as e:
+        if pid:
+            mysql_delete('DELETE FROM `t_assets_project` WHERE `id`={}'.format(pid))
+        if pbid:
+            mysql_delete('DELETE FROM `t_assets_proj_branch` WHERE `id`={}'.format(pbid))
+        if dhid:
+            mysql_delete('DELETE FROM `t_deploy_history` WHERE `id`={}'.format(dhid))
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
 @app.task
@@ -129,7 +145,7 @@ def new_autorule(pid, container):
         else:
             sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `host_id`, `token`) " \
                   "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
-        db_conn.insert(sql)
+        mysql_insert(sql)
         return dict(code=0)
     except IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])
