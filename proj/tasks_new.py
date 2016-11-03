@@ -89,7 +89,7 @@ def new_hostgroup(envId, hgName, hgDes):
 # 11 : database error
 # 100 : error reading repo infomation
 @app.task
-def new_project(repo, alias, reliable, rely_id):
+def new_project(repo, alias, webapp, reliable, rely_id):
     try:
         result = subprocess.check_output(
                 'export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.
@@ -97,13 +97,13 @@ def new_project(repo, alias, reliable, rely_id):
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
-    name, alias = get_proj_name(repo, alias)
+    name, alias, webapp = get_proj_name(repo, alias, webapp)
     pid = None  #新项目id
     pbid = None #项目、分支id
     dhid = None #发布历史id
     try:
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, `reliable`, `rely_id`) \
-              VALUES ('{}', '{}', '{}', '{}','{}')".format(repo, name, alias, reliable,rely_id if rely_id else 0)
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, `webapp_name`, `reliable`, `rely_id`) \
+              VALUES ('{}', '{}', '{}', '{}', '{}','{}')".format(repo, name, alias, webapp, reliable,rely_id if rely_id else 0)
         pid = mysql_insert(sql)
 
         p_path = prepare_proj_dir(name, alias, 'master')
@@ -144,12 +144,16 @@ def new_project(repo, alias, reliable, rely_id):
 def new_autorule(pid, container):
     try:
         sql=None
+        token = ''.join(random.sample(string.ascii_letters+string.digits, 13))
         if container.startswith('g'):
-            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `hg_id`, `token`) " \
-                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
+            sql = "INSERT INTO `t_deploy_auto_rule` (`proj_id`, `proj_branch`, `hg_id`, `token`) " \
+                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], token)
+        elif container.startswith('h'):
+            sql = "INSERT INTO `t_deploy_auto_rule` (`proj_id`, `proj_branch`, `host_id`, `token`) " \
+                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], token)
         else:
-            sql = "INSERT INTO `t_deploy_auto_rule` (`project_id`, `project_branch`, `host_id`, `token`) " \
-                  "VALUES ('{}', '{}', '{}', '{}')".format(pid, 'master', container[1:], ''.join(random.sample(string.ascii_letters+string.digits, 13)))
+            sql = "INSERT INTO `t_deploy_auto_rule` (`proj_id`, `proj_branch`, `token`) " \
+                  "VALUES ('{}', '{}', '{}')".format(pid, 'master', token)
         mysql_insert(sql)
         return dict(code=0)
     except IntegrityError as e:
@@ -161,11 +165,13 @@ def new_autorule(pid, container):
 
 
 # Functions used in tasks above
-def get_proj_name(_repo, _alias):
+def get_proj_name(_repo, _alias, _webapp):
     _name = _repo.split('.git')[0].split('/')[-1]
     if not _alias:
-        alias = _name
-    return _name, _alias
+        _alias = _name
+    if not _webapp:
+        _webapp = _name
+    return _name, _alias, _webapp
 def prepare_proj_dir(_name, _alias, branch):
     if len(_alias) == 0:
         _alias = _name

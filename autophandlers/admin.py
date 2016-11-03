@@ -20,9 +20,7 @@ from proj.db import mysql_get
 from proj.tasks_new import new_host
 from proj.tasks_new import new_hostgroup
 from proj.tasks_new import new_project
-from proj.tasks_new import new_autorule
 
-from proj.tasks_del import del_autorule
 
 class Admin(BaseHandler, object):
     @coroutine
@@ -122,24 +120,9 @@ class NewProject(BaseHandler, object):
     def post(self, *args, **kwargs):
         repo        = self.get_argument('repo',     strip=False)
         alias       = self.get_argument('alias',    strip=False)
+        webapp      = self.get_argument('webapp',   strip=False)
         reliable    = 1 if self.get_argument('reliable', default=0,strip=False) else 0
         rely_id     = self.get_argument('rely_id',  strip=False)
 
-        rData = yield torncelery.async(new_project, repo, alias, reliable, rely_id)
+        rData = yield torncelery.async(new_project, repo, alias, webapp, reliable, rely_id)
         self.write(rData)
-
-class NewAutoRule(BaseHandler, object):
-    @coroutine
-    def post(self, *args, **kwargs):
-        pId         = self.get_argument('project',      strip=False)
-        container   = self.get_argument('Container',    strip=False)
-
-        rData = yield torncelery.async(new_autorule, pId, container)
-        self.write(rData)
-
-class DelAutoRule(BaseHandler, object):
-    @coroutine
-    def post(self, *args, **kwargs):
-        arId = self.get_argument('arid')
-
-        rData = yield torncelery.async(del_autorule, arId)

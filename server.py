@@ -24,19 +24,24 @@ settings = dict(
 def make_app():
     return Application([
         (r'/', index.Index),
+        # 页面请求 map
         (r'/admin', admin.Admin),
         (r'/admin/(?P<module>[a-z]+)', admin.Admin),
         (r"/deploy", deploy.Deploy),
         (r"/deploy/?(?P<module>[a-z]+)", deploy.Deploy),
 
+        # 数据库操作/管理操作 map
         (r'/new/host', admin.NewHost),
         (r'/new/hostgroup', admin.NewHostgroup),
         (r'/new/project', admin.NewProject),
-        (r'/new/autorule', admin.NewAutoRule),
+
+        (r'/new/autorule', deploy.NewAutoRule),
+        (r'/del/autorule', deploy.DelAutoRule),
+
+        # 发布操作 map
         (r'/auto/(?P<token>.+)', deploy.Auto),
 
-        (r'/del/autorule',admin.DelAutoRule),
-
+        # 404
         (r".*", ErrorHandler)
     ], **settings)
 

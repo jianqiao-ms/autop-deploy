@@ -7,216 +7,121 @@
 # d - deploy
 
 # celery app 子模块必须引入的包
+from __future__ import print_function
+from __future__ import print_function
 from __future__ import absolute_import
 from proj.celery import app
-from proj.db import db_conn
+from proj.db import mysql_insert
+from proj.db import mysql_delete
+from proj.db import mysql_update
+from proj.db import mysql_query
+from proj.db import mysql_get
 
 # 异常
 from torndb import IntegrityError
-from socket import gaierror
 
 # 系统包
 import re
 import os
 import sys
+import time
 import traceback
 import subprocess
 
-p_git_updated_file = re.compile(r'^(?!D)\t*.+$')
-p_git_deleted_file = re.compile(r'^(?=D)\t*.+$')
-
+# Description of return code
+#
+# 0 : OK
+# 1 : 分支不是master, 忽略此次更新操作
+# 11 : database error
+# 21 : 项目目录不存在
+# 21 : 项目update failed
 @app.task
-def auto_deploy(token, before, after):
-    name_path = {'imanager_web'     : 'imanager_web',
-                 'api'              : 'imanager_api',
-                 'imanager_core'    :  'imanager',
-                 'iclock'           : 'imanager_iclock',
-                 'iservice'         : 'imanager_iservice',
-                 'actor'            : 'iservice',
-                 'oa'               : 'oa',
-                 }
+def auto_deploy(token, push_branch, before, after):
+    compile_flag    = None
+    project         = mysql_get("SELECT \
+                                    P.`id` AS PId, \
+                                    P.`alias` AS PAlias, \
+                                    P.`webapp_name` AS PWebapp, \
+                                    P.`reliable` AS PReliable, \
+                                    AR.`host_id` AS ARHId, \
+                                    AR.`hg_id` AS ARHGId \
+                                FROM \
+                                    `t_deploy_auto_rule` AS AR \
+                                LEFT JOIN `t_assets_project` AS P ON P.id = AR.proj_id \
+                                WHERE \
+                                    AR.token = '{}'".format(token))
 
-    name_host = {'imanager_web'     : ['192.168.0.105', 'imanager'],
-                 'api'              : ['192.168.0.126', 'api'],
-                 'imanager_core'    : ['ALL'],
-                 'iclock'           : ['192.168.0.81','iclock'],
-                 'iservice'         : ['192.168.0.112','192.168.0.111','iservice'],
-                 'actor'            : ['192.168.0.150', '192.168.0.151', '192.168.0.152', 'iservice'],
-                 'oa'               : ['192.168.0.91', 'oa'],
-                 }
-
-    data            = dict()
-    data['msg']     = list()
-    data['code']    = 200
-    flag            = None
-    project         = db_conn.get("SELECT \
-                                P.* \
-                            FROM \
-                                `t_deploy_auto_rule` AS AR \
-                            LEFT JOIN `t_assets_project` AS P ON  \
-                                P.id = AR.project_id \
-                            WHERE \
-                                AR.token = '{}'".format(token))
-    pname           = project['alias']
-
-    # 切换目录
-    data['msg'].append('[OK]检测项目repo')
-    path = "/var/autop/repo/{}___master".format(project['alias'])
-    if os.path.isdir(path):
-        os.chdir(path)
-        data['msg'].append('[OK]项目repo 存在')
-        data['msg'].append('[OK]切换到项目repo {path}'.format(path = path))
-    else:
-        data['msg'].append('[WARNNING]项目repo 不存在，初始化项目')
-        os.chdir('/var/autop/repo')
+    # 新建分支
+    if before == '0000000000000000000000000000000000000000':
+        # 插入 pb project_branch 表
+        sql = "INSERT INTO `t_assets_proj_branch` (`branch`, `proj_id`) VALUES ('{}', '{}')".format(
+            project['PId'], push_branch
+        )
         try:
-            subprocess.check_output('git clone http://192.168.1.141/devs/{pname}.git'.format(pname = name_path[pname]), shell=True)
-            data['msg'].append('[OK]项目初始化成功')
-            os.chdir(path)
-        except subprocess.CalledProcessError as e:
-            data['msg'].append('[ERROR]clone项目失败')
-            for line in e.output.split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
-        except:
-            data['msg'].append('[ERROR]clone项目失败')
-            for line in traceback.format_exc().split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
+            pbid = mysql_insert(sql)
+        except IntegrityError as e:
+            return dict(code=11, column=e.args[1].split()[-1][1:-1])
 
-    # 更新项目
-    try:
-        updated_file = []
-        deleted_file = []
-        result = subprocess.check_output("git pull", shell=True).split('\n')
-        data['msg'].append('[OK]git更新成功')
-        if result[0] == 'Already up-to-date.':
-            data['msg'].append('[WARN]已经是最新,发布取消')
-            return data
-        else:
-            commit_start = result[0].split()[1].split('..')[0]
-            commit_stop = result[0].split()[1].split('..')[1]
+        # 插入 dh deploy_history 表
+        sql = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `after_commit`) " \
+              "VALUES ('{}', '{}', '{}', '{}', '{}')".format(
+            pbid, 'NEWBRANCH', 'AUTO', time.strftime('%Y-%m-%s %H:%M:%S'), after
+        )
 
-            changes = subprocess.check_output("git diff --name-status {start} {stop}".
-                                              format(start = commit_start, stop = commit_stop),
-                                              shell= True).split('\n')
-            deleted_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_deleted_file.match(x), changes))
-            updated_file    = map(lambda x:x.split()[1], filter(lambda x:p_git_updated_file.match(x), changes))
-    except subprocess.CalledProcessError as e:
-        data['msg'].append('[ERROR]git更新失败')
-        for line in e.output.split('\n'):
-            data['msg'].append('\t{line}'.format(line = line))
-        data['code'] = sys._getframe().f_lineno
-        return data
-    except:
-        data['msg'].append('[ERROR]git更新失败')
-        for line in traceback.format_exc().split('\n'):
-            data['msg'].append('\t{line}'.format(line = line))
-        data['code'] = sys._getframe().f_lineno
-        return data
-
-    # 编译项目
-    compile_flag = False
-    for f in updated_file:
-        if f.endswith('.java'):
-            compile_flag = True
-            break
-
-    if compile_flag:
         try:
-            subprocess.check_output("mvn clean install", shell = True)
-            data['msg'].append('[OK]编译成功')
-        except subprocess.CalledProcessError as e:
-            data['msg'].append('[ERROR]编译失败')
-            for line in traceback.format_exc().split('\n'):
-                data['msg'].append('\t{line}'.format(line=line))
-            for line in e.output.split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
+            dhid = mysql_insert(sql)
+        except IntegrityError as e:
+            return dict(code=11, column=e.args[1].split()[-1][1:-1])
+
+    # 删除分支
+    if after == '0000000000000000000000000000000000000000':
+        # pb project_branch 表 删除记录
+        sql = "DELETE FROM `t_assets_proj_branch` WHERE proj_id='{}' AND branch='{}'".format(
+            project['PId'], push_branch
+        )
+        try:
+            mysql_delete(sql)
+        except IntegrityError as e:
+            return dict(code=11, column=e.args[1].split()[-1][1:-1])
+
+    # 非master分支不自动发布
+    if push_branch != 'master':
+        return dict(code=1,branch=push_branch)
+    else:
+        # 获取项目需要发布到的机器及路径(container)
+        containers = get_containers(project)
+
+        proj_repo_path = '/var/autop/repo/{}___master'.format(project['PAlias'])
+
+        # 切换目录
+        try:
+            os.chdir(proj_repo_path)
         except:
-            data['msg'].append('[ERROR]编译失败')
-            for line in traceback.format_exc().split('\n'):
-                data['msg'].append('\t{line}'.format(line = line))
-            data['code'] = sys._getframe().f_lineno
-            return data
-    else:
-        data['msg'].append('[WARN]没有java文件更新,跳过编译')
+            return dict(code=21)
 
-    # 发布项目
-    if pname != 'imanager_core':
-        for f in updated_file:
-            if f=='.gitlab-ci.yml':
-                continue
-            cmd = None
-            if f.endswith('.java') and f.startswith('src/main/java'):
-                f = 'target/class' + f.split('src/main/java')[1][:-4] + 'class'
-                cmd = 'pscp -H "{hosts}" -l root {file} /usr/local/tomcat1/webapps/{webapp}/{path}'.\
-                    format(hosts    = ' '.join(name_host[pname][:-1]),
-                           file     = f,
-                           webapp   = name_host[pname][-1],
-                           path     = 'WEB-INF/class'+f.split('target/class')[1])
-            elif f.startswith('src/main/java') and not f.endswith('.java'):
-                cmd = 'pscp -H "{hosts}" -l root {file} /usr/local/tomcat1/webapps/{webapp}/{path}'. \
-                    format(hosts    = ' '.join(name_host[pname][:-1]),
-                           file     = f,
-                           webapp   = name_host[pname][-1],
-                           path     = 'WEB-INF/class' + f.split('src/main/java')[1])
-            elif f.startswith('src/main/resource'):
-                cmd = 'pscp -H "{hosts}" -l root {file} /usr/local/tomcat1/webapps/{webapp}/{path}'. \
-                    format(hosts    = ' '.join(name_host[pname][:-1]),
-                           file     = f,
-                           webapp   = name_host[pname][-1],
-                           path     = 'WEB-INF/class' + f.split('src/main/resource')[1])
-            elif f.startswith('src/main/webapp'):
-                cmd = 'pscp -H "{hosts}" -l root {file} /usr/local/tomcat1/webapps/{webapp}/{path}'. \
-                    format(hosts    = ' '.join(name_host[pname][:-1]),
-                           file     = f,
-                           webapp   = name_host[pname][-1],
-                           path     = f.split('src/main/webapp')[1])
+        # update
+        try:
+            os.system('git pull')
+        except:
+            return dict(code=31)
 
-            try:
-                subprocess.check_output(cmd, shell=True)
-                data['msg'].append('[OK]发布成功\t{file}'.format(file = f))
-            except subprocess.CalledProcessError as e:
-                data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
-                for line in e.output.split('\n'):
-                    data['msg'].append('\t{line}'.format(line=line))
-                data['code'] = sys._getframe().f_lineno
-                pass
-            except:
-                data['msg'].append('[ERROR]{file}发布失败'.format(file = f))
-                for line in traceback.format_exc().split('\n'):
-                    data['msg'].append('\t{line}'.format(line = line))
-                data['code'] = sys._getframe().f_lineno
-                pass
-        return data
-    else:
-        for p in name_host:
-            if p == 'imanager_core':
-                continue
-            if p == 'oa':
-                continue
-            cmd = 'pscp -H "{hosts}" -l root target/imanager_core-0.0.1-SNAPSHOT.jar ' \
-                  '/usr/local/tomcat1/webapps/{webapp}/WEB-INF/lib'.\
-                format(hosts  = ' '.join(name_host[p][:-1]),
-                       webapp = name_host[p][-1])
 
-            try:
-                subprocess.check_output(cmd, shell=True)
-                data['msg'].append('[OK]imanager_core发布到{project:20}@ {host}成功'.format(project = p, host = ' '.join(name_host[p][:-1])))
-            except subprocess.CalledProcessError as e:
-                data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project = p))
-                for line in e.output.split('\n'):
-                    data['msg'].append('\t{line}'.format(line = line))
-                data['code'] = sys._getframe().f_lineno
-                pass
-            except:
-                data['msg'].append('[ERROR]imanager_core发布到{project:20}失败'.format(project=p))
-                for line in traceback.format_exc().split('\n'):
-                    data['msg'].append('\t{line}'.format(line = line))
-                data['code'] = sys._getframe().f_lineno
-                pass
-        return data
+
+# Functions used in tasks above
+def get_containers(proj):
+    containers = list()
+    if proj['PReliable']==0:
+        # 根据 proj 结果看 项目是发布到 主机 还是 主机组
+        if proj['ARHId']:
+            containers.append(
+                    mysql_get(
+                            "SELECT `ip_addr` FROM `t_assets_host` WHERE id='{}'".format(proj['ARHId'])
+                    )['ip_addr'].encode() + ":" + proj['PWebapp']
+            )
+        elif proj['ARHGId']:
+            hosts = mysql_query(
+                        "SELECT `ip_addr` FROM `t_assets_host` WHERE hg_id='{}'".format(proj['ARHGId'])
+                    )
+            for h in hosts:
+                containers.append(h['ip_addr'].encode() + ":" + proj['PWebapp'])
+    return containers

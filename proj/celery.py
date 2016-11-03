@@ -8,7 +8,8 @@ app = Celery('proj',
              include=[
                  'proj.db',
                  'proj.tasks_new',
-                 'proj.tasks_del'
+                 'proj.tasks_del',
+                 'proj.tasks_ucd'
              ])
 app.config_from_object('proj._celeryconf')
 
