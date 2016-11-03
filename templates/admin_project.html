@@ -34,17 +34,26 @@
             </tr>
             {% end %}
             <tr id="new">
+{#                form 提交内容
+
+                    repo
+                    alias
+                    webapps
+                    reliable
+                    rely_id
+
+#}
                 <td><input type="text" class="form-control"  name='repo' placeholder="Project Repo" ></td>
                 <td><input type="text" class="form-control"  name='alias' placeholder="Alias"></td>
-                <td><input type="text" class="form-control"  name='alias' placeholder="webapp"></td>
+                <td><input type="text" class="form-control"  name='webapp' placeholder="webapp"></td>
                 <td>
                     <label>
-                        <input type="checkbox"> aaa
+                        <input type="checkbox" name="reliable"> Reliable
                     </label>
                 </td>
                 <td>
-                    <select class="form-control" name="rely">
-                        <option value=0>无</option>
+                    <select class="form-control" name="rely_id">
+                        <option value=''>无</option>
                         {% for r in data['proj'] %}
                             {% if r['PReliable']==0 %}
                                 {% continue %}

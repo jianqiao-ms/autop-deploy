@@ -3,6 +3,9 @@
 
 # celery app 子模块必须引入的包
 from __future__ import absolute_import
+
+from pyasn1.type.univ import Null
+
 from proj.celery import app
 from proj.db import mysql_insert
 from proj.db import mysql_delete
@@ -86,7 +89,7 @@ def new_hostgroup(envId, hgName, hgDes):
 # 11 : database error
 # 100 : error reading repo infomation
 @app.task
-def new_project(repo, alias, rely):
+def new_project(repo, alias, reliable, rely_id):
     try:
         result = subprocess.check_output(
                 'export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.
@@ -94,11 +97,13 @@ def new_project(repo, alias, rely):
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
-    name = get_proj_name(repo)
-
+    name, alias = get_proj_name(repo, alias)
+    pid = None  #新项目id
+    pbid = None #项目、分支id
+    dhid = None #发布历史id
     try:
-        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, `rely_id`) \
-              VALUES ('{}', '{}', '{}', '{}')".format(repo, name, alias, int(rely))
+        sql = "INSERT INTO `t_assets_project` (`repo`, `name`, `alias`, `reliable`, `rely_id`) \
+              VALUES ('{}', '{}', '{}', '{}','{}')".format(repo, name, alias, reliable,rely_id if rely_id else 0)
         pid = mysql_insert(sql)
 
         p_path = prepare_proj_dir(name, alias, 'master')
@@ -156,9 +161,11 @@ def new_autorule(pid, container):
 
 
 # Functions used in tasks above
-
-def get_proj_name(_repo):
-    return _repo.split('.git')[0].split('/')[-1]
+def get_proj_name(_repo, _alias):
+    _name = _repo.split('.git')[0].split('/')[-1]
+    if not _alias:
+        alias = _name
+    return _name, _alias
 def prepare_proj_dir(_name, _alias, branch):
     if len(_alias) == 0:
         _alias = _name

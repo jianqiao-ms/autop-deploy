@@ -89,9 +89,10 @@ class Admin(BaseHandler, object):
                         P.`alias` AS PAlias, \
                         P.`reliable` AS PReliable, \
                         IFNULL(P.`webapp_name`, '') AS PWebapp, \
-                        IFNULL(P.`rely_id`, '') AS PRely \
+                        IFNULL(PP.`alias`, '') AS PRely \
                     FROM \
-                        `t_assets_project` AS P"
+                        `t_assets_project` AS P \
+                    LEFT JOIN `t_assets_project` AS PP ON P.`rely_id`=PP.`id`"
 
         data['proj'] = yield torncelery.async(mysql_query, sql_proj)
         self.render('admin_project.html', data=data)
@@ -119,11 +120,12 @@ class NewHostgroup(BaseHandler, object):
 class NewProject(BaseHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        repo   = self.get_argument('repo',      strip=False)
-        pAlias = self.get_argument('alias',     strip=False)
-        rely   = self.get_argument('rely',      strip=False)
+        repo        = self.get_argument('repo',     strip=False)
+        alias       = self.get_argument('alias',    strip=False)
+        reliable    = 1 if self.get_argument('reliable', default=0,strip=False) else 0
+        rely_id     = self.get_argument('rely_id',  strip=False)
 
-        rData = yield torncelery.async(new_project, repo, pAlias, rely)
+        rData = yield torncelery.async(new_project, repo, alias, reliable, rely_id)
         self.write(rData)
 
 class NewAutoRule(BaseHandler, object):
