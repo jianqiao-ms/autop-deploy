@@ -19,7 +19,7 @@
             <tr id="{{ r['ARId'] }}">
                 <td>{{ r['PName'] }}</td>
                 <td>{{ r['Container'] }}</td>
-                <td>http://SERVERNAME/<span class="text-danger">auto/{{ r['ARToken'] }}</span></td>
+                <td>http://SERVERNAME/auto/<span class="text-danger">{{ r['ARToken'] }}</span></td>
                 <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
             </tr>
             {% end %}
