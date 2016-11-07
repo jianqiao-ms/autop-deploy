@@ -45,6 +45,8 @@ def auto_deploy(token, push_branch, before, after):
                                     P.`alias` AS PAlias, \
                                     P.`webapp_name` AS PWebapp, \
                                     P.`reliable` AS PReliable, \
+                                    P.`full_update` AS PFullUpdate, \
+                                    P.`artifact` AS PArtifact, \
                                     AR.`host_id` AS ARHId, \
                                     AR.`hg_id` AS ARHGId \
                                 FROM \
@@ -105,6 +107,7 @@ def auto_deploy(token, push_branch, before, after):
 
         # 获取项目需要发布到的机器及路径(container)
         containers = get_containers(project)
+
         # 获取更新的文件
         src_files, compile_flag = get_update_files(before, after)
 
@@ -115,7 +118,10 @@ def auto_deploy(token, push_branch, before, after):
                 return dict(type=type(e).__name__, info=traceback.format_exc(), code=31)
 
         # 发布文件
-        return deploy_incremental(src_files, containers)
+        if project['PFullupdate']:
+            return deploy_full(project['PArtifact'], containers, project['PWebapp'])
+        else:
+            return deploy_incremental(src_files, containers)
 
 # Functions used in tasks above
 def get_containers(proj):
@@ -227,7 +233,7 @@ def deploy_incremental(src_files, containers):
 def deploy_full(artifact, containers, proj_webapp):
     deploy_status = list()
     for container in containers:
-        cmd = "scp {artifact} root@{host}:/usr/local/tomcat1/{artifact_root}/{webapp}".format(
+        cmd = "scp target/{artifact} root@{host}:/usr/local/tomcat1/webapps/{artifact_root}/{webapp}".format(
             artifact = artifact,
             host = container.split(':')[0],
             artifact_root=container.split(':')[1],

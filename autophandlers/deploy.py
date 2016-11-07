@@ -66,8 +66,6 @@ class Auto(BaseHandler, object):
         after       = req_body['after']
         push_branch = req_body['ref'].split('/')[2]
 
-        print(req_body)
-
         rData = yield torncelery.async(auto_deploy, token, push_branch, before, after)
         print(rData)
         self.write('OK')
