@@ -125,7 +125,9 @@ def new_project(repo, alias, webapp, reliable, rely_id):
             pbid = mysql_insert(sql)
 
             sql = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `after_commit`) " \
-                  "VALUES ('{}', 'INIT', 'manual', '{}', '{}')".format(pbid, time.strftime('%Y-%m-%d %H:%M:%S'),r.split('t')[0])
+                  "VALUES ('{}', 'INIT', 'manual', '{}', '{}')".format(
+                    pbid, time.strftime('%Y-%m-%d %H:%M:%S'),r.split('\t')[0]
+                   )
             dhid = mysql_insert(sql)
 
         return dict(code=0)

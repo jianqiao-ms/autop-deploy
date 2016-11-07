@@ -39,7 +39,6 @@ import subprocess
 # 41 : 发布失败
 @app.task
 def auto_deploy(token, push_branch, before, after):
-    compile_flag    = None
     project         = mysql_get("SELECT \
                                     P.`id` AS PId, \
                                     P.`alias` AS PAlias, \
@@ -113,15 +112,37 @@ def auto_deploy(token, push_branch, before, after):
 
         if compile_flag:
             try:
-                subprocess.check_output('mvn clean install', shell=True)
+                os.system('mvn clean install')
             except Exception as e:
                 return dict(type=type(e).__name__, info=traceback.format_exc(), code=31)
 
         # 发布文件
-        if project['PFullupdate']:
-            return deploy_full(project['PArtifact'], containers, project['PWebapp'])
-        else:
-            return deploy_incremental(src_files, containers)
+
+        sql = "SELECT `id` FROM `t_assets_proj_branch` WHERE `proj_id`='{}' AND `branch`='master'".format(
+                project['PId']
+        )
+        pbid = mysql_get(sql)['id']
+        r = None
+        try:
+            if project['PFullUpdate']:
+                r = deploy_full(project['PArtifact'], containers, project['PWebapp'])
+            else:
+                r = deploy_incremental(src_files, containers)
+
+            sql = "INSERT INTO `t_deploy_history` (`pb_id`,`type`, `event`, `time`, `before_commit`, `after_commit`) \
+                                  VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(
+                    pbid, 'AUTH', 'PUSH', time.strftime('%Y-%m-%s %H:%M:%S'), before, after
+            )
+            mysql_insert(sql)
+            return 0
+        except Exception as e:
+            print(e)
+            # sql = "INSERT INTO `t_deploy_history` (`pb_id`,`type`, `event`, `time`, `before_commit`, `after_commit`, `status`) \
+            #                                   VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+            #         pbid, 'AUTH', 'PUSH', time.strftime('%Y-%m-%s %H:%M:%S'), before, after,r['result']
+            # )
+            # mysql_insert(sql)
+            # return 0
 
 # Functions used in tasks above
 def get_containers(proj):
@@ -244,3 +265,4 @@ def deploy_full(artifact, containers, proj_webapp):
         except Exception as e:
             deploy_status.append('D###ERROR###{host}'.format(host=container.split(':')[0] ))
         deploy_status.append('D###OK###{host}'.format(host=container.split(':')[0]))
+    return dict(code=0, result=deploy_status)

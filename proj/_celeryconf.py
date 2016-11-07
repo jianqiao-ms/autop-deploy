@@ -7,8 +7,8 @@ BROKER_URL                  = 'amqp://celeryadmin:jianqiaoA1@localhost:5672/cele
 CELERY_RESULT_BACKEND       = 'amqp'
 
 CELERY_TASK_SERIALIZER      = 'json'
-CELERY_RESULT_SERIALIZER    = 'json'
-CELERY_ACCEPT_CONTENT       = ['json']
+CELERY_RESULT_SERIALIZER    = 'pickle'
+CELERY_ACCEPT_CONTENT       = ['pickle','json']
 CELERY_TIMEZONE             = 'Asia/Shanghai'
 CELERY_ENABLE_UTC           = True
 CELERYD_LOG_COLOR           = False

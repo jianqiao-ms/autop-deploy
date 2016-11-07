@@ -25,36 +25,67 @@ from proj.tasks_del import del_autorule
 
 class Deploy(BaseHandler, object):
     @coroutine
-    def get(self, module = ''):
-        data = dict()
-        if len(module):
-            data['rules']   = yield torncelery.async(mysql_query,
-                                                "SELECT \
-                                                    P.`alias`                AS PName, \
-                                                    IFNULL(H.`ip_addr`,HG.`name`) AS Container, \
-                                                    AR.`token`               AS ARToken, \
-                                                    AR.`id`                  AS ARId \
-                                                FROM \
-                                                    `t_deploy_auto_rule` AS AR \
-                                                LEFT JOIN `t_assets_project` AS P ON AR.`proj_id` = P.`id` \
-                                                LEFT JOIN `t_assets_hostgroup` AS HG ON AR.`hg_id` = HG.`id` AND AR.`hg_id` IS NOT NULL \
-                                                LEFT JOIN `t_assets_host` AS H ON AR.`host_id` = H.`id` AND AR.`host_id` IS NOT NULL ")
-            data['host']    = yield torncelery.async(mysql_query,
-                                                  "SELECT "
-                                                  "* "
-                                                  "FROM `t_assets_host` AS H "
-                                                  "WHERE H.`hg_id`=''")
-            data['hg']      = yield torncelery.async(mysql_query,
-                                                  "SELECT "
-                                                  "* "
-                                                  "FROM `t_assets_hostgroup`")
-            data['proj'] = yield torncelery.async(mysql_query,
-                                                "SELECT "
-                                                "* "
-                                                "FROM `t_assets_project`")
-            self.render("deploy-{}.html".format(module), data = data)
-            return
+    def get(self, module=''):
+        function_map = dict(
+            auto=self.get_autorule,
+            history=self.get_history
+        )
+
+        if not len(module):
+            self.get_dashboard()
+        else:
+            yield function_map[module]()
+
+    def get_dashboard(self):
         self.render('deploy.html')
+
+    @coroutine
+    def get_autorule(self):
+        data = dict()
+        data['rules'] = yield torncelery.async(mysql_query,
+                                               "SELECT \
+                                                     P.`alias`                AS PName, \
+                                                     IFNULL(H.`ip_addr`,HG.`name`) AS Container, \
+                                                     AR.`token`               AS ARToken, \
+                                                     AR.`id`                  AS ARId \
+                                                 FROM \
+                                                     `t_deploy_auto_rule` AS AR \
+                                                 LEFT JOIN `t_assets_project` AS P ON AR.`proj_id` = P.`id` \
+                                                 LEFT JOIN `t_assets_hostgroup` AS HG ON AR.`hg_id` = HG.`id` AND AR.`hg_id` IS NOT NULL \
+                                                 LEFT JOIN `t_assets_host` AS H ON AR.`host_id` = H.`id` AND AR.`host_id` IS NOT NULL ")
+        data['host'] = yield torncelery.async(mysql_query,
+                                              "SELECT "
+                                              "* "
+                                              "FROM `t_assets_host` AS H "
+                                              "WHERE H.`hg_id`=''")
+        data['hg'] = yield torncelery.async(mysql_query,
+                                            "SELECT "
+                                            "* "
+                                            "FROM `t_assets_hostgroup`")
+        data['proj'] = yield torncelery.async(mysql_query,
+                                              "SELECT "
+                                              "* "
+                                              "FROM `t_assets_project`")
+        self.render("deploy_auto.html", data=data)
+
+    @coroutine
+    def get_history(self):
+        data = dict()
+        data['history'] = yield torncelery.async(mysql_query,
+                                                 "SELECT \
+                                                    DH.`id` AS DHId, \
+                                                    P.`alias` AS DHProj, \
+                                                    PB.`branch` AS DHBranch, \
+                                                    DH.`event` AS DHEvt, \
+                                                    DH.`type` AS DHType, \
+                                                    DH.`time` AS DHTime, \
+                                                    DH.`before_commit` AS DHBefore, \
+                                                    DH.`after_commit` AS DHAfter \
+                                                  FROM \
+                                                    `t_deploy_history` AS DH \
+                                                  LEFT JOIN `t_assets_proj_branch` AS PB ON DH.pb_id = PB.id \
+                                                  LEFT JOIN `t_assets_project` AS P ON PB.`proj_id` = P.`id`")
+        self.render("deploy_history.html", data=data)
 
 
 class Auto(BaseHandler, object):
