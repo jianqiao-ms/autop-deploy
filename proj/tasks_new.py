@@ -27,7 +27,8 @@ import random
 import string
 
 @app.task
-def new_host(envId, ipaddr, hgId, uName, uPwd):
+def new_host(ipaddr, hgId, uName, uPwd):
+    pubkey = subprocess.check_output('cat ~/.ssh/id_rsa.pub', shell=True)
     response = os.system('ping -c 1 {}'.format(ipaddr))
     response >>= 8
     if response == 1:
@@ -37,13 +38,14 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
 
     ssh = paramiko.SSHClient()                                  # 初始化SSHClient对象
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    hostname=None                                               # 初始化hostname
     try:
         if len(uPwd):
-            print('password')
             ssh.connect(ipaddr, port=22, username='root', password=uPwd, timeout=5)
+            ssh.exec_command("echo '{}' >> /root/.ssh/authorized_keys".format(
+                    pubkey
+            ))
+            print('Add public key to host success')
         else:
-            print('none password')
             ssh.connect(ipaddr, port=22, username='root', timeout=5)
         stdin, stdout, stderr = ssh.exec_command("hostname")
         hostname = stdout.readlines()[0]
@@ -61,8 +63,8 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
         ssh.close()
 
     try:
-        sql = "INSERT INTO `t_assets_host` (`hostname`, `ip_addr`, `env_id`, `group_id`) " \
-              "VALUES ('{}', '{}', '{}', '{}')".format(hostname, ipaddr, envId, hgId)
+        sql = "INSERT INTO `t_assets_host` (`name`, `ip_addr`, `hg_id`) " \
+              "VALUES ('{}', '{}', '{}')".format(hostname, ipaddr, hgId)
         mysql_insert(sql)
         return dict(code=0)
     except IntegrityError:
@@ -72,10 +74,10 @@ def new_host(envId, ipaddr, hgId, uName, uPwd):
 
 
 @app.task
-def new_hostgroup(envId, hgName, hgDes):
+def new_hostgroup(hgName, hgDes):
     try:
         sql = "INSERT INTO `t_assets_hostgroup` (`env_id`, `name`, `description`) " \
-              "VALUES ('{}', '{}', '{}')".format(envId, hgName, hgDes)
+              "VALUES ('{}', '{}', '{}')".format(hgName, hgDes)
         mysql_insert(sql)
         return dict(code=0)
     except IntegrityError:

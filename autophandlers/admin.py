@@ -98,13 +98,12 @@ class Admin(BaseHandler, object):
 class NewHost(BaseHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        envId   = self.get_argument('env',      strip=False)
         ipaddr  = self.get_argument('ipaddr',   strip=False)
         hgId    = self.get_argument('hostgroup',strip=False)
         uName   = self.get_argument('username', strip=False)
         uPwd    = self.get_argument('password', strip=False)
 
-        rData = yield torncelery.async(new_host, envId, ipaddr, hgId, uName, uPwd)
+        rData = yield torncelery.async(new_host, ipaddr, hgId, uName, uPwd)
         self.write(rData)
 class NewHostgroup(BaseHandler, object):
     @coroutine

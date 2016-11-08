@@ -54,38 +54,31 @@ def auto_deploy(token, push_branch, before, after):
                                 WHERE \
                                     AR.token = '{}'".format(token))
 
-    # 新建分支
-    if before == '0000000000000000000000000000000000000000':
-        # 插入 pb project_branch 表
-        sql = "INSERT INTO `t_assets_proj_branch` (`branch`, `proj_id`) VALUES ('{}', '{}')".format(
-            project['PId'], push_branch
-        )
+    # 判断是否 新建或删除分支
+    bool, evt = is_branch_level(before,after)
+    if bool:
+        sql_pb_a = "INSERT INTO `t_assets_proj_branch` (`branch`, `proj_id`) \
+                      VALUES ('{id}', '{branch}')".format(
+                        id=project['PId'], branch=push_branch
+                    )
+        sql_pb_d = "UPDATE `t_assets_proj_branch` SET `status`='DELETED' \
+                      WHERE `proj_id`='{id}' AND `branch`='{branch}'".format(
+                        id=project['PId'], branch=push_branch
+                    )
         try:
-            pbid = mysql_insert(sql)
-        except IntegrityError as e:
-            return dict(code=11, column=e.args[1].split()[-1][1:-1])
-
-        # 插入 dh deploy_history 表
-        sql = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `after_commit`) " \
-              "VALUES ('{}', '{}', '{}', '{}', '{}')".format(
-            pbid, 'NEWBRANCH', 'AUTO', time.strftime('%Y-%m-%s %H:%M:%S'), after
-        )
-
-        try:
-            dhid = mysql_insert(sql)
-        except IntegrityError as e:
-            return dict(code=11, column=e.args[1].split()[-1][1:-1])
-
-    # 删除分支
-    if after == '0000000000000000000000000000000000000000':
-        # pb project_branch 表 删除记录
-        sql = "DELETE FROM `t_assets_proj_branch` WHERE proj_id='{}' AND branch='{}'".format(
-            project['PId'], push_branch
-        )
-        try:
-            mysql_delete(sql)
-        except IntegrityError as e:
-            return dict(code=11, column=e.args[1].split()[-1][1:-1])
+            pbid = mysql_insert(sql_pb_a) if evt=='add' else mysql_update(sql_pb_d)
+            sql_dh = "INSERT INTO `t_deploy_history` (`pb_id`, `event`, `type`, `time`, `before_commit`, `after_commit`) \
+                        VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(
+                          pbid,
+                          'ADDBRANCH' if evt == 'add' else 'DELBRANCH',
+                          'AUTO',
+                          time.strftime('%Y-%m-%d %H:%M:%S'),
+                          before,
+                          after
+                      )
+            mysql_insert(sql_dh)
+        except Exception as e:
+            return dict(code=11, info=traceback.format_exc())
 
     # 非master分支不自动发布
     if push_branch != 'master':
@@ -104,17 +97,17 @@ def auto_deploy(token, push_branch, before, after):
         except:
             return dict(code=31)
 
-        # 获取项目需要发布到的机器及路径(container)
-        containers = get_containers(project)
-
-        # 获取更新的文件
-        src_files, compile_flag = get_update_files(before, after)
-
+        # 获取更新的文件 编译
+        src_files, compile_flag = get_update_files(before, after, project['PFullUpdate'], project['PArtifact'])
         if compile_flag:
             try:
                 os.system('mvn clean install')
             except Exception as e:
                 return dict(type=type(e).__name__, info=traceback.format_exc(), code=31)
+
+        # 获取项目需要发布到的机器及路径(container)
+        containers = get_containers(project)
+
 
         # 发布文件
 
@@ -122,29 +115,25 @@ def auto_deploy(token, push_branch, before, after):
                 project['PId']
         )
         pbid = mysql_get(sql)['id']
-        r = None
         try:
-            if project['PFullUpdate']:
-                r = deploy_full(project['PArtifact'], containers, project['PWebapp'])
-            else:
-                r = deploy_incremental(src_files, containers)
-
+            deploy_status = deploy(src_files, containers)
             sql = "INSERT INTO `t_deploy_history` (`pb_id`,`type`, `event`, `time`, `before_commit`, `after_commit`) \
                                   VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(
-                    pbid, 'AUTH', 'PUSH', time.strftime('%Y-%m-%s %H:%M:%S'), before, after
+                    pbid, 'AUTO', 'PUSH', time.strftime('%Y-%m-%d %H:%M:%S'), before, after
             )
             mysql_insert(sql)
-            return 0
+            return deploy_status
         except Exception as e:
             print(e)
-            # sql = "INSERT INTO `t_deploy_history` (`pb_id`,`type`, `event`, `time`, `before_commit`, `after_commit`, `status`) \
-            #                                   VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
-            #         pbid, 'AUTH', 'PUSH', time.strftime('%Y-%m-%s %H:%M:%S'), before, after,r['result']
-            # )
-            # mysql_insert(sql)
-            # return 0
 
 # Functions used in tasks above
+def is_branch_level(before, after):
+    if before == '0000000000000000000000000000000000000000' \
+            or after == '0000000000000000000000000000000000000000':
+        return True, 'add' if before == '0000000000000000000000000000000000000000' else 'del'
+    else:
+        return False, None
+
 def get_containers(proj):
     containers = list()
     if proj['PReliable']==0:
@@ -179,28 +168,33 @@ def get_containers(proj):
             containers += get_containers(proj)
     return containers
 
-def get_update_files(before, after):
+def get_update_files(before, after, full_update, artifact):
     compile_flag = None
-    src_files = dict()
-    diff_result =  filter(lambda x:x,
-                        subprocess.check_output('git diff --name-status {old_commit} {new_commit}'.
-                            format(
-                                old_commit = before, new_commit = after
-                            ),
-                            shell=True).split('\n')
-                        )
-    for f in diff_result:
-        statu = f.split('\t')[0]
-        file = f.split('\t')[1]
+    src_files = None
+    if not full_update:
+        src_files = dict()
+        diff_result =  filter(lambda x:x,
+                                subprocess.check_output(
+                                        'git diff --name-status {old_commit} {new_commit}'.format(
+                                            old_commit = before, new_commit = after
+                                            ),shell=True
+                                ).split('\n')
+                            )
+        for f in diff_result:
+            statu = f.split('\t')[0]
+            file = f.split('\t')[1]
 
-        if file.endswith('java'):
-            compile_flag = True
-            file = 'target/class'+ file[12:-5] + '.class'
+            if file.endswith('java'):
+                compile_flag = True
+                file = 'target/class'+ file[12:-5] + '.class'
 
-        if src_files.has_key(statu):
-            src_files[statu].append(file)
-        else:
-            src_files[statu] = [file]
+            if src_files.has_key (statu):
+                src_files[statu].append(file)
+            else:
+                src_files[statu] = [file]
+    else:
+        src_files = 'target/'+artifact
+        compile_flag = True
     return src_files, compile_flag
 
 def get_dst_path(src_file):
@@ -209,60 +203,60 @@ def get_dst_path(src_file):
     else:
         return '/'.join(src_file.split('/')[3:])
 
-def deploy_incremental(src_files, containers):
+def deploy(src_files, containers):
     deploy_status = list()
-    for f in src_files['M']:
+    if isinstance(src_files, dict):
+        for f in src_files['M']:
+            for container in containers:
+                cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
+                        src_path=f,
+                        host=container.split(':')[0],
+                        webapp=container.split(':')[1],
+                        dst_path=get_dst_path(f)
+                )
+                try:
+                    os.system(cmd)
+                except Exception as e:
+                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
+                deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
+        for f in src_files['A']:
+            for container in containers:
+                cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
+                        src_path=f,
+                        host=container.split(':')[0],
+                        webapp=container.split(':')[1],
+                        dst_path=get_dst_path(f)
+                )
+                try:
+                    os.system(cmd)
+                except Exception as e:
+                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
+                deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
+        for f in src_files['D']:
+            for container in containers:
+                cmd = "ssh root@{host} 'rm -rf /usr/local/tomcat1/webapps/{webapp}/{dst_path}'".format(
+                        host=container.split(':')[0],
+                        webapp=container.split(':')[1],
+                        dst_path=get_dst_path(f)
+                )
+                try:
+                    __result = subprocess.check_output(cmd, shell=True)
+                except Exception as e:
+                    print(e.message)
+                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0],file=f))
+                deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
+    elif isinstance(src_files, unicode):
         for container in containers:
             cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
-                    src_path=f,
+                    src_path=src_files.encode(),
                     host=container.split(':')[0],
                     webapp=container.split(':')[1],
-                    dst_path=get_dst_path(f)
+                    dst_path='WEB-INF/lib'
             )
             try:
+                print(cmd)
                 os.system(cmd)
             except Exception as e:
-                deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
-            deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
-    for f in src_files['A']:
-        for container in containers:
-            cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
-                    src_path=f,
-                    host=container.split(':')[0],
-                    webapp=container.split(':')[1],
-                    dst_path=get_dst_path(f)
-            )
-            try:
-                os.system(cmd)
-            except Exception as e:
-                deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
-            deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
-    for f in src_files['D']:
-        for container in containers:
-            cmd = "ssh root@{host} 'rm -rf /usr/local/tomcat1/webapps/{webapp}/{dst_path}'".format(
-                    host=container.split(':')[0],
-                    webapp=container.split(':')[1],
-                    dst_path=get_dst_path(f)
-            )
-            try:
-                os.system(cmd)
-            except Exception as e:
-                deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0],file=f))
-            deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
-    return dict(code=0, result=deploy_status)
-
-def deploy_full(artifact, containers, proj_webapp):
-    deploy_status = list()
-    for container in containers:
-        cmd = "scp target/{artifact} root@{host}:/usr/local/tomcat1/webapps/{artifact_root}/{webapp}".format(
-            artifact = artifact,
-            host = container.split(':')[0],
-            artifact_root=container.split(':')[1],
-            webapp=proj_webapp
-        )
-        try:
-            os.system(cmd)
-        except Exception as e:
-            deploy_status.append('D###ERROR###{host}'.format(host=container.split(':')[0] ))
-        deploy_status.append('D###OK###{host}'.format(host=container.split(':')[0]))
+                deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
+            deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
     return dict(code=0, result=deploy_status)
