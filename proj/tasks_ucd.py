@@ -78,24 +78,24 @@ def auto_deploy(token, push_branch, before, after):
                       )
             mysql_insert(sql_dh)
         except Exception as e:
-            return dict(code=11, info=traceback.format_exc())
+            print(dict(code=11, info=traceback.format_exc()))
 
     # 非master分支不自动发布
     if push_branch != 'master':
-        return dict(code=1,branch=push_branch)
+        print(dict(code=1,branch=push_branch))
     else:
         # 切换目录
         proj_repo_path = '/var/autop/repo/{}___master'.format(project['PAlias'])
         try:
             os.chdir(proj_repo_path)
         except:
-            return dict(code=21)
+            print(dict(code=21))
 
         # update
         try:
             os.system('git pull')
         except:
-            return dict(code=31)
+            print(dict(code=31))
 
         # 获取更新的文件 编译
         src_files, compile_flag = get_update_files(before, after, project['PFullUpdate'], project['PArtifact'])
@@ -103,7 +103,7 @@ def auto_deploy(token, push_branch, before, after):
             try:
                 os.system('mvn clean install')
             except Exception as e:
-                return dict(type=type(e).__name__, info=traceback.format_exc(), code=31)
+                print(dict(type=type(e).__name__, info=traceback.format_exc(), code=31))
 
         # 获取项目需要发布到的机器及路径(container)
         containers = get_containers(project)
@@ -258,4 +258,4 @@ def deploy(src_files, containers):
             except Exception as e:
                 deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
             deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
-    return dict(code=0, result=deploy_status)
+    print(dict(code=0, result=deploy_status))
