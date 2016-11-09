@@ -76,8 +76,8 @@ def new_host(ipaddr, hgId, uName, uPwd):
 @app.task
 def new_hostgroup(hgName, hgDes):
     try:
-        sql = "INSERT INTO `t_assets_hostgroup` (`env_id`, `name`, `description`) " \
-              "VALUES ('{}', '{}', '{}')".format(hgName, hgDes)
+        sql = "INSERT INTO `t_assets_hostgroup` (`name`, `description`) " \
+              "VALUES ('{}', '{}')".format(hgName, hgDes)
         mysql_insert(sql)
         return dict(code=0)
     except IntegrityError:

@@ -108,11 +108,10 @@ class NewHost(BaseHandler, object):
 class NewHostgroup(BaseHandler, object):
     @coroutine
     def post(self, *args, **kwargs):
-        envId   = self.get_argument('env',      strip=False)
         hgName  = self.get_argument('hg-name',  strip=False)
         hgDes   = self.get_argument('hg-des',   strip=False)
 
-        rData = yield torncelery.async(new_hostgroup, envId, hgName, hgDes)
+        rData = yield torncelery.async(new_hostgroup, hgName, hgDes)
         self.write(rData)
 class NewProject(BaseHandler, object):
     @coroutine
