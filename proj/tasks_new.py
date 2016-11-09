@@ -93,9 +93,12 @@ def new_hostgroup(hgName, hgDes):
 @app.task
 def new_project(repo, alias, webapp, reliable, rely_id):
     try:
-        result = subprocess.check_output(
-                'export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.
-                    format(repo), shell=True).split('\n')
+        # 获取项目所有分支
+        result = filter(lambda x:x,
+                        subprocess.check_output(
+                                'export GIT_TERMINAL_PROMPT=0;git ls-remote --heads {}'.
+                                    format(repo), shell=True).split('\n')
+                        )
     except Exception as e:
         return dict(type=type(e).__name__, info=traceback.format_exc(), code=400)
 
@@ -109,11 +112,11 @@ def new_project(repo, alias, webapp, reliable, rely_id):
         pid = mysql_insert(sql)
 
         p_path = prepare_proj_dir(name, alias, 'master')
+        print('项目path：{}'.format(p_path))
         subprocess.check_call('git clone {} {}'.format(repo, p_path), shell=True)
+        print('克隆成功')
 
         for r in result:
-            if not r.lstrip().rstrip():
-                continue
             branch = r.split('\t')[1].split('/')[2]
 
             pb_path = prepare_proj_dir(name, alias, branch)
