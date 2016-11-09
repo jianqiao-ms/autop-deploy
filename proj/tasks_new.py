@@ -112,15 +112,18 @@ def new_project(repo, alias, webapp, reliable, rely_id):
         pid = mysql_insert(sql)
 
         p_path = prepare_proj_dir(name, alias, 'master')
-        print('项目path：{}'.format(p_path))
+        print('project path：{}'.format(p_path))
         subprocess.check_call('git clone {} {}'.format(repo, p_path), shell=True)
-        print('克隆成功')
+        print('project clone success [branch master]')
 
         for r in result:
+            print('start processing other branches')
             branch = r.split('\t')[1].split('/')[2]
-
+            print('processing branch {}'.format(branch))
             pb_path = prepare_proj_dir(name, alias, branch)
+            print('branch path {}'.format(pb_path))
             os.system('cp -r {} {}'.format(p_path, pb_path))
+            continue
             os.chdir(pb_path)
             os.system('git checkout -b {} -t origin/{}'.format(branch, branch))
 
