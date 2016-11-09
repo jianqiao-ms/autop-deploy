@@ -1,0 +1,68 @@
+{% extends deploy.html %}
+
+{% block page-header %}Auto deploy rule{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
+{% block content %}
+<form role="form" id="new-auto-rule" action="/new/autorule" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>项目</td>
+                <td>主机/主机组</td>
+                <td>Webhooks</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in data['rules'] %}
+            <tr id="{{ r['ARId'] }}">
+                <td>{{ r['PName'] }}</td>
+                <td>{{ r['Container'] }}</td>
+                <td>http://SERVERNAME/auto/<span class="text-danger">{{ r['ARToken'] }}</span></td>
+                <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
+            </tr>
+            {% end %}
+            <tr id="new">
+                <td>
+                    <select class="form-control" name="project">
+                        <option value="">无</option>
+                        {% for r in data['proj'] %}
+                        <option value="{{ r['id'] }}">&#xf1c9 {{ r['alias'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="Container">
+                        <option value="">无</option>
+                        {% for r in data['host'] %}
+                            <option value="h{{ r['id'] }}">&#xf1b2 {{ r['ip_addr'] }}</option>
+                        {% end %}
+                        {% for r in data['hg'] %}
+                            <option value="g{{ r['id'] }}">&#xf1b3 {{ r['name'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% end %}
+
+
+
+
+{% block confirmbody %}
+<form role="form" id="del-auto-rule" action="/del/autorule" method="post">
+    <input type="text" id='arid' placeholder="" name="arid" style='display:none' />
+</form>
+<div class="row">
+    <div class="col-sm-12">
+        是否确认删除
+    </div>
+</div>
+{% end %}

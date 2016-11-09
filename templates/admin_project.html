@@ -1,0 +1,73 @@
+{% extends admin.html %}
+
+{% block page-header %}Admin Project{% end %}
+{% block button-new %}<button type="button" class="btn btn-primary btn-std" id="new">New</button>{% end %}
+
+{% block content %}
+<form role="form" id="new-proj" action="/new/project" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>repo</td>
+                <td>别名</td>
+                <td>webapp</td>
+                <td>可被依赖</td>
+                <td>依赖</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in data['proj'] %}
+            <tr id="{{ r['PId'] }}">
+                <td>{{ r['PRepo'] }}</td>
+                <td>{{ r['PAlias'] }}</td>
+                <td>{{ r['PWebapp'] }}</td>
+                <td>
+                    {% if r['PReliable'] == 1 %}
+                    <i class="fa fa-toggle-on " aria-hidden="true"></i>
+                    {% else %}
+                    <i class="fa fa-toggle-off " aria-hidden="true"></i>
+                    {% end %}
+                </td>
+                <td>{{ r['PRely'] }}</td>
+                <td><i class="fa fa-times fa-lg" aria-hidden="true"></i> <i class="fa fa-pencil-square-o fa-lg"></i></td>
+            </tr>
+            {% end %}
+            <tr id="new">
+{#                form 提交内容
+
+                    repo
+                    alias
+                    webapp
+                    reliable
+                    rely_id
+
+#}
+                <td><input type="text" class="form-control"  name='repo' placeholder="Project Repo" ></td>
+                <td><input type="text" class="form-control"  name='alias' placeholder="Alias"></td>
+                <td><input type="text" class="form-control"  name='webapp' placeholder="webapp"></td>
+                <td>
+                    <label>
+                        <input type="checkbox" name="reliable"> Reliable
+                    </label>
+                </td>
+                <td>
+                    <select class="form-control" name="rely_id">
+                        <option value=''>无</option>
+                        {% for r in data['proj'] %}
+                            {% if r['PReliable']==0 %}
+                                {% continue %}
+                            {% end %}
+                        <option value={{ r['PId'] }}>{{ r['PAlias'] }}</option>
+                        {% end %}
+                    </select>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <button type="button" class="btn btn-warning" id="cancel">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% end %}

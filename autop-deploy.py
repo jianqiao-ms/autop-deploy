@@ -17,15 +17,7 @@ from tornado.web import asynchronous
 from tornado.gen import coroutine
 import torncelery
 
-from tasks import mysql_query
-from tasks import mysql_get
-from tasks import deploy
-from tasks import new_host
-from tasks import new_hostgroup
-from tasks import new_project
-from tasks import new_autorule
-from tasks import del_autorule
-from tasks import auto_deploy
+
 
 # 自定义方法，格式化返回数据
 class DateJsonEncoder(json.JSONEncoder, object):
@@ -142,7 +134,11 @@ class Admin(RequestHandler, object):
                                 project      = 'SELECT '
                                                  'id                             AS PId,'
                                                  'repo                           AS PRepo,'
-                                                 'alias                          AS PAlias '
+                                                 'alias                          AS PAlias, '
+                                                 'deploy_alone                   AS PDeployAlone, '
+                                                 'IFNULL(`rely_id`,"")           AS PRely, '
+                                                 'IFNULL(`webapp_name`,"")       AS PWebapp, '
+                                                 'able_to_be_rely                AS PIsRely '
                                                'FROM `t_assets_project`')
 
         if len(module):
@@ -168,7 +164,6 @@ class Deploy(curlRequestHandler, object):
         data = dict()
         if len(module):
             data['env']     = yield torncelery.async(mysql_get, 'SELECT * FROM `t_assets_env`')
-            print data['env']
             data['rules']   = yield torncelery.async(mysql_get,
                                                 "SELECT \
                                                     P.`name`                AS PName, \
@@ -225,8 +220,9 @@ class NewProject(RequestHandler, object):
     def post(self, *args, **kwargs):
         repo   = self.get_argument('repo',      strip=False)
         pAlias = self.get_argument('alias',     strip=False)
+        rely   = self.get_argument('rely',      strip=False)
 
-        rData = yield torncelery.async(new_project, repo, pAlias)
+        rData = yield torncelery.async(new_project, repo, pAlias, rely)
         self.write(rData)
 
 class NewAutoRule(RequestHandler, object):
@@ -261,7 +257,7 @@ class DelAutoRule(RequestHandler, object):
         self.write(rData)
 
 if __name__ == "__main__":
-    print 'Starting Server...'
+    print('Starting Server...')
     tornado.options.parse_command_line()
     app = make_app()
     app.listen(8888)

@@ -22,10 +22,6 @@ $(document).ready(function () {
                 alert('请选择项目');
                 return false;
             }
-            if (formNewAutoRule.find('[name=Container]').val() == '') {
-                alert('请选择主机 或 主机组');
-                return false;
-            }
         },
         success: newAutoRule
     };

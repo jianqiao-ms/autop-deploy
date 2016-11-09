@@ -14,6 +14,7 @@ css 属性顺序
 }
 .table>tbody>tr#new>td {
     padding: 0.1rem;
+    vertical-align: middle;
 }
 .table>tbody>tr#new {
     display: none;
@@ -25,10 +26,10 @@ button.btn-std {
 }
 
 /*fontawesome 操作按钮 鼠标样式*/
-td .fa {
+td .fa-lg {
     cursor: pointer;
 }
-td .fa:hover {
+td .fa-lg:hover {
     color: #a94442;
 }
 
@@ -37,4 +38,22 @@ td .fa:hover {
 }
 select {
   font: normal normal normal 14px/1 FontAwesome;
+}
+
+/*页面内容标题*/
+.page-header-container {
+    border-bottom: 1px solid #eee;
+
+    padding-bottom: 9px;
+    margin:0 0 20px;
+}
+.main .page-header {
+    float: left;
+    border: none;
+
+    padding-bottom: 0;
+    margin:0;
+}
+.main .page-header-container button {
+    float: right;
 }
