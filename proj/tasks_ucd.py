@@ -110,7 +110,6 @@ def auto_deploy(token, push_branch, before, after):
 
 
         # 发布文件
-
         sql = "SELECT `id` FROM `t_assets_proj_branch` WHERE `proj_id`='{}' AND `branch`='master'".format(
                 project['PId']
         )

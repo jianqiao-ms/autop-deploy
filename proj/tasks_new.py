@@ -115,8 +115,7 @@ def new_project(repo, alias, webapp, reliable, rely_id):
             if not r.lstrip().rstrip():
                 continue
             branch = r.split('\t')[1].split('/')[2]
-            if branch=='master':
-                continue
+
             pb_path = prepare_proj_dir(name, alias, branch)
             os.system('cp -r {} {}'.format(p_path, pb_path))
             os.chdir(pb_path)
