@@ -79,6 +79,7 @@ def auto_deploy(token, push_branch, before, after):
             mysql_insert(sql_dh)
         except Exception as e:
             print(dict(code=11, info=traceback.format_exc()))
+            return traceback.format_exc().split('\n')
 
     # 非master分支不自动发布
     if push_branch != 'master':
@@ -94,16 +95,20 @@ def auto_deploy(token, push_branch, before, after):
         # update
         try:
             os.system('git pull')
+            print('update success')
         except:
             print(dict(code=31))
+            return traceback.format_exc().split('\n')
 
         # 获取更新的文件 编译
         src_files, compile_flag = get_update_files(before, after, project['PFullUpdate'], project['PArtifact'])
         if compile_flag:
             try:
                 os.system('mvn clean install')
+                print('compile success')
             except Exception as e:
                 print(dict(type=type(e).__name__, info=traceback.format_exc(), code=31))
+                return traceback.format_exc().split('\n')
 
         # 获取项目需要发布到的机器及路径(container)
         containers = get_containers(project)
