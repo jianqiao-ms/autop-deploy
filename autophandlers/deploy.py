@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from tornado.gen import coroutine
 import json
+import socket
 
 # 三方包
 import torncelery
@@ -66,6 +67,7 @@ class Deploy(BaseHandler, object):
                                               "SELECT "
                                               "* "
                                               "FROM `t_assets_project`")
+        data['ip'] = socket.gethostbyname(socket.gethostname())
         self.render("deploy_auto.html", data=data)
 
     @coroutine
