@@ -11,6 +11,7 @@ from autophandlers._handler import ErrorHandler
 from autophandlers import index
 from autophandlers import admin
 from autophandlers import deploy
+from autophandlers import test
 
 
 # 返回tornad app对象
@@ -34,15 +35,15 @@ def make_app():
         (r'/new/host', admin.NewHost),
         (r'/new/hostgroup', admin.NewHostgroup),
         (r'/new/project', admin.NewProject),
-
         (r'/new/autorule', deploy.NewAutoRule),
         (r'/del/autorule', deploy.DelAutoRule),
 
         # 发布操作 map
         (r'/auto/(?P<token>.+)', deploy.Auto),
 
-        # 404
-        (r".*", ErrorHandler)
+
+        (r'/test',test.test),       # 测试
+        (r".*", ErrorHandler)       # 404
     ], **settings)
 
 if __name__ == "__main__":

@@ -66,6 +66,7 @@ def new_host(ipaddr, hgId, uName, uPwd):
         sql = "INSERT INTO `t_assets_host` (`name`, `ip_addr`, `hg_id`) " \
               "VALUES ('{}', '{}', '{}')".format(hostname, ipaddr, hgId)
         mysql_insert(sql)
+        print('[LOG]init host {} success'.format(ipaddr))
         return dict(code=0)
     except IntegrityError:
         return dict(code=11)
@@ -79,6 +80,7 @@ def new_hostgroup(hgName, hgDes):
         sql = "INSERT INTO `t_assets_hostgroup` (`name`, `description`) " \
               "VALUES ('{}', '{}')".format(hgName, hgDes)
         mysql_insert(sql)
+        print('[LOG]init hostgroup {} success'.format(hgName))
         return dict(code=0)
     except IntegrityError:
         return dict(code=11)
@@ -115,9 +117,12 @@ def new_project(repo, alias, webapp, reliable, rely_id):
         print('[LOG]project path:{}'.format(p_path))
         subprocess.check_call('git clone {} {}'.format(repo, p_path), shell=True)
         print('[LOG]project clone success [branch master]')
+        os.system('mvn clean install')
+        print('[LOG]compile project {} branch master success'.format(alias))
+
+        print('[LOG]start processing other branches')
 
         for r in result:
-            print('[LOG]start processing other branches')
             branch = r.split('\t')[1].split('/')[2]
             if not branch=='master':
                 print('[LOG]processing branch {}'.format(branch))
@@ -126,6 +131,9 @@ def new_project(repo, alias, webapp, reliable, rely_id):
                 os.system('cp -r {} {}'.format(p_path, pb_path))
                 os.chdir(pb_path)
                 os.system('git checkout -b {} -t origin/{}'.format(branch, branch))
+                print('[LOG]init project {} branch {} success'.format(alias, branch))
+                os.system('mvn clean install')
+                print('[LOG]compile project {} branch {} success'.format(alias, branch))
 
             sql = "INSERT INTO `t_assets_proj_branch` (`proj_id`, `branch`) " \
                   "VALUES ('{}', '{}')".format(pid, branch)
@@ -164,6 +172,7 @@ def new_autorule(pid, container):
             sql = "INSERT INTO `t_deploy_auto_rule` (`proj_id`, `proj_branch`, `token`) " \
                   "VALUES ('{}', '{}', '{}')".format(pid, 'master', token)
         mysql_insert(sql)
+        print('[LOG]init autorule success')
         return dict(code=0)
     except IntegrityError as e:
         return dict(code=11, column=e.args[1].split()[-1][1:-1])

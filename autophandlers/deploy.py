@@ -91,18 +91,19 @@ class Deploy(BaseHandler, object):
 
 
 class Auto(BaseHandler, object):
-    @coroutine
     def post(self, token, *args, **kwargs):
-        token       = token
-        req_body    = json.loads(self.request.body)
-        before      = req_body['before']
-        after       = req_body['after']
-        push_branch = req_body['ref'].split('/')[2]
-
-        rData = yield torncelery.async(auto_deploy, token, push_branch, before, after)
-        for l in rData:
-            print(l)
+        self.token  = token
         self.write('OK')
+
+    @coroutine
+    def on_finish(self):
+        req_body        = json.loads(self.request.body)
+        before          = req_body['before']
+        after           = req_body['after']
+        push_branch     = req_body['ref'].split('/')[2]
+        deploy_status   = yield torncelery.async(auto_deploy, self.token, push_branch, before, after)
+        for l in deploy_status:
+            print(l)
 
 class NewAutoRule(BaseHandler, object):
     @coroutine

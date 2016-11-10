@@ -54,6 +54,8 @@ def auto_deploy(token, push_branch, before, after):
                                 WHERE \
                                     AR.token = '{}'".format(token))
 
+    print(project)
+
     # 判断是否 新建或删除分支
     bool, evt = is_branch_level(before,after)
     if bool:
@@ -94,8 +96,8 @@ def auto_deploy(token, push_branch, before, after):
 
         # update
         try:
-            os.system('git pull')
-            print('update success')
+            subprocess.check_call('git pull', shell=True)
+            print('[LOG]update success')
         except:
             print(dict(code=31))
             return traceback.format_exc().split('\n')
@@ -104,16 +106,19 @@ def auto_deploy(token, push_branch, before, after):
         src_files, compile_flag = get_update_files(before, after, project['PFullUpdate'], project['PArtifact'])
         if compile_flag:
             try:
-                os.system('mvn clean install')
-                print('compile success')
+                subprocess.check_call('mvn clean install', shell=True)
+                print('[LOG]compile success')
             except Exception as e:
                 print(dict(type=type(e).__name__, info=traceback.format_exc(), code=31))
                 return traceback.format_exc().split('\n')
+        else:
+            print('[LOG]compile skip')
 
         # 获取项目需要发布到的机器及路径(container)
         containers = get_containers(project)
-
-
+        for c in containers:
+            print(c)
+        print('[LOG]get containers success')
         # 发布文件
         sql = "SELECT `id` FROM `t_assets_proj_branch` WHERE `proj_id`='{}' AND `branch`='master'".format(
                 project['PId']
@@ -126,9 +131,12 @@ def auto_deploy(token, push_branch, before, after):
                     pbid, 'AUTO', 'PUSH', time.strftime('%Y-%m-%d %H:%M:%S'), before, after
             )
             mysql_insert(sql)
+            for l in deploy_status:
+                print(l)
             return deploy_status
         except Exception as e:
             print(e)
+            return traceback.format_exc().split('\n')
 
 # Functions used in tasks above
 def is_branch_level(before, after):
@@ -190,7 +198,7 @@ def get_update_files(before, after, full_update, artifact):
 
             if file.endswith('java'):
                 compile_flag = True
-                file = 'target/class'+ file[12:-5] + '.class'
+                file = 'target/classes'+ file[13:-5] + '.class'
 
             if src_files.has_key (statu):
                 src_files[statu].append(file)
@@ -203,14 +211,14 @@ def get_update_files(before, after, full_update, artifact):
 
 def get_dst_path(src_file):
     if src_file.endswith('class'):
-        return 'WEB-INF/classes/'+ '/'.join(src_file.split('/')[3:])
+        return 'WEB-INF/classes/'+ '/'.join(src_file.split('/')[2:])
     else:
         return '/'.join(src_file.split('/')[3:])
 
 def deploy(src_files, containers):
     deploy_status = list()
     if isinstance(src_files, dict):
-        for f in src_files['M']:
+        for f in src_files['M'] if src_files.has_key('M') else []:
             for container in containers:
                 cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
                         src_path=f,
@@ -218,12 +226,15 @@ def deploy(src_files, containers):
                         webapp=container.split(':')[1],
                         dst_path=get_dst_path(f)
                 )
+                print(cmd)
                 try:
-                    os.system(cmd)
+                    subprocess.check_call(cmd, shell=True)
                 except Exception as e:
-                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
+                    print(e.message)
+                    deploy_status.append('D###ERROR###{host}###{file}###{error}'.format(host=container.split(':')[0], file=f, error=e.message))
+                    continue
                 deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
-        for f in src_files['A']:
+        for f in src_files['A'] if src_files.has_key('A') else []:
             for container in containers:
                 cmd = "scp {src_path} root@{host}:/usr/local/tomcat1/webapps/{webapp}/{dst_path}".format(
                         src_path=f,
@@ -231,23 +242,30 @@ def deploy(src_files, containers):
                         webapp=container.split(':')[1],
                         dst_path=get_dst_path(f)
                 )
+                print(cmd)
                 try:
-                    os.system(cmd)
+                    subprocess.check_call(cmd, shell=True)
                 except Exception as e:
-                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=f))
+                    print(e.message)
+                    deploy_status.append(
+                        'D###ERROR###{host}###{file}###{error}'.format(host=container.split(':')[0], file=f, error=e.message))
+                    continue
                 deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
-        for f in src_files['D']:
+        for f in src_files['D'] if src_files.has_key('D') else []:
             for container in containers:
                 cmd = "ssh root@{host} 'rm -rf /usr/local/tomcat1/webapps/{webapp}/{dst_path}'".format(
                         host=container.split(':')[0],
                         webapp=container.split(':')[1],
                         dst_path=get_dst_path(f)
                 )
+                print(cmd)
                 try:
-                    __result = subprocess.check_output(cmd, shell=True)
+                    subprocess.check_call(cmd, shell=True)
                 except Exception as e:
                     print(e.message)
-                    deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0],file=f))
+                    deploy_status.append(
+                        'D###ERROR###{host}###{file}###{error}'.format(host=container.split(':')[0], file=f, error=e.message))
+                    continue
                 deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=f))
     elif isinstance(src_files, unicode):
         for container in containers:
@@ -257,10 +275,13 @@ def deploy(src_files, containers):
                     webapp=container.split(':')[1],
                     dst_path='WEB-INF/lib'
             )
+            print(cmd)
             try:
-                print(cmd)
-                os.system(cmd)
+                subprocess.check_call(cmd, shell=True)
             except Exception as e:
-                deploy_status.append('D###ERROR###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
+                print(e.message)
+                deploy_status.append(
+                    'D###ERROR###{host}###{file}###{error}'.format(host=container.split(':')[0], file=src_files, error=e.message))
+                continue
             deploy_status.append('D###OK###{host}###{file}'.format(host=container.split(':')[0], file=src_files))
-    print(dict(code=0, result=deploy_status))
+    return deploy_status
