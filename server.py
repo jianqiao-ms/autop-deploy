@@ -11,8 +11,6 @@ from autophandlers._handler import ErrorHandler
 from autophandlers import index
 from autophandlers import admin
 from autophandlers import deploy
-from autophandlers import test
-
 
 # 返回tornad app对象
 settings = dict(
@@ -41,8 +39,6 @@ def make_app():
         # 发布操作 map
         (r'/auto/(?P<token>.+)', deploy.Auto),
 
-
-        (r'/test',test.test),       # 测试
         (r".*", ErrorHandler)       # 404
     ], **settings)
 
