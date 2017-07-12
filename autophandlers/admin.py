@@ -9,7 +9,7 @@ from tornado.gen import coroutine
 import torncelery
 
 # 自定义包
-from ._handler import BaseHandler
+from main.basehandler import BaseHandler
 
 from proj.db import mysql_insert
 from proj.db import mysql_delete
@@ -25,6 +25,7 @@ from proj.tasks_new import new_project
 class Admin(BaseHandler, object):
     @coroutine
     def get(self, module=''):
+        data = self.db.query(Article).all()
         function_map = dict(
             host = self.get_host,
             hostgroup = self.get_hg,

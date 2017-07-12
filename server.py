@@ -1,50 +1,52 @@
 #!/usr/bin/env python
 # -*- coding:UTF-8 -*-
 
+
 import os
+import configparser
+from tornado.web import Application
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 from tornado import options
 from tornado import ioloop
 from tornado.web import Application
 
-from autophandlers._handler import ErrorHandler
-from autophandlers import index
-from autophandlers import admin
-from autophandlers import deploy
+from main.handlers import handlers
+from main.settings import settings
 
-# 返回tornad app对象
-settings = dict(
-    debug           = True,
-    gzip            = True,
-    template_path   = os.path.join(os.path.dirname(__file__), "templates"),
-    static_path     = os.path.join(os.path.dirname(__file__), "static"),
-)
+# 创建Orm对象的基类:
+OrmBase = declarative_base()
 
-def make_app():
-    return Application([
-        (r'/', index.Index),
-        # 页面请求 map
-        (r'/admin', admin.Admin),
-        (r'/admin/(?P<module>[a-z]+)', admin.Admin),
-        (r"/deploy", deploy.Deploy),
-        (r"/deploy/?(?P<module>[a-z]+)", deploy.Deploy),
+class autop(Application, object):
+    def __init__(self, handlers=None, default_host=None, transforms=None,
+                 **settings):
 
-        # 数据库操作/管理操作 map
-        (r'/new/host', admin.NewHost),
-        (r'/new/hostgroup', admin.NewHostgroup),
-        (r'/new/project', admin.NewProject),
-        (r'/new/autorule', deploy.NewAutoRule),
-        (r'/del/autorule', deploy.DelAutoRule),
+        # 读取配置文件
+        config_file = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'autop.conf'))
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        dbconfig = config['db']
+        engine = create_engine('mysql+mysqlconnector://{user}:{passwd}@{host}:{port}/{dbname}'.format(
+            user=dbconfig['user'],
+            passwd=dbconfig['pass'],
+            host=dbconfig['host'],
+            port=dbconfig['port'],
+            dbname=dbconfig['name']
+        ))
 
-        # 发布操作 map
-        (r'/auto/(?P<token>.+)', deploy.Auto),
+        self.db = scoped_session(sessionmaker(bind=engine,
+                                              autocommit=False,
+                                              autoflush=True,
+                                              expire_on_commit=False))
 
-        (r".*", ErrorHandler)       # 404
-    ], **settings)
+        super(autop, self).__init__(handlers=handlers, default_host=default_host, transforms=transforms,
+                                    **settings)
 
 if __name__ == "__main__":
     print('Starting Server...')
     options.parse_command_line()
-    app = make_app()
-    app.listen(8888)
+    autop(handlers = handlers, **settings).listen(8888)
     ioloop.IOLoop.instance().start()
