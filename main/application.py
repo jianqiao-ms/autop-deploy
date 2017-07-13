@@ -4,11 +4,6 @@
 
 
 
-# 创建Orm对象的基类:
-OrmBase = declarative_base()
-
-
-
 
 
 

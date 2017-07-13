@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 # -*- coding:UTF-8 -*-
 
-
-import os
 import configparser
+import os
+
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-from tornado import options
 from tornado import ioloop
+from tornado import options
 from tornado.web import Application
 
-from main.handlers import handlers
-from main.settings import settings
+# from main.handlers import handlers
+from system.settings import settings
 
 # 创建Orm对象的基类:
 OrmBase = declarative_base()

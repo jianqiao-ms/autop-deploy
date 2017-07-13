@@ -2,7 +2,8 @@
 # -*- coding:UTF-8 -*-
 
 import os
-from main.jinja import JinjaLoader
+
+from system.jinja import JinjaLoader
 
 settings = dict(
     debug           = True,

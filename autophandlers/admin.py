@@ -3,23 +3,17 @@
 
 # 系统包
 from __future__ import absolute_import
-from tornado.gen import coroutine
 
 # 三方包
 import torncelery
+from tornado.gen import coroutine
 
-# 自定义包
-from main.basehandler import BaseHandler
-
-from proj.db import mysql_insert
-from proj.db import mysql_delete
-from proj.db import mysql_update
 from proj.db import mysql_query
-from proj.db import mysql_get
-
 from proj.tasks_new import new_host
 from proj.tasks_new import new_hostgroup
 from proj.tasks_new import new_project
+# 自定义包
+from system.hd_base import BaseHandler
 
 
 class Admin(BaseHandler, object):
