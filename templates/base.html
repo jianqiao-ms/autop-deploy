@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autop</title>
+</head>
+<body>
+
+{{current_user}}
+<hr /><br />
+{% if current_user %}
+已登录 : {{ current_user }}
+{% else %}
+默认: visitor <input type="button" value="登录" onclick="window.location ='/login'" />
+{% end %}
+</body>
+</html>
