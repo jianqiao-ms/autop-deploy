@@ -1,83 +1,34 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 #-* coding: utf-8 -*
-# DZf_HJFdxeVzQorkQhMo
 
-import tornado.ioloop
-import tornado.web
-import tornado.gen
-import tornado.concurrent
-import functools
-from concurrent.futures import ThreadPoolExecutor
+from tornado.web import Application
 from tornado.options import parse_command_line
+from tornado.ioloop import IOLoop
+
 import os
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
+from handlers.functions import run_command
 
-class SyncHandler(tornado.web.RequestHandler):
-
-    def get(self, *args, **kwargs):
-        # 耗时的代码
-        os.system("ping -c 2 www.baidu.com")
-        self.finish('It works')
-
-class AsyncHandler(tornado.web.RequestHandler):
-    @tornado.web.asynchronous
-    @tornado.gen.coroutine
-    def get(self, *args, **kwargs):
-
-        tornado.ioloop.IOLoop.instance().add_timeout(1, callback=functools.partial(self.ping, 'www.google.com'))
-
-        # do something others
-        self.finish('It works')
-
-    @tornado.gen.coroutine
-    def ping(self, url):
-        os.system("ping -c 2 {}".format(url))
-        return 'after'
+from handlers.base import GitlabOAuth2LoginHandler
+from handlers.web import MainHandler
 
 
-class AsyncTaskHandler(tornado.web.RequestHandler):
-    @tornado.web.asynchronous
-    @tornado.gen.coroutine
-    def get(self, *args, **kwargs):
-        # yield 结果
-        response = yield tornado.gen.Task(self.ping, ' www.google.com')
-        print('response', response)
-        self.finish('hello')
+from handlers.system import SysAdminHandler
+from handlers.system import DbInitHandler
 
-    @tornado.gen.coroutine
-    def ping(self, url):
-        os.system("ping -c 10 {}".format(url))
-        return 'after'
 
-class FutureHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(10)
+settings = {
+    'login_url':'/login',
+    'template_path':os.path.join(os.path.dirname(__file__), "templates")
+}
 
-    @tornado.web.asynchronous
-    @tornado.gen.coroutine
-    def get(self, *args, **kwargs):
-
-        url = 'www.google.com'
-        tornado.ioloop.IOLoop.instance().add_callback(functools.partial(self.ping, url))
-        self.finish('It works')
-
-    @tornado.concurrent.run_on_executor
-    def ping(self, url):
-        os.system("ping -c 100 {}".format(url))
-
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-        (r"/sync", SyncHandler),
-        (r"/async", AsyncHandler),
-        (r"/asynctask", AsyncTaskHandler),
-        (r"/asyncfuture", FutureHandler),
-    ])
+application = Application([
+    (r"/", MainHandler),
+    (r"/login", GitlabOAuth2LoginHandler),
+    (r"/admin", SysAdminHandler),
+], **settings)
 
 if __name__ == "__main__":
     parse_command_line()
-    app = make_app()
-    app.listen(60000)
-    tornado.ioloop.IOLoop.current().start()
+    application.listen(60000)
+    IOLoop.current().start()
