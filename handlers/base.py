@@ -1,12 +1,19 @@
 #! /usr/bin/env python
 #-* coding: utf-8 -*
 
+# tornado packages
 from tornado.auth import OAuth2Mixin
 from tornado.web import RequestHandler
 from tornado.web import HTTPError
 from tornado.util import PY3
+from tornado.process import Subprocess
 import tornado.escape
 
+# system packages
+import sys
+import os
+import shlex
+import functools
 if PY3:
     import urllib.parse as urlparse
     from urllib.parse import urlencode
@@ -14,9 +21,22 @@ else:
     import urlparse
     from urllib import urlencode
 
-import functools
+# self packages
+sys.path.append(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+from db import db_session
+from db import Project
 
-def AdminAuthenticated(method):
+async def run_command(command):
+    """run command"""
+    process = Subprocess(
+        shlex.split(command),
+        stdout=Subprocess.STREAM,
+        stderr=Subprocess.STREAM
+    )
+    out, err = await process.stdout.read_until_close(), process.stderr.read_until_close()
+    return (out,err)
+
+def adminAuthenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.current_user == 'root':
@@ -42,6 +62,27 @@ def authenticated(method):
                 return
             raise HTTPError(403)
         return method(self, *args, **kwargs)
+    return wrapper
+
+def async_authenticated(method):
+
+    @functools.wraps(method)
+    async def wrapper(self, *args, **kwargs):
+        self.current_user = await self.get_current_user()
+        if not self.current_user:
+            if self.request.method in ("GET", "HEAD"):
+                url = self.get_login_url()
+                if "?" not in url:
+                    if urlparse.urlsplit(url).scheme:
+                        # if login url is absolute, make next absolute too
+                        next_url = self.request.full_url()
+                    else:
+                        next_url = self.request.uri
+                    url += "?" + urlencode(dict(next=next_url))
+                self.redirect(url)
+                return
+            raise HTTPError(403)
+        return await method(self, *args, **kwargs)
     return wrapper
 
 class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
@@ -89,10 +130,27 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
 class BaseHandler(RequestHandler, OAuth2Mixin):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request, **kwargs)
+        self.db_sesion = db_session
+        self.table = {
+            'Project':Project
+        }
 
     async def get_current_user(self):
         token = self.get_cookie('token')
         if not token:
             return None
         user = await self.oauth2_request('http://192.168.3.252/api/v4/user', access_token=token)
-        return user['username']
+        return user
+
+    async def get_gitlab_api(self, url):
+        gitlab_api_prefix = 'http://192.168.3.252/api/v4'
+        _httpclient = self.get_auth_http_client()
+        _header = {
+            'Private-Token': 'hsssfmR1LxNAfCG5NB7g'
+        }
+
+        resonse =  await _httpclient.fetch(gitlab_api_prefix + url, headers = _header)
+        return resonse.body
+
+if __name__ == '__main__':
+    print(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))

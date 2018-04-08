@@ -3,15 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Autop</title>
+
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{static_url('css/base.css')}}" />
+    <!--<link rel="stylesheet" type="text/css" href="/statics/css/base.css" />-->
+    {% end %}
+    {% block other-css %}{% end %}
+
+    {% block js %}
+
+    {% end %}
+    {% block other-js %}{% end %}
+
 </head>
 <body>
+    <div class="header">
+        {{ current_user['name'] }}
+    </div>
 
-{{current_user}}
-<hr /><br />
-{% if current_user %}
-已登录 : {{ current_user }}
-{% else %}
-默认: visitor <input type="button" value="登录" onclick="window.location ='/login'" />
-{% end %}
+    <div class="body-container">
+        {% block body %}{% end %}
+    </div>
 </body>
 </html>

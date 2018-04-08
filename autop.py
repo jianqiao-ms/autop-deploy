@@ -7,15 +7,11 @@ from tornado.ioloop import IOLoop
 
 import os
 
-from handlers.functions import run_command
-
 from handlers.base import GitlabOAuth2LoginHandler
-from handlers.web import MainHandler
+from handlers.root import MainHandler
 
 
-from handlers.system import SysAdminHandler
-from handlers.system import DbInitHandler
-
+from handlers.admin import AdminHandler
 
 settings = {
     'login_url':'/login',
@@ -25,7 +21,7 @@ settings = {
 application = Application([
     (r"/", MainHandler),
     (r"/login", GitlabOAuth2LoginHandler),
-    (r"/admin", SysAdminHandler),
+    (r"/admin", AdminHandler),
 ], **settings)
 
 if __name__ == "__main__":
