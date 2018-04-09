@@ -1,0 +1,11 @@
+div.terminal {
+    background-color:#2F343F;
+    color: #fff;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+
+    z-index: 99;
+}

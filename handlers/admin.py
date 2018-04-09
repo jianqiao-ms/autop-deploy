@@ -3,7 +3,7 @@
 
 # tornado packages
 from tornado.web import escape
-
+from tornado.web import RequestHandler
 # system packages
 
 # self packages
@@ -19,13 +19,12 @@ class AdminHandler(BaseHandler):
 class DbInitHandler(BaseHandler):
     @async_authenticated
     async def get(self):
-        gitlab_projects = await self.get_gitlab_api('/projects')
-
-        gitlab_projects = escape.json_decode(escape.to_unicode(gitlab_projects))
+        response_body = await self.get_gitlab_api('/projects')
+        gitlab_projects = escape.json_decode(escape.to_unicode(response_body))
 
         for p in gitlab_projects:
-            print('正在添加{}'.format(p['name']))
-            self.db_sesion.add(self.table['Project'](
+            self.write('正在添加{}<br />'.format(p['name']))
+            self.db_sesion.add(self.schema.project(
                 gitlab_id   = p['id'],
                 name        = p['name'],
                 deploy_name = '',
@@ -35,7 +34,12 @@ class DbInitHandler(BaseHandler):
                 lang        = '',
                 tags        = ''
             ))
+        try:
             self.db_sesion.commit()
-
-            # print(p)
-        # self.finish()
+            self.write('完成')
+        except Exception as e:
+            self.db_sesion.rollback()
+            import traceback
+            self.write(escape.xhtml_escape(str(traceback.format_exc())))
+        finally:
+            self.finish()

@@ -9,12 +9,6 @@
     <!--<link rel="stylesheet" type="text/css" href="/statics/css/base.css" />-->
     {% end %}
     {% block other-css %}{% end %}
-
-    {% block js %}
-
-    {% end %}
-    {% block other-js %}{% end %}
-
 </head>
 <body>
     <div class="header">
@@ -24,5 +18,9 @@
     <div class="body-container">
         {% block body %}{% end %}
     </div>
+
+    {% block other-body-content %}{% end %}
+    <script src="{{static_url('js/jquery.min.js')}}"></script>
+    {% block other-js %}{% end %}
 </body>
 </html>

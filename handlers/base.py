@@ -8,6 +8,7 @@ from tornado.web import HTTPError
 from tornado.util import PY3
 from tornado.process import Subprocess
 import tornado.escape
+from tornado.httpclient import AsyncHTTPClient as HTTPClient
 
 # system packages
 import sys
@@ -20,21 +21,28 @@ if PY3:
 else:
     import urlparse
     from urllib import urlencode
-
+if PY3:
+    import urllib.parse as urlparse
+    import urllib.parse as urllib_parse
+    long = int
+else:
+    import urlparse
+    import urllib as urllib_parse
 # self packages
 sys.path.append(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
-from db import db_session
-from db import Project
+import db as Database
 
-async def run_command(command):
-    """run command"""
-    process = Subprocess(
-        shlex.split(command),
-        stdout=Subprocess.STREAM,
-        stderr=Subprocess.STREAM
-    )
-    out, err = await process.stdout.read_until_close(), process.stderr.read_until_close()
-    return (out,err)
+# def run_command(command):
+# """run command"""
+# async def run_command(command):
+#     process = Subprocess(
+#         shlex.split(command),
+#         stdout=Subprocess.STREAM,
+#         stderr=Subprocess.STREAM
+#     )
+    # out, err = await process.stdout.read_until_close(), process.stderr.read_until_close()
+    # return (out,err)
+    # return process
 
 def adminAuthenticated(method):
     @functools.wraps(method)
@@ -127,13 +135,15 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
 
         return tornado.escape.json_decode(response.body)
 
+class SqlSchema(object):
+    project = Database.Project
+    deploy_history = Database.DeployHistory
+
 class BaseHandler(RequestHandler, OAuth2Mixin):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request, **kwargs)
-        self.db_sesion = db_session
-        self.table = {
-            'Project':Project
-        }
+        self.db_sesion = Database.session
+        self.schema = SqlSchema
 
     async def get_current_user(self):
         token = self.get_cookie('token')
@@ -143,14 +153,22 @@ class BaseHandler(RequestHandler, OAuth2Mixin):
         return user
 
     async def get_gitlab_api(self, url):
-        gitlab_api_prefix = 'http://192.168.3.252/api/v4'
-        _httpclient = self.get_auth_http_client()
-        _header = {
-            'Private-Token': 'hsssfmR1LxNAfCG5NB7g'
-        }
+        gitlab_api_prefix   = 'http://192.168.3.252/api/v4'
+        _httpclient         = self.get_auth_http_client()
+        _header             = {'Private-Token': '9PnZDPXdzpxskMu3vmRy'}
 
-        resonse =  await _httpclient.fetch(gitlab_api_prefix + url, headers = _header)
-        return resonse.body
+        _response = await _httpclient.fetch(gitlab_api_prefix + url, headers = _header, method='HEAD')
+        _response = await _httpclient.fetch(gitlab_api_prefix + url + '?per_page={}'.format(_response.headers['X-Total']), headers = _header)
+        return _response.body
 
 if __name__ == '__main__':
-    print(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+    gitlab_api_prefix = 'http://192.168.3.252/api/v4'
+    from tornado.httpclient import HTTPClient as SyncHTTPClient
+    from tornado.httputil import HTTPHeaders
+    from tornado.httpclient import HTTPRequest
+
+
+    request = HTTPRequest(gitlab_api_prefix + '/projects', headers=HTTPHeaders({'Private-Token': 'TH_rmdTezUXEEQa74tQg'}), method= "HEAD")
+    response = SyncHTTPClient().fetch(request)
+    print(response.headers)
+    # print(len(tornado.escape.json_decode(response.body)))
