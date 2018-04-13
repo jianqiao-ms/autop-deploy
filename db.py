@@ -18,6 +18,7 @@ class Project(Base):
 
     gitlab_id   = Column(Integer, primary_key=True)
     name        = Column(String(32))
+    full_name   = Column(String(64))
     deploy_name = Column(String(32))
     description = Column(String(256))
     repo_ssh    = Column(String(256))

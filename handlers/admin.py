@@ -27,6 +27,7 @@ class DbInitHandler(BaseHandler):
             self.db_sesion.add(self.schema.project(
                 gitlab_id   = p['id'],
                 name        = p['name'],
+                full_name   = p['name_with_namespace'],
                 deploy_name = '',
                 description = p['description'],
                 repo_ssh    = p['ssh_url_to_repo'],
