@@ -44,11 +44,11 @@
         <td>
             <select class="pcommit">
                 {% for item in commits%}
-                <option id="{{ item['short_id'] }}">{{ item['short_id'] }} || {{ item['title'] }}</option>
+                <option id="{{ item['id'] }}">{{ item['short_id'] }} || {{ item['title'] }}</option>
                 {% end %}
             </select>
         </td>
-        <!--<td><input type="button" value="发布" onclick="window.location.href='/deployaction'" /></td>-->
+        <!--<td><input type="button" value="发布" onclick="window.location.href='/deploy'" /></td>-->
         <td><input type="button" value="发布" /></td>
     </tr>
 </table>

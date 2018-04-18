@@ -15,6 +15,25 @@ from handlers.base import BaseHandler
 from handlers.base import authenticated
 from handlers.base import async_authenticated
 
+class DeployHandler(BaseHandler):
+    @async_authenticated
+    async def get(self):
+        _gitlab_id = self.get_query_argument('gitlab_id', False)
+        # _project   = self.db_sesion.query(self.schema.project).filter(self.schema.project.gitlab_id == _gitlab_id).one()
+        _commit    = self.get_query_argument('commit', False)
+        _httpclient = self.get_auth_http_client()
+
+        _pkg = 'http://192.168.3.252/api/v4/projects/{id}/repository/archive?sha={commit}'.format(
+            id = _gitlab_id,
+            commit = _commit
+        )
+
+        print(_pkg)
+
+        response = await _httpclient.fetch(_pkg, headers = {'Private-Token': '9PnZDPXdzpxskMu3vmRy'})
+        with open('tmp/123.tar.gz', 'wb') as f:
+            f.write(response.body)
+        self.finish('OK')
 
 class DeployActionHandler(BaseHandler):
     async def get(self):
