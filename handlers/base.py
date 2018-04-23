@@ -136,7 +136,7 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
         return tornado.escape.json_decode(response.body)
 
 class SqlSchema(object):
-    project = Database.Project
+    project = Database.App
     deploy_history = Database.DeployHistory
 
 class BaseHandler(RequestHandler, OAuth2Mixin):

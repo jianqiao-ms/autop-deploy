@@ -4,23 +4,37 @@
     <meta charset="UTF-8">
     <title>Autop</title>
 
-    {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{static_url('css/base.css')}}" />
-    <!--<link rel="stylesheet" type="text/css" href="/statics/css/base.css" />-->
-    {% end %}
+    <link rel="stylesheet" type="text/css" href="{{static_url('css/bootstrap/bootstrap.min.css')}}" />
+
+    {% block css %}{% end %}
     {% block other-css %}{% end %}
 </head>
 <body>
-    <div class="header">
-        {{ current_user['name'] }}
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin">admin</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        {% block content %}{% end %}
     </div>
 
-    <div class="body-container">
-        {% block body %}{% end %}
-    </div>
-
-    {% block other-body-content %}{% end %}
-    <script src="{{static_url('js/jquery.min.js')}}"></script>
-    {% block other-js %}{% end %}
+    <script src="{{static_url('js/public/jquery-3.3.1.min.js')}}" />
+    <script src="{{static_url('js/public/popper.min.js')}}" />
+    <script src="{{static_url('js/bootstrap/bootstrap.min.js')}}" />
+    {% block js %}{% end %}
 </body>
 </html>
