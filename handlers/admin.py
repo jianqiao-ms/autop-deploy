@@ -11,10 +11,46 @@ from handlers.base import BaseHandler
 from handlers.base import authenticated
 from handlers.base import async_authenticated
 
+admin_items = {
+    'environment':{
+        'link':'/admin/environment',
+        'handler':None,
+        'text':'环境'
+    },
+    'host':{
+        'link': '/admin/host',
+        'handler': None,
+        'text': '主机'
+    },
+    'hostgroup': {
+        'link': '/admin/hostgroup',
+        'handler': None,
+        'text': '主机组'
+    },
+    'apptype': {
+        'link': '/admin/apptype',
+        'handler': None,
+        'text': '应用类型'
+    },
+    'app': {
+        'link': '/admin/app',
+        'handler': None,
+        'text': '应用'
+    },
+    '发布规则': {
+        'link': '/admin/deployrule',
+        'handler': None,
+        'text': '发布规则'
+    }
+}
+
 class AdminHandler(BaseHandler):
     @authenticated
-    def get(self):
-        self.render('admin/admin.html')
+    def get(self, admin_item):
+        if not admin_item:
+            self.render('admin/admin.html', admin_items = admin_items)
+        else:
+            pass
 
 class DbInitHandler(BaseHandler):
     @async_authenticated

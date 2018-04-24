@@ -3,7 +3,7 @@
 
 # create db connectin
 
-from sqlalchemy import  Column, Integer, String, DateTime
+from sqlalchemy import  Column, Integer, String, DateTime, Binary
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -18,56 +18,53 @@ class Environment(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(16))
 
-class Host(Base):
-    __tablename__ = 't_host'
+class Container(Base):
+    __tablename__ = 't_container'
     id = Column(Integer, primary_key=True)
-    gid = Column(Integer)
-    eid = Column(Integer)
+    name = Column(String(16))
+    ipaddr = Column(String(16))
+    type = Column(Integer)
+    group_id = Column(Integer)
+    env_id = Column(Integer)
 
 class HostGroup(Base):
-    __tablename__ = 't_hostgroup'
+    __tablename__ = 't_host_group'
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
+
+class AppType(Base):
+    __tablename__ = 't_app_type'
+    id = Column(Integer, primary_key=True)
+    type = Column(String(16))
 
 class App(Base):
     __tablename__ = 't_app'
     gitlab_id   = Column(Integer, primary_key=True)
     deploy_name = Column(String(32))
-    lang_id     = Column(Integer)
+    type_id     = Column(Integer)
 
-class AppLang(Base):
-    __tablename__ = 't_app_lang'
+class DeployRule(Base):
+    __tablename__ = 't_deploy_rule'
     id = Column(Integer, primary_key=True)
-    lang = Column(String(16))
-
-class DeployAutoRule(Base):
-    __tablename__ = 't_deploy_auto_rule'
-    appid = Column(Integer, primary_key=True)
-    eid = Column(Integer)
-    dst_device = Column(Integer)
-    dst_path = Column(String(128))
-    dst_ln = Column(String(128))
-    rst_cmd = Column(String(32))
-
-class DeployManualRequest(Base):
-    __tablename__ = 't_deploy_manual_request'
-    appid = Column(Integer, primary_key=True)
-    eid = Column(Integer)
-    dst_device = Column(Integer)
-    dst_path = Column(String(128))
-    dst_ln = Column(String(128))
-    rst_cmd = Column(String(32))
-    commit = Column(String(48))
+    gitlab_id = Column(Integer)
+    env_id = Column(Integer)
+    container_id = Column(Integer)
+    deploy_path = Column(String(128))
+    run_path = Column(String(128))
+    automatic = Column(Binary)
+    exclude = Column(String(2048))
 
 class DeployHistory(Base):
     __tablename__ = 't_history_deploy'
-    gitlab_id   = Column(Integer, primary_key=True)
-    commit      = Column(String(48))
-    commit_msg  = Column(String(256))
-    commit_time = Column(DateTime)
-    op_time     = Column(DateTime)
+    id = Column(Integer, primary_key=True)
+    rule_id   = Column(Integer)
     type        = Column(String(8))
+    state = Column(Integer)
+    commit      = Column(String(48))
+    commit_time = Column(DateTime)
+    action_time     = Column(DateTime)
     user_id     = Column(Integer)
+
 
 if __name__ == '__main__':
     # Base.metadata.drop_all(engine)
