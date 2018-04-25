@@ -44,10 +44,11 @@ admin_items = {
     }
 }
 
-class AdminHandler(BaseHandler):
+
+class AdminPage(BaseHandler):
     @authenticated
-    def get(self, admin_item):
-        if not admin_item:
+    def get(self, item):
+        if not item:
             self.render('admin/admin.html', admin_items = admin_items)
         else:
             pass

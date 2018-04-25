@@ -44,6 +44,20 @@ import db as Database
     # return (out,err)
     # return process
 
+###############################
+# GITLAB Configuration
+###############################
+# GITLAB                          = 'http://192.168.3.252'
+GITLAB                          = 'http://gitlab.shangweiec.com'
+GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
+GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
+GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
+
+GITLAB_OAUTH_REDIRECT_URI       = 'http://localhost:60000/login'
+GITLAB_OAUTH_APP_ID             = 'e49e6db2f2b83295d43ab21490137687c2c068283ddc9eccdcf752221e5f7e9a'
+GITLAB_OAUTH_APP_SECRET         = '0ca6835640412d1d7d6d149fc47dcb5ad41602a87c129cd3c30bf58329cbd358'
+
+
 def adminAuthenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -52,7 +66,6 @@ def adminAuthenticated(method):
     return wrapper
 
 def authenticated(method):
-
     @functools.wraps(method)
     async def wrapper(self, *args, **kwargs):
         self.current_user = await self.get_current_user()
@@ -73,7 +86,6 @@ def authenticated(method):
     return wrapper
 
 def async_authenticated(method):
-
     @functools.wraps(method)
     async def wrapper(self, *args, **kwargs):
         self.current_user = await self.get_current_user()
@@ -94,13 +106,6 @@ def async_authenticated(method):
     return wrapper
 
 class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
-    _OAUTH_AUTHORIZE_URL = 'http://192.168.3.252/oauth/authorize'
-    _OAUTH_ACCESS_TOKEN_URL = 'http://192.168.3.252/oauth/token'
-    _OAUTH_REDIRECT_URI = 'http://192.168.2.200:60000/login'
-    _OAUTH_APP_ID = 'e49e6db2f2b83295d43ab21490137687c2c068283ddc9eccdcf752221e5f7e9a'
-    _OAUTH_APP_SECRET = '0ca6835640412d1d7d6d149fc47dcb5ad41602a87c129cd3c30bf58329cbd358'
-
-
     async def get(self):
         returned_code = self.get_query_argument('code', False)
         redirect_next = self.get_query_argument('next', False)
@@ -111,11 +116,11 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
             self.redirect(redirect_next if redirect_next else '/')
         else:
             await self.authorize_redirect(
-                redirect_uri=self._OAUTH_REDIRECT_URI,
-                client_id=self._OAUTH_APP_ID,
+                redirect_uri=GITLAB_OAUTH_REDIRECT_URI,
+                client_id=GITLAB_OAUTH_APP_ID,
                 response_type='code',
                 extra_params = {
-                    'state':self._OAUTH_APP_SECRET,
+                    'state':GITLAB_OAUTH_APP_SECRET,
                     'next': redirect_next if redirect_next else '/'
                 }
             )
@@ -123,15 +128,15 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
     async def get_authenticated_user(self, code):
         parameters = urlencode(
             {
-                'client_id': self._OAUTH_APP_ID,
-                'client_secret': self._OAUTH_APP_SECRET,
+                'client_id': GITLAB_OAUTH_APP_ID,
+                'client_secret': GITLAB_OAUTH_APP_SECRET,
                 'code': code,
                 'grant_type': 'authorization_code',
-                'redirect_uri': self._OAUTH_REDIRECT_URI
+                'redirect_uri': GITLAB_OAUTH_REDIRECT_URI
             }
         )
         http_client = self.get_auth_http_client()
-        response =  await http_client.fetch(self._OAUTH_ACCESS_TOKEN_URL, body=parameters, method='POST')
+        response =  await http_client.fetch(GITLAB_OAUTH_ACCESS_TOKEN_URL, body=parameters, method='POST')
 
         return tornado.escape.json_decode(response.body)
 
@@ -149,26 +154,25 @@ class BaseHandler(RequestHandler, OAuth2Mixin):
         token = self.get_cookie('token')
         if not token:
             return None
-        user = await self.oauth2_request('http://192.168.3.252/api/v4/user', access_token=token)
+        user = await self.oauth2_request('{}/api/v4/user'.format(GITLAB), access_token=token)
         return user
 
     async def get_gitlab_api(self, url):
-        gitlab_api_prefix   = 'http://192.168.3.252/api/v4'
+        GITLAB_API_PREFIX   = '{}/api/v4'.format(GITLAB)
         _httpclient         = self.get_auth_http_client()
         _header             = {'Private-Token': '9PnZDPXdzpxskMu3vmRy'}
 
-        _response = await _httpclient.fetch(gitlab_api_prefix + url, headers = _header, method='HEAD')
-        _response = await _httpclient.fetch(gitlab_api_prefix + url + '?per_page={}'.format(_response.headers['X-Total']), headers = _header)
+        _response = await _httpclient.fetch(GITLAB_API_PREFIX + url, headers = _header, method='HEAD')
+        _response = await _httpclient.fetch(GITLAB_API_PREFIX + url + '?per_page={}'.format(_response.headers['X-Total']), headers = _header)
         return _response.body
 
 if __name__ == '__main__':
-    gitlab_api_prefix = 'http://192.168.3.252/api/v4'
     from tornado.httpclient import HTTPClient as SyncHTTPClient
     from tornado.httputil import HTTPHeaders
     from tornado.httpclient import HTTPRequest
 
 
-    request = HTTPRequest(gitlab_api_prefix + '/projects', headers=HTTPHeaders({'Private-Token': 'TH_rmdTezUXEEQa74tQg'}), method= "HEAD")
+    request = HTTPRequest(GITLAB_API_PREFIX + '/projects', headers=HTTPHeaders({'Private-Token': 'TH_rmdTezUXEEQa74tQg'}), method= "HEAD")
     response = SyncHTTPClient().fetch(request)
     print(response.headers)
     # print(len(tornado.escape.json_decode(response.body)))
