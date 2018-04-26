@@ -47,8 +47,8 @@ import db as Database
 ###############################
 # GITLAB Configuration
 ###############################
-# GITLAB                          = 'http://192.168.3.252'
-GITLAB                          = 'http://gitlab.shangweiec.com'
+GITLAB                          = 'http://192.168.3.252'
+# GITLAB                          = 'http://gitlab.shangweiec.com'
 GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
 GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
 GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
@@ -106,6 +106,11 @@ def async_authenticated(method):
     return wrapper
 
 class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
+    _OAUTH_AUTHORIZE_URL = '{}/oauth/authorize'.format(GITLAB)
+    _OAUTH_ACCESS_TOKEN_URL = '{}/oauth/token'.format(GITLAB)
+
+    _OAUTH_REDIRECT_URI = 'http://localhost:60000/login'
+
     async def get(self):
         returned_code = self.get_query_argument('code', False)
         redirect_next = self.get_query_argument('next', False)
@@ -141,7 +146,11 @@ class GitlabOAuth2LoginHandler(RequestHandler, OAuth2Mixin):
         return tornado.escape.json_decode(response.body)
 
 class SqlSchema(object):
-    project = Database.App
+    environment = Database.Environment
+    container = Database.Container
+    app_type = Database.AppType
+    app = Database.App
+    deploy_rule = Database.DeployRule
     deploy_history = Database.DeployHistory
 
 class BaseHandler(RequestHandler, OAuth2Mixin):

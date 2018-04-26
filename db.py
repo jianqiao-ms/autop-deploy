@@ -27,11 +27,6 @@ class Container(Base):
     group_id = Column(Integer)
     env_id = Column(Integer)
 
-class HostGroup(Base):
-    __tablename__ = 't_host_group'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-
 class AppType(Base):
     __tablename__ = 't_app_type'
     id = Column(Integer, primary_key=True)

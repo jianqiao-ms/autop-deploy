@@ -11,47 +11,43 @@ from handlers.base import BaseHandler
 from handlers.base import authenticated
 from handlers.base import async_authenticated
 
-admin_items = {
-    'environment':{
-        'link':'/admin/environment',
-        'handler':None,
-        'text':'环境'
-    },
-    'host':{
-        'link': '/admin/host',
-        'handler': None,
-        'text': '主机'
-    },
-    'hostgroup': {
-        'link': '/admin/hostgroup',
-        'handler': None,
-        'text': '主机组'
-    },
-    'apptype': {
-        'link': '/admin/apptype',
-        'handler': None,
-        'text': '应用类型'
-    },
-    'app': {
-        'link': '/admin/app',
-        'handler': None,
-        'text': '应用'
-    },
-    '发布规则': {
-        'link': '/admin/deployrule',
-        'handler': None,
-        'text': '发布规则'
-    }
-}
 
-
-class AdminPage(BaseHandler):
+class AdminHandler(BaseHandler):
     @authenticated
-    def get(self, item):
-        if not item:
-            self.render('admin/admin.html', admin_items = admin_items)
-        else:
-            pass
+    def get(self):
+        self.render('admin/admin.html')
+
+class AdminItemHandler(BaseHandler):
+    @authenticated
+    def get(self):
+        _, _, item = self.request.path.rpartition('/')
+        if item:
+            items = self.db_sesion.query(getattr(self.schema,item)).all()
+            self.render('admin/admin-{}.html'.format(item), items=items)
+
+class AdminEnvHandler(AdminItemHandler):
+    def post(self):
+        pass
+
+class AdminContainerHandler(AdminItemHandler):
+    def post(self):
+        pass
+
+class AdminAppTypeHandler(AdminItemHandler):
+    def post(self):
+        pass
+
+class AdminAppHandler(AdminItemHandler):
+    def post(self):
+        pass
+
+class AdminDeployRuleHandler(AdminItemHandler):
+    def post(self):
+        pass
+
+class AdminDeployHistoryHandler(AdminItemHandler):
+    def post(self):
+        pass
 
 class DbInitHandler(BaseHandler):
     @async_authenticated

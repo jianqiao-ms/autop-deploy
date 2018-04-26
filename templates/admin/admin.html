@@ -10,17 +10,16 @@
     <div class="col-sm-6">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                {% for item in admin_items %}
-                    <li class="breadcrumb-item"><a href="{{admin_items[item]['link']}}">{{admin_items[item]['text']}}</a></li>
-                {% end %}
-                <!--<li class="breadcrumb-item"><a href="/admin/environment">环境</a></li>-->
-                <!--<li class="breadcrumb-item"><a href="/admin/host">主机</a></li>-->
-                <!--<li class="breadcrumb-item"><a href="/admin/hostgroup">主机组</a></li>-->
-                <!--<li class="breadcrumb-item"><a href="/admin/apptype">应用类型</a></li>-->
-                <!--<li class="breadcrumb-item"><a href="/admin/app">应用</a></li>-->
-                <!--<li class="breadcrumb-item"><a href="/admin/deployrule">发布规则</a></li>-->
+                <li class="breadcrumb-item"><a href="/admin/environment">环境</a></li>
+                <li class="breadcrumb-item"><a href="/admin/container">容器</a></li>
+                <li class="breadcrumb-item"><a href="/admin/app_type">应用类型</a></li>
+                <li class="breadcrumb-item"><a href="/admin/app">应用</a></li>
+                <li class="breadcrumb-item"><a href="/admin/deploy_rule">发布规则</a></li>
             </ol>
         </nav>
     </div>
 </div>
+
+
+{% block item-content %}{% end %}
 {% end %}
