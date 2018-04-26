@@ -5,9 +5,16 @@
 {% end %}
 
 {% block content %}
-<div class="row nav-container">
-    <div class="col-sm-4"></div>
-    <div class="col-sm-6">
+
+<div class="row align-items-center nav-container">
+    <div class="col-sm-1">{% block col1 %}{% end %}</div>
+    <div class="col-sm-1">
+        {% block col2 %}<button type="button" class="btn btn-primary">新建</button>{% end %}
+    </div>
+    <div class="col-sm-1">{% block col3 %}{% end %}</div>
+    <div class="col-sm-1">{% block col4 %}{% end %}</div>
+
+    <div class="col-sm-8">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/admin/environment">环境</a></li>
