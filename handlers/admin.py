@@ -11,10 +11,16 @@ from handlers.base import BaseHandler
 from handlers.base import authenticated
 from handlers.base import async_authenticated
 
+class AdmEnvHandler(BaseHandler):
+    def get(self):
+        print('OK')
+        # self.write('env')
+        self.finish('env')
+
 admin_items = {
     'environment':{
         'link':'/admin/environment',
-        'handler':None,
+        'handler':AdmEnvHandler,
         'text':'环境'
     },
     'host':{
@@ -51,7 +57,9 @@ class AdminPage(BaseHandler):
         if not item:
             self.render('admin/admin.html', admin_items = admin_items)
         else:
-            pass
+            return admin_items[item]['handler'](self.application, self.request).get()
+
+
 
 class DbInitHandler(BaseHandler):
     @async_authenticated
