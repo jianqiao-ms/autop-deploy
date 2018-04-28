@@ -47,8 +47,8 @@ import db as Database
 ###############################
 # GITLAB Configuration
 ###############################
-GITLAB                          = 'http://192.168.3.252'
-# GITLAB                          = 'http://gitlab.shangweiec.com'
+# GITLAB                          = 'http://192.168.3.252'
+GITLAB                          = 'http://gitlab.shangweiec.com'
 GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
 GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
 GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
