@@ -1,4 +1,4 @@
-#! /usr/bin/python
+ #! /usr/bin/python
 #-* coding: utf-8 -*
 
 # tornado packages
@@ -12,7 +12,7 @@ import os
 
 # self packages
 from handlers.base import GitlabOAuth2LoginHandler
-from handlers.root import MainHandler
+from handlers.index import MainHandler
 
 from handlers.project import ProjectListHandler
 

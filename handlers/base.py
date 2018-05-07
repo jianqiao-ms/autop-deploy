@@ -49,14 +49,13 @@ import db as Database
 ###############################
 GITLAB                          = 'http://192.168.3.252'
 # GITLAB                          = 'http://gitlab.shangweiec.com'
-GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
-GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
-GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
-
 GITLAB_OAUTH_REDIRECT_URI       = 'http://localhost:60000/login'
 GITLAB_OAUTH_APP_ID             = 'e49e6db2f2b83295d43ab21490137687c2c068283ddc9eccdcf752221e5f7e9a'
 GITLAB_OAUTH_APP_SECRET         = '0ca6835640412d1d7d6d149fc47dcb5ad41602a87c129cd3c30bf58329cbd358'
 
+GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
+GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
+GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
 
 def adminAuthenticated(method):
     @functools.wraps(method)
