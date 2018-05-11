@@ -9,8 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
-engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
+engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
+# engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
 session  = sessionmaker(bind = engine)()
 Base = declarative_base()
 

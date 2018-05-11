@@ -1,26 +1,4 @@
-body {
-    margin: 0;
-}
-
-div.header {
-    background-color: black;
-    width: 100%;
-    position: fixed;
-    height: 50px;
-    z-index: 60000;
-
-    color: white;
-}
-
-div.body-container {
-    background-color: bisque;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-
-    padding-top: 52px;
+.row.padding-row>[class^=col-] {
+    padding-top: .27rem;
+    padding-bottom: 0.27rem;
 }

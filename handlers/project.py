@@ -12,12 +12,9 @@ import shlex
 
 # self packages
 from handlers.base import BaseHandler
-from handlers.base import authenticated
-from handlers.base import async_authenticated
 
 
 class ProjectListHandler(BaseHandler):
-    @async_authenticated
     async def get(self):
         _gitlab_id = self.get_query_argument('gitlab_id', False)
         if not _gitlab_id:

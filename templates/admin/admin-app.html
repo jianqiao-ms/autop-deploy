@@ -1,18 +1,44 @@
 {% extends admin.html %}
 
-{% block col3 %}
-<button type="button" class="btn btn-danger">同步</button>
+{% block nav-col2 %}
+<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#gitlabAppModel">新建</button>
 {% end %}
 
 {% block item-content %}
     {% for item in items %}
-    <div class="row">
-        <div class="col-sm-11">
+    <div class="row padding-row">
+        <div class="col-xl-11">
             {{ item.name }}
         </div>
-        <div class="col-sm-1">
-            <input type="button" value="BUTTON">
+        <div class="col-xl-1">
+            <button type="button" class="btn btn-outline-primary btn-sm btn-block">Edit</button>
         </div>
     </div>
     {% end %}
+{% end %}
+
+{% block other-content %}
+<div class="modal fade" id="gitlabAppModel" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Apps on 192.168.3.252</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}
+
+{% block js %}
+<script src="{{static_url('js/admin/admin.js')}}"></script>
 {% end %}

@@ -8,17 +8,13 @@ from tornado.web import RequestHandler
 
 # self packages
 from handlers.base import BaseHandler
-from handlers.base import authenticated
-from handlers.base import async_authenticated
 
 
 class AdminHandler(BaseHandler):
-    @authenticated
     def get(self):
         self.render('admin/admin.html')
 
 class AdminItemHandler(BaseHandler):
-    @authenticated
     def get(self):
         _, _, item = self.request.path.rpartition('/')
         if item:
@@ -50,7 +46,6 @@ class AdminDeployHistoryHandler(AdminItemHandler):
         pass
 
 class DbInitHandler(BaseHandler):
-    @async_authenticated
     async def get(self):
         response_body = await self.get_gitlab_api('/projects')
         gitlab_projects = escape.json_decode(escape.to_unicode(response_body))

@@ -6,7 +6,10 @@
 
     <link rel="stylesheet" type="text/css" href="{{static_url('css/bootstrap/bootstrap.min.css')}}" />
 
-    {% block css %}{% end %}
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{static_url('css/base.css')}}" />
+    {% end %}
+
     {% block other-css %}{% end %}
 </head>
 <body>
@@ -32,9 +35,10 @@
         {% block content %}{% end %}
     </div>
 
-    <script src="{{static_url('js/public/jquery-3.3.1.min.js')}}" />
-    <script src="{{static_url('js/public/popper.min.js')}}" />
-    <script src="{{static_url('js/bootstrap/bootstrap.min.js')}}" />
+    <script src="{{static_url('js/public/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{static_url('js/public/popper.min.js')}}"></script>
+    <script src="{{static_url('js/bootstrap/bootstrap.min.js')}}"></script>
+
     {% block js %}{% end %}
 </body>
 </html>

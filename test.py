@@ -11,7 +11,6 @@ from tornado.httpserver import HTTPServer
 import os
 
 # self packages
-from handlers.base import GitlabOAuth2LoginHandler
 from handlers.index import MainHandler
 
 from handlers.project import ProjectListHandler
@@ -39,13 +38,6 @@ settings = {
 
 application = Application([
     (r"/", MainHandler),
-    (r"/login", GitlabOAuth2LoginHandler),
-
-    (r"/project", ProjectListHandler),
-    (r"/project", ProjectListHandler),
-
-    (r"/deploy", DeployHandler),
-    # (r"/deployaction", DeployActionHandler),
 
     (r"/admin", AdminHandler),
     (r"/admin/environment", AdminEnvHandler),

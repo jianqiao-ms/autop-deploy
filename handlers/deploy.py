@@ -12,11 +12,8 @@ import shlex
 
 # self packages
 from handlers.base import BaseHandler
-from handlers.base import authenticated
-from handlers.base import async_authenticated
 
 class DeployHandler(BaseHandler):
-    @async_authenticated
     async def get(self):
         _gitlab_id = self.get_query_argument('gitlab_id', False)
         # _project   = self.db_sesion.query(self.schema.project).filter(self.schema.project.gitlab_id == _gitlab_id).one()
