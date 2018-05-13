@@ -7,3 +7,11 @@ div.nav-container {
     -webkit-margin-before: unset;
     -webkit-margin-after: unset;
 }
+
+.row.padding-row>[class^=col-] {
+    line-height: 2.7;
+}
+
+.row.title-row {
+    line-height: 2.2;
+}

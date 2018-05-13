@@ -1,16 +1,13 @@
 #! /usr/bin/env python
 #-* coding: utf-8 -*
 
-# create db connectin
-
 from sqlalchemy import  Column, Integer, String, DateTime, Binary
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
-# engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
+# engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
+engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
 session  = sessionmaker(bind = engine)()
 Base = declarative_base()
 
@@ -60,7 +57,6 @@ class DeployHistory(Base):
     commit_time = Column(DateTime)
     action_time     = Column(DateTime)
     user_id     = Column(Integer)
-
 
 if __name__ == '__main__':
     # Base.metadata.drop_all(engine)

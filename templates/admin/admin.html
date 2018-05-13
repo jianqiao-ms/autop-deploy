@@ -6,14 +6,19 @@
 
 {% block content %}
 <div class="row align-items-center nav-container">
-    <div class="col-xl-1">{% block col1 %}{% end %}</div>
-    <div class="col-xl-1">
-        {% block nav-col2 %}<button type="button" class="btn btn-primary btn-block">新建</button>{% end %}
+    <div class="col-md-1">{% block col1 %}{% end %}</div>
+    <div class="col-md-1">
+        {% block nav-col2 %}
+        <button type="button" class="btn btn-primary btn-block"
+                data-toggle="modal" data-target="#{% block modal-id %}{% end %}">
+            新建
+        </button>
+        {% end %}
     </div>
-    <div class="col-xl-1">{% block col3 %}{% end %}</div>
-    <div class="col-xl-1">{% block col4 %}{% end %}</div>
+    <div class="col-md-1">{% block col3 %}{% end %}</div>
+    <div class="col-md-1">{% block col4 %}{% end %}</div>
 
-    <div class="col-xl-8">
+    <div class="col-md-8">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/admin/environment">环境</a></li>
@@ -30,5 +35,24 @@
 {% block item-content %}{% end %}
 </div>
 
-{% block other-content %}{% end %}
+
+<div class="modal fade" id="{% block modal-id %}{% end %}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">{% block modal-title %}{% end %}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img class="loading" src="/statics/images/loading.gif" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% end %}

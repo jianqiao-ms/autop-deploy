@@ -1,4 +1,18 @@
-.row.padding-row>[class^=col-] {
-    padding-top: .27rem;
-    padding-bottom: 0.27rem;
+img.loading {
+    display: block;
+    margin:0 auto;
 }
+
+img.loading.loading-btn {
+    height: 1.8125em;
+}
+
+@media screen and (min-width: 1024px) {
+  .modal-lg {
+    max-width: 1000px;
+}}
+
+@media screen and (min-width: 1440px) {
+  .modal-lg {
+    max-width: 1280px;
+}}

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Autop</title>
 
-    <link rel="stylesheet" type="text/css" href="{{static_url('css/bootstrap/bootstrap.min.css')}}" />
-
+    <link rel="stylesheet" type="text/css" href="{{static_url('bootstrap-4.0.0-dist/css/bootstrap.min.css')}}" />
     {% block css %}
     <link rel="stylesheet" type="text/css" href="{{static_url('css/base.css')}}" />
     {% end %}
@@ -13,8 +12,8 @@
     {% block other-css %}{% end %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Navbar</a>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -31,12 +30,11 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
-        {% block content %}{% end %}
-    </div>
+    <div class="container-fluid">{% block content %}{% end %}</div>
 
-    <script src="{{static_url('js/public/jquery-3.3.1.min.js')}}"></script>
-    <script src="{{static_url('js/bootstrap/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('bootstrap-4.0.0-dist/dependency/jquery-3.2.1.min.js')}}"></script>
+    <script src="{{static_url('bootstrap-4.0.0-dist/dependency/popper.min.js')}}"></script>
+    <script src="{{static_url('bootstrap-4.0.0-dist/js/bootstrap.min.js')}}"></script>
 
     {% block js %}{% end %}
 </body>
