@@ -23,7 +23,7 @@ from handlers.admin import AdminDeployHistoryHandler
 
 from handlers.admin import DbInitHandler
 
-from handlers.admin import AdmApiGitlabApps
+from handlers.admin import AdmApiApps
 
 settings = {
     'login_url':'/login',
@@ -42,7 +42,7 @@ application = Application([
     (r"/admin/app", AdminAppHandler),
     (r"/admin/deploy_rule", AdminDeployRuleHandler),
     (r"/admin/deploy_history", AdminDeployHistoryHandler),
-    (r'/admin/api/gitlabapps',AdmApiGitlabApps),
+    (r'/admin/api/gitlabapps',AdmApiApps),
     (r"/dbinit", DbInitHandler),
 
 ], **settings)

@@ -6,8 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
-engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
+engine = create_engine('mysql+pymysql://majianqiao:jianqiaoA1!@192.168.3.251/autop?charset=utf8')
+# engine = create_engine('mysql+pymysql://jianqiao:jianqiao@localhost/autop?charset=utf8')
 session  = sessionmaker(bind = engine)()
 Base = declarative_base()
 
@@ -28,7 +28,7 @@ class Container(Base):
 class AppType(Base):
     __tablename__ = 't_app_type'
     id = Column(Integer, primary_key=True)
-    type = Column(String(16))
+    name = Column(String(16))
 
 class App(Base):
     __tablename__ = 't_app'

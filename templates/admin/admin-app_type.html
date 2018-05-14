@@ -1,14 +1,29 @@
 {% extends admin.html %}
 
+
 {% block item-content %}
-    {% for item in items %}
-    <div class="row">
-        <div class="col-sm-11">
-            {{ item.name }}
+
+{% end %}
+
+
+
+{% block modal-id %}gitlabAppTypeModel{% end %}
+{% block modal-title %}App Type{% end %}
+{% block modal-body %}
+<div class="container-fluid">
+    <div class="row padding-row">
+        <div class="col-md-10">
+            <input type="text" class="form-control" id="apptype" placeholder="App Type" />
         </div>
-        <div class="col-sm-1">
-            <input type="button" value="BUTTON">
+        <div class="col-md-2">
+            <button type="button" class="btn btn-outline-primary btn-sm btn-block d-inline-block">
+                Add
+            </button>
         </div>
     </div>
-    {% end %}
+</div>
+{% end %}
+
+{% block js %}
+<script src="{{static_url('js/admin/admin.js')}}"></script>
 {% end %}

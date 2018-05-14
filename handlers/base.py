@@ -38,8 +38,8 @@ from handlers import database
 ###############################
 # GITLAB Configuration
 ###############################
-# GITLAB                          = 'http://192.168.3.252'
-GITLAB                          = 'http://gitlab.shangweiec.com'
+GITLAB                          = 'http://192.168.3.252'
+# GITLAB                          = 'http://gitlab.shangweiec.com'
 GITLAB_PRIVATE_TOKEN            = '9PnZDPXdzpxskMu3vmRy'
 
 GITLAB_OAUTH_REDIRECT_URI       = 'http://localhost:60000/login'
@@ -50,19 +50,19 @@ GITLAB_API_PREFIX               = '{}/api/v4'.format(GITLAB)
 GITLAB_OAUTH_AUTHORIZE_URL      = '{}/oauth/authorize'.format(GITLAB)
 GITLAB_OAUTH_ACCESS_TOKEN_URL   = '{}/oauth/token'.format(GITLAB)
 
-# class SqlSchema(object):
-#     environment = database.Environment
-#     container = database.Container
-#     app_type = database.AppType
-#     app = database.App
-#     deploy_rule = database.DeployRule
-#     deploy_history = database.DeployHistory
+class SqlSchema(object):
+    environment = database.Environment
+    container = database.Container
+    app_type = database.AppType
+    app = database.App
+    deploy_rule = database.DeployRule
+    deploy_history = database.DeployHistory
 
 class BaseHandler(RequestHandler, OAuth2Mixin):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request, **kwargs)
         self.database = database
-        # self.schema = SqlSchema
+        self.schema = SqlSchema
 
     async def get_gitlab_api(self, url):
         _httpclient         = self.get_auth_http_client()
