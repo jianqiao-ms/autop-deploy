@@ -9,13 +9,16 @@ import io, json
 import tornado.web
 
 # Local Packages
+from handler.index import IndexHandler
+
 
 # CONST
-plugins = next(os.walk(os.path.join(os.path.dirname(__file__), "plugins")))[1]
-
-
 
 # Class&Function Defination
+# class IndexHandler(tornado.web.RequestHandler):
+#     def get(self, *args, **kwargs):
+#         self.render('index.html')
+
 
 # Logic
 if __name__ == '__main__':
@@ -29,6 +32,8 @@ if __name__ == '__main__':
     from tornado.ioloop import IOLoop
 
     parse_command_line()
-    application = Application(url_map, **settings)
+    application = Application([
+        '/',
+    ], **settings)
     application.listen(60000)
     IOLoop.current().start()
