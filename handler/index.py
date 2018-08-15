@@ -12,8 +12,10 @@ import tornado.web
 
 # Class&Function Defination
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self, *args, **kwargs):
+    async def get(self, *args, **kwargs):
         self.render('index.html')
+
+
 
 # Logic
 if __name__ == '__main__':
