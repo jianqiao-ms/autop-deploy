@@ -20,21 +20,19 @@ from tornado.iostream import StreamClosedError
 
 
 async def fsub():
-    p = Subprocess(shlex.split('git clone git@192.168.3.252:backend/boss.git'),stdin=None, stdout=Subprocess.STREAM, stderr=subprocess.STDOUT, universal_newlines=True)
+    p = Subprocess(shlex.split('ping -c 10 baidu.com'),stdin=None, stdout=Subprocess.STREAM, stderr=subprocess.STDOUT, universal_newlines=True)
 
-    # try:
-    a = await p.stdout.read_until(b'\n')
-    sys.stdout.write(a.decode())
-    while True :
-        if p.stdout._read_buffer_size==0:
-            break
+    try:
         a = await p.stdout.read_until(b'\n')
         sys.stdout.write(a.decode())
-        # print('da')
-    # except StreamClosedError as e:
-    #     pass
+        while True :
+            if p.stdout._read_buffer_size==0:
+                break
+            a = await p.stdout.read_until(b'\n')
+            sys.stdout.write(a.decode())
+    except StreamClosedError as e:
+        pass
 
-    IOLoop.instance().current().stop()
 
 
 async def fprocess():
