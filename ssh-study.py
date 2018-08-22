@@ -3,7 +3,7 @@
 
 # Official packages
 import os
-
+import random
 # 3rd-party Packages
 import paramiko
 
@@ -30,24 +30,15 @@ proxy = paramiko.SSHClient()
 proxy.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 proxy.connect(**desc_proxy )
 
+
 proxy_transport = proxy.get_transport()
+channel = proxy_transport.open_channel("direct-tcpip",
+                                       ('192.168.0.49',22),
+                                       ('127.0.0.1',1234))
+remote_client = paramiko.SSHClient()
+remote_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+remote_client.connect('localhost',port=1234, sock=channel, username='root')
 
 
-proxy_channel = proxy_transport.open_channel(kind="forwarded-tcpip",dest_addr=('192.168.0.41',22), src_addr=('192.168.2.200',11111))
-
-print(proxy_channel)
-
-
-
-target = paramiko.SSHClient()
-target.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-target.connect(sock=proxy_channel, **desc_target)
-stdin, stdout, stderr = target.exec_command('hostname')
-print(stdout.read())
-
-
-# Logic
-# if __name__ == '__main__':
-#     stdin, stdout, stderr = target.exec_command('hostname')
-#     print(stdout.read())
-
+stdin, stdout, stderr = remote_client.exec_command('hostname')
+print(stdout.readlines())
