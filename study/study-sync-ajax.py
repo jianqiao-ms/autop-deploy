@@ -2,7 +2,7 @@
 #-* coding: utf-8 -*
 
 # Official packages
-import os
+import os, sys
 import shlex
 import subprocess
 
@@ -12,6 +12,7 @@ from tornado.process import Subprocess
 from tornado.options import parse_command_line
 from tornado.web import Application
 from tornado.ioloop import IOLoop
+from tornado.iostream import StreamClosedError
 
 # Local Packages
 
@@ -32,10 +33,31 @@ def fsub():
     IOLoop.current().add_handler(fd, recv, IOLoop.current().READ)
 
 class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        fsub()
-        self.finish('OK')
+    async def get(self):
+        p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
+                       stderr=subprocess.STDOUT, universal_newlines=True)
 
+        a = await p.stdout.read_until_close()
+        self.finish(a.decode().replace('\n', '<br/>'))
+
+        # try:
+        #     a = await p.stdout.read_until(b'\n')
+            # self.write(a.decode())
+            # self.flush()
+            # while True:
+                # if p.stdout._read_buffer_size == 0:
+                #     break
+                # a = await p.stdout.read_until(b'\n')
+                # self.write(a.decode())
+                # self.flush()
+        # except StreamClosedError as e:
+        #     import traceback
+        #     traceback.print_exc()
+        #     self.finish()
+
+class AsyncHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.finish('aysnc')
 
 class AjaxHandler(tornado.web.RequestHandler):
     def get(self):
@@ -57,6 +79,7 @@ if __name__ == "__main__":
     parse_command_line()
     application = Application([
         ('/', MainHandler),
+        ('/aysnc', AsyncHandler),
     ], **settings)
 
     application.listen(60000)
