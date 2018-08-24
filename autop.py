@@ -40,7 +40,8 @@ logger.addHandler(file_logger)
 if __name__ == '__main__':
     settings = {
         'login_url': '/login',
-        'template_path': os.path.join(os.path.dirname(__file__), "template")
+        'template_path': os.path.join(os.path.dirname(__file__), "template"),
+        "static_path": os.path.join(os.path.dirname(__file__), "static"),
     }
 
     parse_command_line()
