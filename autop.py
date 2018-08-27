@@ -2,40 +2,23 @@
 #-* coding: utf-8 -*
 
 # Official packages
-import os, sys
-import io, json
-import logging
+import os
 
 # 3rd-party Packages
-import tornado.web
-from tornado.options import parse_command_line
-from tornado.web import Application
+import tornado.options
 from tornado.ioloop import IOLoop
 
+
 # Local Packages
+from classes.appliacation import Application
 from handler.index import IndexHandler
+from handler.upload import UploadHandler
 
 # CONST
 # 程序运行logger
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-console_logger = logging.StreamHandler()
-console_logger.setLevel(logging.DEBUG)
-console_fmt = logging.Formatter('[%(asctime)s] %(levelname)-7s [%(funcName)s: %(filename)s]%(lineno)d -- %(message)s')
-console_logger.setFormatter(console_fmt)
-
-file_logger = logging.FileHandler('autop.log')
-file_logger.setLevel(logging.INFO)
-file_fmt = logging.Formatter('[%(asctime)s] %(levelname)-7s [%(funcName)s: %(filename)s]%(lineno)d -- %(message)s')
-file_logger.setFormatter(file_fmt)
-
-logger.addHandler(console_logger)
-logger.addHandler(file_logger)
 
 
 # Class&Function Defination
-
 # Logic
 if __name__ == '__main__':
     settings = {
@@ -44,10 +27,11 @@ if __name__ == '__main__':
         "static_path": os.path.join(os.path.dirname(__file__), "static"),
     }
 
-    parse_command_line()
+    tornado.options.parse_command_line()
     application = Application([
         ('/', IndexHandler),
+        ('/upload', UploadHandler),
     ], **settings)
 
-    application.listen(60000)
+    application.listen(60000, max_body_size=20 * 1024 * 1024 * 1024)
     IOLoop.current().start()

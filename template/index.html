@@ -1,5 +1,24 @@
+{% extends base.html %}
+
 {% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="testtext">Test Text</label>
+                    <input type="text" class="form-control" id="testtext" name="testtext" />
+                  </div>
 
-
-
+                <div class="form-group">
+                    <label for="uploadFileForm">Email address</label>
+                    <input type="file" class="form-control" id="uploadFileForm" name="uploadFileForm" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+</div>
 {% end %}

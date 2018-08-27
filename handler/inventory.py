@@ -11,10 +11,10 @@ import tornado.web
 # CONST
 
 # Class&Function Defination
-class IndexHandler(tornado.web.RequestHandler):
+class HostHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
+        self.application.logger.info('asd')
         self.render('index.html')
-
 
 
 # Logic

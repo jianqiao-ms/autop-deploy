@@ -1,0 +1,7 @@
+{
+  "host": "192.168.3.251",
+  "port": 3306,
+  "user": "majianqiao",
+  "passwd": "jianqiaoA1!",
+  "database": "autop"
+}

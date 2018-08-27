@@ -1,0 +1,48 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "main": {
+            "format": "[%(asctime)s] %(levelname)-7s [%(funcName)s: %(filename)s]%(lineno)d -- %(message)s"
+        }
+    },
+    "handlers": {
+        "console":{
+            "level":"DEBUG",
+            "class":"logging.StreamHandler",
+            "formatter": "main"
+        },
+        "file": {
+            "filename":"/home/jianqiao/workspace/autop/logs/autop.log",
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "formatter": "main"
+        },
+        "rotate-file": {
+            "filename":"/home/jianqiao/workspace/autop/logs/autop.log",
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "formatter": "main",
+            "when":"D",
+            "backupCount":30
+        },
+        "access-file": {
+            "filename":"/home/jianqiao/workspace/autop/logs/access.log",
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "formatter": "main",
+            "when":"D",
+            "backupCount":30
+        }
+    },
+    "loggers": {
+        "": {
+            "handlers":["console","rotate-file"],
+            "level":"INFO"
+        },
+        "tornado.access": {
+            "handlers": ["console","rotate-file"],
+            "level": "DEBUG"
+        }
+    }
+}
