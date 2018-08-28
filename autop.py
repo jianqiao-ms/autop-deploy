@@ -7,10 +7,10 @@ import os
 # 3rd-party Packages
 import tornado.options
 from tornado.ioloop import IOLoop
-
+from tornado.web import Application
 
 # Local Packages
-from classes.appliacation import Application
+# from classes.appliacation import Application
 from handler.index import IndexHandler
 from handler.upload import UploadHandler
 
@@ -33,5 +33,5 @@ if __name__ == '__main__':
         ('/upload', UploadHandler),
     ], **settings)
 
-    application.listen(60000, max_body_size=20 * 1024 * 1024 * 1024)
+    application.listen(60000)
     IOLoop.current().start()
