@@ -2,16 +2,10 @@
 #-* coding: utf-8 -*
 
 # Official packages
-import sys
-try:
-    from urllib.parse import unquote
-except ImportError:
-    # Python 2.
-    from urllib import unquote
 
 # 3rd-party Packages
 import tornado.web
-import logging
+
 # Local Packages
 
 # CONST
