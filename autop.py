@@ -7,18 +7,17 @@ import os
 # 3rd-party Packages
 import tornado.options
 from tornado.ioloop import IOLoop
-from tornado.web import Application
 
 # Local Packages
-# from classes.appliacation import Application
+from classes.appliacation import Application
+
 from handler.index import IndexHandler
 from handler.upload import UploadHandler
 
 # CONST
-# 程序运行logger
-
 
 # Class&Function Defination
+
 # Logic
 if __name__ == '__main__':
     settings = {
@@ -27,6 +26,7 @@ if __name__ == '__main__':
         "static_path": os.path.join(os.path.dirname(__file__), "static"),
     }
 
+    tornado.options.options.logging = None
     tornado.options.parse_command_line()
     application = Application([
         ('/', IndexHandler),
