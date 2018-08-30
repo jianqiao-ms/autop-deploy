@@ -13,6 +13,7 @@ from classes.appliacation import Application
 
 from handler.index import IndexHandler
 from handler.upload import UploadHandler
+from handler.database import DatabaseHandler
 
 # CONST
 
@@ -31,6 +32,7 @@ if __name__ == '__main__':
     application = Application([
         ('/', IndexHandler),
         ('/upload', UploadHandler),
+        ('/(?P<object>.+)\/*(?P<id>.*)', DatabaseHandler),
     ], **settings)
 
     application.listen(60000)

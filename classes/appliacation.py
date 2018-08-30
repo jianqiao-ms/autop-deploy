@@ -33,11 +33,12 @@ class Application(tornado.web.Application):
             LOGGER.warning("Dumplicate log_function in settings")
 
         with open(MYSQL_CONFIG_FILE, "r") as file:
-            engine = create_engine(
+            self.engine = create_engine(
                 "mysql+pymysql://{user}:{passwd}@{host}:{port}/{database}?charset=utf8".format(**json.load(file)),
             )
-            self.mysql = scoped_session(sessionmaker(bind=engine)) # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
+            self.mysql = scoped_session(sessionmaker(bind=self.engine)) # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
             LOGGER.info("MySQL connected!")
+            self.schemas = self.engine.table_names()
 
     def log_request(self, handler):
         request_time = 1000.0 * handler.request.request_time()
