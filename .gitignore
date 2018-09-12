@@ -1,5 +1,13 @@
 .idea/
 *.pyc
 *test*
-*.log
+
 upload/*
+
+
+access.log
+access.log.*
+autop.log
+autop.log.*
+tornado.log
+tornado.log.*
