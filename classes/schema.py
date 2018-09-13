@@ -24,35 +24,57 @@ HostToGroup = Table("relation_host-group", ModalBase.metadata,
     Column("host_id", ForeignKey("data_host.id"), primary_key = True),
     Column("hostgroup", ForeignKey("data_hostgroup.id"), primary_key = True),
 )
+
+class HostType(ModalBase):
+    __tablename__ = "data_hosttype"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    ssh_auth_type = Column(Enum("password", "rsa_key"), nullable=False)
+    ssh_user = Column(String(32), nullable=False)
+    ssh_key = Column(String(255))
+    ssh_password = Column(String(255))
+
+    hosts = relationship("Host",
+                         backref = "data_hosttype")
+
+    def __repr__(self):
+        # """          id     ipaddr  hostname visiblename ssh_auth_type ssh_user ssh_key ssh_password"""
+        line_format = "<{tablename}({columns})>"
+        column_name = ['"'+x.name+'"={}' for x in self.__table__.columns]
+        line_format = line_format.format(tablename = self.__tablename__, columns = ",".join(column_name))
+
+        data = [str(self.__dict__[x.name]) for x in self.__table__.columns]
+        return line_format.format(*data)
+
+
 class Host(ModalBase):
     __tablename__ = "data_host"
 
     id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
     ipaddr = Column(String(15), nullable=False)
     hostname = Column(String(255), nullable=False)
-    visiblename = Column(String(255), nullable=False)
     ssh_auth_type = Column(Enum("password","rsa_key"), nullable=False)
     ssh_user = Column(String(32), nullable=False)
     ssh_key = Column(String(255))
     ssh_password = Column(String(255))
 
+    type_id = Column(Integer, ForeignKey('data_hosttype.id'))
+
     groups = relationship("HostGroup",
                           secondary = HostToGroup,
                           back_populates = "hosts")
     def __repr__(self):
-        rst = list()
-
         # """          id     ipaddr  hostname visiblename ssh_auth_type ssh_user ssh_key ssh_password"""
-        line_format = "{:<2} {:<15} {:<10} {:<11} {:<13} {:<10} {:<32} {:<10}"
-        column_name = [x.name for x in self.__table__.columns]
-        title = line_format.format(*column_name)
+        line_format = "<{tablename}({columns})>"
+        column_name = ['"'+x.name+'"={}' for x in self.__table__.columns]
+        line_format = line_format.format(tablename = self.__tablename__, columns = ",".join(column_name))
 
-        self.__dict__["ssh_password"] = "***"
-        data = [str(self.__dict__[x]) for x in column_name]
-        rst.append(title)
-        rst.append(line_format.format(*data))
-
-        return "\n".join(rst)
+        data = [str(self.__dict__[x.name]) for x in self.__table__.columns]
+        return line_format.format(*data)
 
 class HostGroup(ModalBase):
     __tablename__ = "data_hostgroup"
@@ -79,16 +101,18 @@ if __name__ == "__main__":
             bind=engine))  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
 
         session = mysql()
-    # ModalBase.metadata.create_all(engine)
 
-    host = session.query(Host).filter_by(ipaddr = "192.168.3.2").all()
+    ModalBase.metadata.drop_all(engine)
+    ModalBase.metadata.create_all(engine)
+
+    # host = session.query(Host).filter_by(ipaddr = "192.168.3.2").all()
 
     # host[0].__repr__()
     #
     # print(host[0])
 
-    for h in host:
-        print(h)
+    # for h in host:
+    #     print(h)
         # print(dir(h))
         # print(h.__dict__)
         # a = [x.name for x in h.__table__.columns]

@@ -36,7 +36,7 @@ class Application(tornado.web.Application):
             self.engine = create_engine(
                 "mysql+pymysql://{user}:{passwd}@{host}:{port}/{database}?charset=utf8".format(**json.load(file)),
             )
-            self.mysql = scoped_session(sessionmaker(bind=self.engine)) # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
+            self.mysql = scoped_session(sessionmaker(bind=self.engine))() # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
             LOGGER.info("MySQL connected!")
             self.schemas = self.engine.table_names()
 
