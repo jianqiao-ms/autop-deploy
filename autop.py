@@ -6,39 +6,39 @@ import os
 
 # 3rd-party Packages
 import tornado.options
+from tornado.routing import RuleRouter, Rule, PathMatches
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
+
 
 # Local Packages
 from classes.appliacation import Application
 
 from handler.index import IndexHandler
 
-from handler.inventory import InventoryHandler
+from handler.inventory import app_inventory
 
 from handler.upload import UploadHandler
 from handler.database import DatabaseHandler
 
 # CONST
-settings = {
-        'login_url': '/login',
-        'template_path': os.path.join(os.path.dirname(__file__), "template"),
-        "static_path": os.path.join(os.path.dirname(__file__), "static"),
-        "debug":True
-    }
+
 
 # Class&Function Defination
-application = Application([
+app_base = Application([
         ('/', IndexHandler),
-        ('/inventory/(?P<item>.+)', InventoryHandler),
-        ('/upload', UploadHandler),
-        ('/(?P<object>.+)\/*(?P<id>.*)', DatabaseHandler),
-    ], **settings)
+])
+
+router = RuleRouter([
+    Rule(PathMatches("/inventory.*"), app_inventory),
+    Rule(PathMatches("/.*"), app_base)
+])
+
 
 # Logic
 if __name__ == '__main__':
     tornado.options.options.logging = None
     tornado.options.parse_command_line()
-    # server = HTTPServer(application)
-    application.listen(60000)
+    server = HTTPServer(router)
+    server.listen(60000)
     IOLoop.current().start()

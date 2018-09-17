@@ -7,7 +7,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table, Column, ForeignKey, \
-    Integer, String, Enum, BigInteger, DateTime, Time, Date
+    Integer, String, Enum, BigInteger, DateTime, Time, Date, Boolean
 
 # Local Packages
 
@@ -20,64 +20,83 @@ from sqlalchemy import Table, Column, ForeignKey, \
 
 ModalBase = declarative_base()
 
-HostToGroup = Table("relation_host-group", ModalBase.metadata,
-    Column("host_id", ForeignKey("data_host.id"), primary_key = True),
-    Column("hostgroup", ForeignKey("data_hostgroup.id"), primary_key = True),
-)
+class SchemeBase():
+    def __repr__(self):
+        """          id     ipaddr  hostname visiblename ssh_auth_type ssh_user ssh_key ssh_password"""
+        line_format = "<{tablename}({columns})>"
+        column_name = ['"'+x.name+'"={}' for x in self.__table__.columns]
+        line_format = line_format.format(tablename = self.__tablename__, columns = ",".join(column_name))
 
-class HostType(ModalBase):
-    __tablename__ = "data_hosttype"
+        data = [str(self.__dict__[x.name]) for x in self.__table__.columns]
+        return line_format.format(*data)
+
+    def json(self):
+        obj_dict = self.__dict__
+        return dict((key, obj_dict[key]) for key in obj_dict if not key.startswith("_"))
+
+class District(ModalBase, SchemeBase):
+    __tablename__ = "t_district"
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
 
+    hosts = relationship("Host", backref = 'district') # One-2-Many
+    templates = relationship("HostTemplate", backref = "district") # One-2-Many
+
+HostToGroup = Table("r_host_hgroup", ModalBase.metadata,
+    Column("host_id", ForeignKey("t_host.id"), primary_key = True),
+    Column("host_group_id", ForeignKey("t_host_group.id"), primary_key = True),
+)
+
+class HostTemplate(ModalBase, SchemeBase):
+    __tablename__ = "t_host_template"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    ssh_port = Column(Integer, default=22)
     ssh_auth_type = Column(Enum("password", "rsa_key"), nullable=False)
     ssh_user = Column(String(32), nullable=False)
     ssh_key = Column(String(255))
     ssh_password = Column(String(255))
+    ssh_proxy_id = Column(Integer)
 
-    hosts = relationship("Host",
-                         backref = "data_hosttype")
+    district_id = Column(Integer, ForeignKey("t_district.id")) # Many-2-One
+    hosts = relationship("Host",backref = "t_host_template") # One-2-Many
 
-    def __repr__(self):
-        # """          id     ipaddr  hostname visiblename ssh_auth_type ssh_user ssh_key ssh_password"""
-        line_format = "<{tablename}({columns})>"
-        column_name = ['"'+x.name+'"={}' for x in self.__table__.columns]
-        line_format = line_format.format(tablename = self.__tablename__, columns = ",".join(column_name))
+class Host(ModalBase ,SchemeBase):
+    """
+    IF EXIST template_id ;then
+        get ssh property from template
+        get distrcit from template
+    IF TRUE is_proxy ; then
+        ignore template_id
+        ignore district_id
+    """
+    __tablename__ = "t_host"
 
-        data = [str(self.__dict__[x.name]) for x in self.__table__.columns]
-        return line_format.format(*data)
+    id              = Column(Integer, primary_key=True)
+    ipaddr          = Column(String(15), nullable=False)
+    visiblename     = Column(String(48), unique=True)
+    hostname        = Column(String(255), nullable=False, unique=True)
+    is_proxy        = Column(Boolean,nullable = False)
 
-
-class Host(ModalBase):
-    __tablename__ = "data_host"
-
-    id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
-
-    ipaddr = Column(String(15), nullable=False)
-    hostname = Column(String(255), nullable=False)
-    ssh_auth_type = Column(Enum("password","rsa_key"), nullable=False)
-    ssh_user = Column(String(32), nullable=False)
-    ssh_key = Column(String(255))
-    ssh_password = Column(String(255))
-
-    type_id = Column(Integer, ForeignKey('data_hosttype.id'))
+    ssh_port        = Column(Integer,default=22)
+    ssh_auth_type   = Column(Enum("password","rsa_key"), nullable=False)
+    ssh_user        = Column(String(32), nullable=False)
+    ssh_key         = Column(String(255))
+    ssh_password    = Column(String(255))
+    ssh_proxy_id    = Column(Integer, ForeignKey('t_host.id'))
+    proxied         = relationship("Host")
+    template_id     = Column(Integer, ForeignKey('t_host_template.id'))
+    district_id     = Column(Integer, ForeignKey('t_district.id'))
 
     groups = relationship("HostGroup",
                           secondary = HostToGroup,
                           back_populates = "hosts")
-    def __repr__(self):
-        # """          id     ipaddr  hostname visiblename ssh_auth_type ssh_user ssh_key ssh_password"""
-        line_format = "<{tablename}({columns})>"
-        column_name = ['"'+x.name+'"={}' for x in self.__table__.columns]
-        line_format = line_format.format(tablename = self.__tablename__, columns = ",".join(column_name))
 
-        data = [str(self.__dict__[x.name]) for x in self.__table__.columns]
-        return line_format.format(*data)
-
-class HostGroup(ModalBase):
-    __tablename__ = "data_hostgroup"
+class HostGroup(ModalBase ,SchemeBase):
+    __tablename__ = "t_host_group"
 
     id = Column(Integer, primary_key= True)
     visiblename = Column(String(255), nullable=False)
@@ -98,25 +117,9 @@ if __name__ == "__main__":
             "mysql+pymysql://{user}:{passwd}@{host}:{port}/{database}?charset=utf8".format(**json.load(file)),
         )
         mysql = scoped_session(sessionmaker(
-            bind=engine))  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
+            bind=engine))()  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
 
         session = mysql()
 
     ModalBase.metadata.drop_all(engine)
     ModalBase.metadata.create_all(engine)
-
-    # host = session.query(Host).filter_by(ipaddr = "192.168.3.2").all()
-
-    # host[0].__repr__()
-    #
-    # print(host[0])
-
-    # for h in host:
-    #     print(h)
-        # print(dir(h))
-        # print(h.__dict__)
-        # a = [x.name for x in h.__table__.columns]
-        # print(a)
-        # print(type(a))
-        # print(" ".join(a))
-

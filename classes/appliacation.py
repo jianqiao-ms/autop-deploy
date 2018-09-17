@@ -19,6 +19,12 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 # CONST
 LOG_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/logging.json")
 MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/mysql.json")
+SETTINGS = {
+        'login_url': '/login',
+        'template_path': os.path.join(os.path.dirname(__file__), "../template"),
+        "static_path": os.path.join(os.path.dirname(__file__), "../static"),
+        "debug":True
+    }
 
 with open(LOG_CONFIG_FILE, "r") as file:
     logging.config.dictConfig(json.load(file))
@@ -26,8 +32,8 @@ with open(LOG_CONFIG_FILE, "r") as file:
 
 # Class&Function Defination
 class Application(tornado.web.Application):
-    def __init__(self, handlers=None, default_host=None, transforms=None,**settings):
-        super(Application, self).__init__(handlers, default_host, transforms,**settings)
+    def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
+        super(Application, self).__init__(handlers, default_host, transforms, **SETTINGS)
         self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
         if "log_function" in self.settings:
             LOGGER.warning("Dumplicate log_function in settings")
