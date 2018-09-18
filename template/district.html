@@ -1,0 +1,41 @@
+{% extends inventory.html %}
+
+{% block list %}
+<div class="container-fluid shadow p-3 mb-5 bg-white rounded">
+
+
+
+
+
+
+    <form>
+        {% for district in object %}
+
+
+
+
+        <div class="form-row">
+            <div class="form-group col">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="{{ district.id }}" >
+                    <label for="{{ district.id }}">{{ district.visiblename }}</label>
+                </div>
+            </div>
+        </div>
+        {% end %}
+
+
+
+    </form>
+
+
+
+
+
+
+
+
+</div>
+{% end %}
+
+{% block js %}<script src="{{static_url('js/inventory/district.js')}}"></script>{% end %}

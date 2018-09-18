@@ -34,74 +34,49 @@ class SchemeBase():
         obj_dict = self.__dict__
         return dict((key, obj_dict[key]) for key in obj_dict if not key.startswith("_"))
 
-class District(ModalBase, SchemeBase):
-    __tablename__ = "t_district"
+class ModalDistrict(ModalBase, SchemeBase):
+    __tablename__ = "t-district"
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
+    hosts = relationship("ModalHost", backref = 'district') # One-2-Many
 
-    hosts = relationship("Host", backref = 'district') # One-2-Many
-    templates = relationship("HostTemplate", backref = "district") # One-2-Many
-
-HostToGroup = Table("r_host_hgroup", ModalBase.metadata,
-    Column("host_id", ForeignKey("t_host.id"), primary_key = True),
-    Column("host_group_id", ForeignKey("t_host_group.id"), primary_key = True),
+HostToGroup = Table("r-host-group", ModalBase.metadata,
+    Column("host_id", ForeignKey("t-host.id"), primary_key = True),
+    Column("host_group_id", ForeignKey("t-host_group.id"), primary_key = True),
 )
-
-class HostTemplate(ModalBase, SchemeBase):
-    __tablename__ = "t_host_template"
-
-    id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
-
-    ssh_port = Column(Integer, default=22)
-    ssh_auth_type = Column(Enum("password", "rsa_key"), nullable=False)
-    ssh_user = Column(String(32), nullable=False)
-    ssh_key = Column(String(255))
-    ssh_password = Column(String(255))
-    ssh_proxy_id = Column(Integer)
-
-    district_id = Column(Integer, ForeignKey("t_district.id")) # Many-2-One
-    hosts = relationship("Host",backref = "t_host_template") # One-2-Many
-
-class Host(ModalBase ,SchemeBase):
-    """
-    IF EXIST template_id ;then
-        get ssh property from template
-        get distrcit from template
-    IF TRUE is_proxy ; then
-        ignore template_id
-        ignore district_id
-    """
-    __tablename__ = "t_host"
+class ModalHost(ModalBase ,SchemeBase):
+    __tablename__ = "t-host"
 
     id              = Column(Integer, primary_key=True)
-    ipaddr          = Column(String(15), nullable=False)
-    visiblename     = Column(String(48), unique=True)
-    hostname        = Column(String(255), nullable=False, unique=True)
-    is_proxy        = Column(Boolean,nullable = False)
+    ipaddr          = Column(String(15),  unique=True)
+    visiblename     = Column(String(48),  unique=True)
+    hostname        = Column(String(255), unique=True)
 
-    ssh_port        = Column(Integer,default=22)
+    is_proxy        = Column(Boolean,nullable = False, default=False)
+    type            = Column(Enum("host","template"), nullable=False, default="host")
+
+    ssh_port        = Column(Integer, nullable=False, default=22)
     ssh_auth_type   = Column(Enum("password","rsa_key"), nullable=False)
     ssh_user        = Column(String(32), nullable=False)
-    ssh_key         = Column(String(255))
-    ssh_password    = Column(String(255))
-    ssh_proxy_id    = Column(Integer, ForeignKey('t_host.id'))
-    proxied         = relationship("Host")
-    template_id     = Column(Integer, ForeignKey('t_host_template.id'))
-    district_id     = Column(Integer, ForeignKey('t_district.id'))
+    ssh_key         = Column(String(255), default="")
+    ssh_password    = Column(String(255), default="")
 
-    groups = relationship("HostGroup",
+    ssh_proxy_id    = Column(Integer, ForeignKey('t-host.id'))
+    template_id     = Column(Integer, ForeignKey('t-host.id'))
+    district_id     = Column(Integer, ForeignKey('t-district.id'))
+
+    groups = relationship("ModalHostGroup",
                           secondary = HostToGroup,
                           back_populates = "hosts")
 
-class HostGroup(ModalBase ,SchemeBase):
-    __tablename__ = "t_host_group"
+class ModalHostGroup(ModalBase ,SchemeBase):
+    __tablename__ = "t-host_group"
 
     id = Column(Integer, primary_key= True)
     visiblename = Column(String(255), nullable=False)
 
-    hosts = relationship("Host",
+    hosts = relationship("ModalHost",
                          secondary = HostToGroup,
                          back_populates = "groups")
 
@@ -119,7 +94,7 @@ if __name__ == "__main__":
         mysql = scoped_session(sessionmaker(
             bind=engine))()  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
 
-        session = mysql()
+        # session = mysql()
 
     ModalBase.metadata.drop_all(engine)
     ModalBase.metadata.create_all(engine)

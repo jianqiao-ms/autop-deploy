@@ -7,12 +7,18 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{static_url('bootstrap/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/header.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/container.css')}}">
     {% block css %}{% end %}<!-- Optional StyleSheet -->
 
     <title>{% block title %}Auto Operation System{% end %}</title>
 </head>
 <body>
-    {% block body %}{% end %}
+    {% block body %}
+
+    {% block nav%}{% end %}
+    {% block container %}{% end %}
+    {% end %}
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{{static_url('bootstrap/jquery-3.3.1.slim.min.js')}}"></script>

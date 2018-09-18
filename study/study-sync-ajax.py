@@ -61,7 +61,7 @@ class AsyncHandler(tornado.web.RequestHandler):
 
 class AjaxHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("index.html")
+        self.render("base.html")
 
 def make_app():
     return tornado.web.Application([

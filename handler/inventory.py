@@ -6,7 +6,6 @@ import json
 
 # 3rd-party Packages
 import tornado.web
-from tornado.web import Application
 from tornado.escape import json_decode, json_encode
 
 from sqlalchemy.exc import IntegrityError
@@ -16,19 +15,26 @@ from classes.appliacation import LOGGER
 from classes.newdict import NewDict
 from classes.appliacation import Application
 
-from classes.schema import District, HostTemplate, HostGroup, Host
+from classes.schema import ModalDistrict, ModalHost, ModalHostGroup
 
 # CONST
 
 # Class&Function Defination
+class NotInitialized(object):
+    def __init__(self):
+        self.visiblename = ''
+        self.id = ''
 
-class DistrictHandler(tornado.web.RequestHandler):
-    def get(self, *args, **kwargs):
-        records = self.application.mysql.query(District).all()
-        self.finish(json.dumps([r.json() for r in records], ensure_ascii=False, indent=2))
+class InventoryHandler(tornado.web.RequestHandler):
+    def get(self):
+        headers = {"Content-Type":""}
+        headers.update(self.request.headers)
+
+        self.finish(self.__json__) if headers["Content-Type"] == "application/json" else \
+            self.render(self.__view__, object = self.__object__)
 
     def post(self, *args, **kwargs):
-        item = District(**json_decode(self.request.body))
+        item = self.__schema__(**json_decode(self.request.body))
 
         try:
             self.application.mysql.add(item)
@@ -44,55 +50,60 @@ class DistrictHandler(tornado.web.RequestHandler):
             return
         self.finish(str(item.id))
 
-class HostTemplateHandler(tornado.web.RequestHandler):
-    def get(self, *args, **kwargs):
-        records = self.application.mysql.query(HostTemplate).all()
-        self.finish(json.dumps([r.json() for r in records], ensure_ascii=False, indent=2))
+    @property
+    def __arguments__(self):
+        return {k: self.get_argument(k) for k in self.request.arguments}
 
-    def post(self, *args, **kwargs):
-        item = HostTemplate(**json_decode(self.request.body))
+    @property
+    def __object__(self):
+        return self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
 
-        try:
-            self.application.mysql.add(item)
-            self.application.mysql.commit()
-        except IntegrityError as e:
-            LOGGER.exception()
-            self.application.mysql.rollback()
-            self.finish('HostTemplate named {} already exist!'.format(item.visiblename))
-            return
-        except:
-            self.application.mysql.rollback()
-            LOGGER.exception('Except during Create HostTemplate')
-            return
-        self.finish(str(item.id))
+    @property
+    def __json__(self):
+        records = self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
+        rst = json.dumps([r.json() for r in records], ensure_ascii=False, indent=2)
+        return rst
 
-class HostHandler(tornado.web.RequestHandler):
-    def get(self, *args, **kwargs):
-        records = self.application.mysql.query(Host).all()
-        self.finish(json.dumps([r.json() for r in records], ensure_ascii=False, indent=2))
+    @property
+    def __schema__(self):
+        return NotInitialized
 
-    def post(self, *args, **kwargs):
-        item = Host(**json_decode(self.request.body))
+    @property
+    def __view__(self):
+        return 'Not Initialized'
 
-        try:
-            self.application.mysql.add(item)
-            self.application.mysql.commit()
-        except IntegrityError as e:
-            LOGGER.exception()
-            self.application.mysql.rollback()
-            self.finish('Host named {} already exist!'.format(item.visiblename))
-            return
-        except:
-            self.application.mysql.rollback()
-            LOGGER.exception('Except during Create Host')
-            return
-        self.finish(str(item.id))
+class DistrictHandler(InventoryHandler):
+    @property
+    def __schema__(self):
+        return ModalDistrict
+
+    @property
+    def __view__(self):
+        return 'district.html'
+
+class HostHandler(InventoryHandler):
+    @property
+    def __schema__(self):
+        return ModalHost
+
+    @property
+    def __view__(self):
+        return 'host.html'
+
+class HostGroupHandler(InventoryHandler):
+    @property
+    def __schema__(self):
+        return ModalHostGroup
+
+    @property
+    def __view__(self):
+        return 'hostgroup.html'
 
 # application
 app_inventory = Application([
     ('/inventory/district', DistrictHandler),
-    ('/inventory/hosttemplate', HostTemplateHandler),
-    ('/inventory/host', HostHandler)
+    ('/inventory/host', HostHandler),
+    ('/inventory/hostgroup', HostGroupHandler),
 ])
 
 # Logic

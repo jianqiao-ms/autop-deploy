@@ -7,15 +7,18 @@
 import tornado.web
 
 # Local Packages
+from classes.appliacation import Application
 
 # CONST
 
 # Class&Function Defination
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('index.html')
+        self.render('base.html')
 
-
+app_dashboard = Application([
+    ('/', IndexHandler),
+])
 
 # Logic
 if __name__ == '__main__':
