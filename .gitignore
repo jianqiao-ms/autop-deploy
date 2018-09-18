@@ -3,7 +3,7 @@
 *test*
 
 upload/*
-
+*.json
 
 access.log
 access.log.*
