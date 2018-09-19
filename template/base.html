@@ -1,6 +1,6 @@
 {% extends bootstrap.html %}
 
-{% block nav %}
+{% block header %}
 <header>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark"> <a class="navbar-brand" href="/">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -10,15 +10,17 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item"> <a class="nav-link" href="/">Home</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="/view/inventory">inventory</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="/inventory">inventory</a> </li>
         </ul>
     </div>
 </nav>
 </header>
 {% end %}
 
+
+
 {% block container %}
-<div class="container-fluid">
-    {% block content %}{% end %}
+<div class="container-fluid global">
+    {% block in_global_container %}{% end %}
 </div>
 {% end %}

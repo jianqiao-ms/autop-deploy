@@ -1,5 +1,17 @@
 {% extends inventory.html %}
 
-{% block list %}<div class="row"></div>{% end %}
+{% block inventory-panel %}
+<form>
+    {% for host in object %}
+    <div class="form-row">
+        <div class="form-group col">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="{{ district.id }}" >
+                <label for="{{ district.id }}">{{ host.visiblename }}</label>
+            </div>
+        </div>
+    </div>
+    {% end %}
+</form>
+{% end %}
 
-{% block js %}<script src="{{static_url('js/inventory/district.js')}}"></script>{% end %}

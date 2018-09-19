@@ -56,13 +56,16 @@ class InventoryHandler(tornado.web.RequestHandler):
 
     @property
     def __object__(self):
-        return self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
+        return self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all() if \
+            self.__schema__ is not NotInitialized else \
+            None
 
     @property
     def __json__(self):
         records = self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
         rst = json.dumps([r.json() for r in records], ensure_ascii=False, indent=2)
-        return rst
+        return rst if self.__schema__ is not NotInitialized else \
+            json.dumps({"ERROR":"Not supported Content-Type"})
 
     @property
     def __schema__(self):
@@ -70,7 +73,7 @@ class InventoryHandler(tornado.web.RequestHandler):
 
     @property
     def __view__(self):
-        return 'Not Initialized'
+        return 'inventory.html'
 
 class DistrictHandler(InventoryHandler):
     @property
@@ -97,10 +100,11 @@ class HostGroupHandler(InventoryHandler):
 
     @property
     def __view__(self):
-        return 'hostgroup.html'
+        return 'host_group.html'
 
 # application
 app_inventory = Application([
+    ('/inventory', InventoryHandler),
     ('/inventory/district', DistrictHandler),
     ('/inventory/host', HostHandler),
     ('/inventory/hostgroup', HostGroupHandler),

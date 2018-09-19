@@ -1,26 +1,20 @@
 {% extends base.html %}
 
-{% block css %}
-<link rel="stylesheet" href="{{static_url('css/inventory.css')}}">
-<link rel="stylesheet" href="{{static_url('css/grid.css')}}">
-{% end %}<!-- Optional StyleSheet -->
 
-{% block content %}
-<div class="row">
-    <div class="col-sm-4">
-        <!--占位-->
-    </div>
-    <div class="col-sm-8 text-right">
-
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/inventory/district">District</a></li>
-                <li class="breadcrumb-item"><a href="inventory/host">Host</a></li>
-                <li class="breadcrumb-item"><a href="/inventory/hostgroup">Hostgroup</a></li>
-            </ol>
-        </nav>
-    </div>
+{% block second_nav %}
+<div class="container-fluid second_nav">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/inventory/district">District</a></li>
+            <li class="breadcrumb-item"><a href="/inventory/host">Host</a></li>
+            <li class="breadcrumb-item"><a href="/inventory/hostgroup">Hostgroup</a></li>
+        </ol>
+    </nav>
 </div>
+{% end %}
 
-{% block list %}{% end %}
+{% block in_global_container %}
+<div class="container-fluid shadow p-3 mb-0 bg-white rounded">
+{% block inventory-panel %}{% end %}
+</div>
 {% end %}

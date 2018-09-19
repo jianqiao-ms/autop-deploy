@@ -7,18 +7,19 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{static_url('bootstrap/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{static_url('css/header.css')}}">
-    <link rel="stylesheet" href="{{static_url('css/container.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/global_container.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/second_nav.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/form.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/shadow.css')}}">
     {% block css %}{% end %}<!-- Optional StyleSheet -->
 
     <title>{% block title %}Auto Operation System{% end %}</title>
 </head>
 <body>
-    {% block body %}
+    {% block header %}{% end %}
+    {% block second_nav %}{% end %}
 
-    {% block nav%}{% end %}
     {% block container %}{% end %}
-    {% end %}
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{{static_url('bootstrap/jquery-3.3.1.slim.min.js')}}"></script>

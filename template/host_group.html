@@ -2,12 +2,12 @@
 
 {% block inventory-panel %}
 <form>
-    {% for district in object %}
+    {% for host_group in object %}
     <div class="form-row">
         <div class="form-group col">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="{{ district.id }}" >
-                <label for="{{ district.id }}">{{ district.visiblename }}</label>
+                <label for="{{ district.id }}">{{ host_group.visiblename }}</label>
             </div>
         </div>
     </div>
