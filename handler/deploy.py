@@ -14,13 +14,14 @@ from sqlalchemy.exc import IntegrityError
 from classes.appliacation import LOGGER
 from classes.appliacation import Application
 from classes.handlers import NotInitialized
-from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup
+from classes.schema.SchemaDeploy import SchemaProjectType, SchemaProject
 
 # CONST
 
 # Class&Function Defination
 
-class InventoryHandler(tornado.web.RequestHandler):
+
+class DeployHandler(tornado.web.RequestHandler):
     def get(self):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
@@ -68,45 +69,35 @@ class InventoryHandler(tornado.web.RequestHandler):
 
     @property
     def __prefix__(self):
-        return 'inventory/'
+        return 'deploy/'
 
     @property
     def __view__(self):
-        return 'inventory.html'
+        return 'deploy.html'
 
-class DistrictHandler(InventoryHandler):
+class ProjectTypeHandler(DeployHandler):
     @property
     def __schema__(self):
-        return SchemaDistrict
+        return SchemaProjectType
 
     @property
     def __view__(self):
         return 'district.html'
 
-class HostHandler(InventoryHandler):
+class ProjectHandler(DeployHandler):
     @property
     def __schema__(self):
-        return SchemaHost
+        return SchemaProject
 
     @property
     def __view__(self):
         return 'host.html'
 
-class HostGroupHandler(InventoryHandler):
-    @property
-    def __schema__(self):
-        return SchemaHostGroup
-
-    @property
-    def __view__(self):
-        return 'host_group.html'
-
 # application
-app_inventory = Application([
-    ('/inventory', InventoryHandler),
-    ('/inventory/district', DistrictHandler),
-    ('/inventory/host', HostHandler),
-    ('/inventory/hostgroup', HostGroupHandler),
+app_deploy = Application([
+    ('/deploy', DeployHandler),
+    ('/deploy/projecttype', ProjectTypeHandler),
+    ('/deploy/project', ProjectHandler),
 ])
 
 # Logic

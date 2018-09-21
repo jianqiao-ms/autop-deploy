@@ -12,6 +12,7 @@ from tornado.ioloop import IOLoop
 # Local Packages
 from handler.dashboard import app_dashboard
 from handler.inventory import app_inventory
+from handler.deploy import app_deploy
 
 # CONST
 
@@ -19,6 +20,7 @@ from handler.inventory import app_inventory
 # Class&Function Defination
 router = RuleRouter([
     Rule(PathMatches("/inventory.*"), app_inventory),
+    Rule(PathMatches("/deploy.*"), app_deploy),
     Rule(PathMatches("/.*"), app_dashboard)
 ])
 

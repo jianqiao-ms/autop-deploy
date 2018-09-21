@@ -25,6 +25,12 @@ def restricted(items):
         return pick_item
     return decorator
 
+class NotInitialized(object):
+    def __init__(self):
+        self.visiblename = ''
+        self.id = ''
+
+
 # Logic
 if __name__ == '__main__':
     pass
