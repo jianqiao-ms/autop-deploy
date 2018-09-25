@@ -6,7 +6,7 @@
 # 3rd-party Packages
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table, Column, ForeignKey, \
-    Integer, String, Enum, Boolean
+    Integer, String, Enum, Boolean, DateTime
 
 # Local Packages
 from classes.schema.Base import ModalBase, SchemaBase
@@ -18,16 +18,49 @@ class SchemaProjectType(ModalBase, SchemaBase):
     __tablename__ = "t-project_type"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(48), nullable=False, unique=True)
-    projects = relationship("ModalProject", backref = "type")
+    visiblename = Column(String(48), nullable=False, unique=True)
+    projects = relationship("SchemaProject", backref = "type")
 
 class SchemaProject(ModalBase, SchemaBase):
     __tablename__ = "t-project"
 
     id = Column(Integer, primary_key=True)
-    gitlab_id = Column(Integer, nullable=False, unique=True)
     visiblename = Column(String(48), nullable=False, unique=True)
+
+    gitlab_id = Column(Integer, nullable=False, unique=True)
     type_id = Column(Integer, ForeignKey("t-project_type.id"))
+
+class SchemaAutoRule(ModalBase, SchemaBase):
+    __tablename__ = "t-deploy_auto"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    project_id = Column(Integer, nullable=False, unique=True)
+    host_id  = Column(Integer, ForeignKey('t-host.id'))
+    host_group_id = Column(Integer, ForeignKey('t-host_group.id'))
+    path = Column(DateTime)
+
+class SchemaAutoHistory(ModalBase, SchemaBase):
+    __tablename__ = "t-deploy_history"
+
+    id = Column(Integer, primary_key=True)
+    rule_id = Column(Integer, ForeignKey('t-deploy_auto.id'))
+    deploy_time = Column(DateTime)
+
+class SchemaManul(ModalBase, SchemaBase):
+    __tablename__ = "t-deploy_manul"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    project_id = Column(Integer, nullable=False, unique=True)
+    branch = Column(String(16))
+    sha = Column(String(48))
+    host_id  = Column(Integer, ForeignKey('t-host.id'))
+    host_group_id = Column(Integer, ForeignKey('t-host_group.id'))
+    path = Column(String(128))
+
 
 # Logic
 if __name__ == '__main__':

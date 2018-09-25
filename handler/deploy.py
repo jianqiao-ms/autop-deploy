@@ -14,7 +14,8 @@ from sqlalchemy.exc import IntegrityError
 from classes.appliacation import LOGGER
 from classes.appliacation import Application
 from classes.handlers import NotInitialized
-from classes.schema.SchemaDeploy import SchemaProjectType, SchemaProject
+from classes.schema.SchemaDeploy import SchemaProjectType, SchemaProject, \
+    SchemaAutoRule, SchemaAutoHistory, SchemaManul
 
 # CONST
 
@@ -30,6 +31,7 @@ class DeployHandler(tornado.web.RequestHandler):
             self.render(self.__prefix__ + self.__view__, object = self.__object__)
 
     def post(self, *args, **kwargs):
+        print(self.request.body)
         item = self.__schema__(**json_decode(self.request.body))
 
         try:
@@ -82,7 +84,7 @@ class ProjectTypeHandler(DeployHandler):
 
     @property
     def __view__(self):
-        return 'district.html'
+        return 'project_type.html'
 
 class ProjectHandler(DeployHandler):
     @property
@@ -91,13 +93,33 @@ class ProjectHandler(DeployHandler):
 
     @property
     def __view__(self):
-        return 'host.html'
+        return 'project.html'
+
+class AutoRuleHandler(DeployHandler):
+    @property
+    def __schema__(self):
+        return SchemaAutoRule
+
+    @property
+    def __view__(self):
+        return 'auto.html'
+
+class ManulHandler(DeployHandler):
+    @property
+    def __schema__(self):
+        return SchemaManul
+
+    @property
+    def __view__(self):
+        return 'manul.html'
 
 # application
 app_deploy = Application([
     ('/deploy', DeployHandler),
     ('/deploy/projecttype', ProjectTypeHandler),
     ('/deploy/project', ProjectHandler),
+    ('/deploy/auto', AutoRuleHandler),
+    ('/deploy/manul', ProjectHandler),
 ])
 
 # Logic

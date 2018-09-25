@@ -18,10 +18,6 @@ from classes.schema.Base import ModalBase, SchemaBase
 # Many-to-many https://docs.sqlalchemy.org/en/latest/orm/tutorial.html
 """
 
-
-
-
-
 class SchemaDistrict(ModalBase, SchemaBase):
     __tablename__ = "t-district"
 
