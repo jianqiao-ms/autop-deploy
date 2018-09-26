@@ -33,7 +33,7 @@ class SchemaHost(ModalBase ,SchemaBase):
     __tablename__ = "t-host"
 
     id              = Column(Integer, primary_key=True)
-    ipaddr          = Column(String(15),  unique=True)
+    ipaddr           = Column(String(15),  unique=True)
     visiblename     = Column(String(48),  unique=True)
     hostname        = Column(String(255), unique=True)
 
@@ -41,7 +41,7 @@ class SchemaHost(ModalBase ,SchemaBase):
     type            = Column(Enum("host","template"), nullable=False, default="host")
 
     ssh_port        = Column(Integer, nullable=False, default=22)
-    ssh_auth_type   = Column(Enum("password","rsa_key"), nullable=False)
+    ssh_auth_type   = Column(Enum("password","rsa_key"), nullable=False, default="password")
     ssh_user        = Column(String(32), nullable=False)
     ssh_key         = Column(String(255), default="")
     ssh_password    = Column(String(255), default="")

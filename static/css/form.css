@@ -11,3 +11,9 @@
 .form-row *:hover{
     cursor:pointer;
 }
+
+.form-row>div {
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+

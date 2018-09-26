@@ -26,9 +26,8 @@ def restricted(items):
     return decorator
 
 class NotInitialized(object):
-    def __init__(self):
-        self.visiblename = ''
-        self.id = ''
+    id = ""
+    visiblename = ''
 
 
 # Logic

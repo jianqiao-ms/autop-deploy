@@ -3,12 +3,15 @@
 
 # Official packages
 import json
+from socket import timeout
 
 # 3rd-party Packages
 import tornado.web
 from tornado.escape import json_decode, json_encode
-
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DBAPIError
+
+import paramiko
 
 # Local Packages
 from classes.appliacation import LOGGER
@@ -35,15 +38,22 @@ class InventoryHandler(tornado.web.RequestHandler):
             self.application.mysql.add(item)
             self.application.mysql.commit()
         except IntegrityError as e:
-            LOGGER.exception()
+            msg = '{} named {} already exist!'.format(kwargs['item'], item.visiblename)
             self.application.mysql.rollback()
-            self.finish('{} named {} already exist!'.format(kwargs['item'], item.visiblename))
+            LOGGER.exception(msg)
+            self.finish(msg)
             return
         except:
             self.application.mysql.rollback()
             LOGGER.exception('Except during Create {}'.format(kwargs['item']))
             return
         self.finish(str(item.id))
+
+    def delete(self, *args, **kwargs):
+        items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
+        for item in items:
+            self.application.mysql.delete(item)
+        self.finish('DELETED')
 
     @property
     def __arguments__(self):
@@ -92,6 +102,54 @@ class HostHandler(InventoryHandler):
     def __view__(self):
         return 'host.html'
 
+    def post(self, *args, **kwargs):
+        item = self.__schema__(**json_decode(self.request.body))
+        hostname = self.get_hostname(item)
+
+        if not hostname["result"]:
+            self.finish(hostname["msg"])
+            return
+        item.hostname = hostname["msg"]
+
+        try:
+            self.application.mysql.add(item)
+            self.application.mysql.commit()
+        except IntegrityError:
+            self.application.mysql.rollback()
+            self.finish('{} already exsit'.format(item.ipaddr))
+        except DBAPIError:
+            self.application.mysql.rollback()
+            pass
+        self.finish(str(item.id))
+
+    def get_hostname(self, host):
+        conn = dict()
+        conn["timeout"] = 30
+        conn["hostname"] = host.ipaddr
+        conn["port"] = 22 if not host.ssh_port else host.ssh_port
+        conn["username"] = host.ssh_user
+        conn["password"] = host.ssh_password if not host.ssh_auth_type == "rsa_key" else None
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            ssh.connect(**conn)
+        except timeout:
+            pass
+            return {"result":False, "msg":"Host {} not avilable, process terminated".format(host.ipaddr)}
+        except paramiko.ssh_exception.AuthenticationException:
+            pass
+            return {"result":False, "msg":"Authentication failed"}
+        except Exception as e:
+            pass
+            return {"result":False, "msg":e.__str__()}
+
+        stdin, stdout, stderr = ssh.exec_command('hostname')
+        hostname = stdout.read().decode()
+        ssh.close()
+        return {"result":True, "msg":hostname}
+
+
 class HostGroupHandler(InventoryHandler):
     @property
     def __schema__(self):
@@ -111,4 +169,15 @@ app_inventory = Application([
 
 # Logic
 if __name__ == '__main__':
-    pass
+    conn = dict(
+        fqdn="192.168.3.9",
+        port=22,
+        username="root",
+        password=" "
+    )
+
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(**conn)
+    ssh.close()
