@@ -2,6 +2,21 @@
 
 {% block inventory-panel %}
 
+        <div class="form-row align-items-center text-white bg-success">
+            <div class="col-sm-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="allCheck">
+                    <label class="form-check-label" for="allCheck">
+                        全选
+                    </label>
+                </div>
+            </div>
+            <div class="col"></div>
+
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-outline-light btn-form">删除</button>
+            </div>
+        </div>
 
     {% for district in object %}
     <form>
@@ -9,7 +24,7 @@
 
 
         <div class="form-row align-items-center">
-            <div class="col-auto">
+            <div class="col-sm-2">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="autoSizingCheck">
                     <label class="form-check-label" for="autoSizingCheck">
@@ -26,11 +41,11 @@
 
             </div>
 
-            <div class="col-auto">
+            <div class="col-sm-1">
                 <button type="submit" class="btn btn-outline-warning  btn-form">修改</button>
             </div>
 
-            <div class="col-auto">
+            <div class="col-sm-1">
                 <button type="submit" class="btn btn-outline-danger btn-form">删除</button>
             </div>
 

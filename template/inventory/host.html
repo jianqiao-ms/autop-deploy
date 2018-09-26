@@ -3,7 +3,6 @@
 {% block inventory-panel %}
 
 
-    <form>
         <div class="form-row align-items-center text-white bg-success">
             <div class="col-sm-2">
                 <div class="form-check">
@@ -16,11 +15,15 @@
             <div class="col-sm-2">
                 <span>主机名</span>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <span>FQDN</span>
             </div>
+            <div class="col"></div>
+
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-outline-light btn-form">删除</button>
+            </div>
         </div>
-    </form>
 
     {% for host in object %}
     <form>
@@ -38,7 +41,7 @@
                 {{ host.hostname }}
             </div>
 
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <span>{{ host.ipaddr }}</span>
             </div>
 

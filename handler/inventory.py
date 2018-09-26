@@ -22,8 +22,12 @@ from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHos
 # CONST
 
 # Class&Function Defination
-
+"""
+"""
 class InventoryHandler(tornado.web.RequestHandler):
+    """
+    Base class of inventory items handlers.
+    """
     def get(self):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
@@ -32,20 +36,29 @@ class InventoryHandler(tornado.web.RequestHandler):
             self.render(self.__prefix__ + self.__view__, object = self.__object__)
 
     def post(self, *args, **kwargs):
+        headers = {"Content-Type": ""}
+        headers.update(self.request.headers)
         item = self.__schema__(**json_decode(self.request.body))
+
+        prepare_func = getattr(self, "post_pre", None)
+        if prepare_func and callable(prepare_func):
+            item = prepare_func(item)
 
         try:
             self.application.mysql.add(item)
             self.application.mysql.commit()
         except IntegrityError as e:
-            msg = '{} named {} already exist!'.format(kwargs['item'], item.visiblename)
             self.application.mysql.rollback()
-            LOGGER.exception(msg)
-            self.finish(msg)
+            _ = e.params.popitem()
+            result = {"status":False, "msg":"Dumpicate `{}` valued ({})".format(_[0], _[1])}
+            self.finish(result) if headers["Content-Type"] == "application/json" else \
+                self.finish(result["msg"])
             return
-        except:
+        except DBAPIError as e:
             self.application.mysql.rollback()
-            LOGGER.exception('Except during Create {}'.format(kwargs['item']))
+            result = {"status": False, "msg": e.__str__()}
+            self.finish(result) if headers["Content-Type"] == "application/json" else \
+                self.finish(result["msg"])
             return
         self.finish(str(item.id))
 
@@ -53,7 +66,7 @@ class InventoryHandler(tornado.web.RequestHandler):
         items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
         for item in items:
             self.application.mysql.delete(item)
-        self.finish('DELETED')
+        self.finish("DELETED")
 
     @property
     def __arguments__(self):
@@ -78,12 +91,19 @@ class InventoryHandler(tornado.web.RequestHandler):
 
     @property
     def __prefix__(self):
-        return 'inventory/'
+        return "inventory/"
 
     @property
     def __view__(self):
-        return 'inventory.html'
+        return "inventory.html"
 
+    @property
+    def __alias__(self):
+        return "HUMANREADABLENAME"
+
+###############################
+# Inventory item handlers
+###############################
 class DistrictHandler(InventoryHandler):
     @property
     def __schema__(self):
@@ -91,7 +111,11 @@ class DistrictHandler(InventoryHandler):
 
     @property
     def __view__(self):
-        return 'district.html'
+        return "district.html"
+    
+    @property
+    def __alias__(self):
+        return "District"
 
 class HostHandler(InventoryHandler):
     @property
@@ -100,27 +124,16 @@ class HostHandler(InventoryHandler):
 
     @property
     def __view__(self):
-        return 'host.html'
+        return "host.html"
 
-    def post(self, *args, **kwargs):
-        item = self.__schema__(**json_decode(self.request.body))
+    def post_pre(self, item):
         hostname = self.get_hostname(item)
 
-        if not hostname["result"]:
+        if not hostname["status"]:
             self.finish(hostname["msg"])
             return
         item.hostname = hostname["msg"]
-
-        try:
-            self.application.mysql.add(item)
-            self.application.mysql.commit()
-        except IntegrityError:
-            self.application.mysql.rollback()
-            self.finish('{} already exsit'.format(item.ipaddr))
-        except DBAPIError:
-            self.application.mysql.rollback()
-            pass
-        self.finish(str(item.id))
+        return item
 
     def get_hostname(self, host):
         conn = dict()
@@ -136,18 +149,18 @@ class HostHandler(InventoryHandler):
             ssh.connect(**conn)
         except timeout:
             pass
-            return {"result":False, "msg":"Host {} not avilable, process terminated".format(host.ipaddr)}
+            return {"status":False, "msg":"Host {} not avilable, process terminated".format(host.ipaddr)}
         except paramiko.ssh_exception.AuthenticationException:
             pass
-            return {"result":False, "msg":"Authentication failed"}
+            return {"status":False, "msg":"Authentication failed"}
         except Exception as e:
             pass
-            return {"result":False, "msg":e.__str__()}
+            return {"status":False, "msg":e.__str__()}
 
-        stdin, stdout, stderr = ssh.exec_command('hostname')
+        stdin, stdout, stderr = ssh.exec_command("hostname")
         hostname = stdout.read().decode()
         ssh.close()
-        return {"result":True, "msg":hostname}
+        return {"status":True, "msg":hostname}
 
 
 class HostGroupHandler(InventoryHandler):
@@ -157,18 +170,18 @@ class HostGroupHandler(InventoryHandler):
 
     @property
     def __view__(self):
-        return 'host_group.html'
+        return "host_group.html"
 
 # application
 app_inventory = Application([
-    ('/inventory', InventoryHandler),
-    ('/inventory/district', DistrictHandler),
-    ('/inventory/host', HostHandler),
-    ('/inventory/hostgroup', HostGroupHandler),
+    ("/inventory", InventoryHandler),
+    ("/inventory/district", DistrictHandler),
+    ("/inventory/host", HostHandler),
+    ("/inventory/hostgroup", HostGroupHandler),
 ])
 
 # Logic
-if __name__ == '__main__':
+if __name__ == "__main__":
     conn = dict(
         fqdn="192.168.3.9",
         port=22,
