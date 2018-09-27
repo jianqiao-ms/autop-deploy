@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="{{static_url('bootstrap/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{static_url('css/global_container.css')}}">
     <link rel="stylesheet" href="{{static_url('css/second_nav.css')}}">
-    <link rel="stylesheet" href="{{static_url('css/form.css')}}">
-    <link rel="stylesheet" href="{{static_url('css/button.css')}}">
+
     <link rel="stylesheet" href="{{static_url('css/shadow.css')}}">
     {% block css %}{% end %}<!-- Optional StyleSheet -->
+    {% block csss %}{% end %}<!-- Optional StyleSheet -->
 
     <title>{% block title %}Auto Operation System{% end %}</title>
 </head>
@@ -20,13 +20,18 @@
     {% block header %}{% end %}
     {% block second_nav %}{% end %}
 
-    {% block container %}{% end %}
+    <div class="container-fluid global">
+        {% block container %}{% end %}
+    </div>
+    {% block modal %}{% end %}
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{{static_url('bootstrap/jquery-3.3.1.slim.min.js')}}"></script>
+    <script src="{{static_url('bootstrap/jquery-3.3.1.min.js')}}"></script>
     <script src="{{static_url('bootstrap/popper.min.js')}}"></script>
     <script src="{{static_url('bootstrap/bootstrap.min.js')}}"></script>
+
     {% block js %}{% end %}<!-- Optional JavaScript -->
+    {% block jss %}{% end %}<!-- Optional JavaScript -->
 
 </body>
 </html>

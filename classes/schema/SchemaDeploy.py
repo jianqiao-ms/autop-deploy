@@ -14,21 +14,7 @@ from classes.schema.Base import ModalBase, SchemaBase
 # CONST
 
 # Class&Function Defination
-class SchemaProjectType(ModalBase, SchemaBase):
-    __tablename__ = "t-project_type"
 
-    id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
-    projects = relationship("SchemaProject", backref = "type")
-
-class SchemaProject(ModalBase, SchemaBase):
-    __tablename__ = "t-project"
-
-    id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
-
-    gitlab_id = Column(Integer, nullable=False, unique=True)
-    type_id = Column(Integer, ForeignKey("t-project_type.id"))
 
 class SchemaAutoRule(ModalBase, SchemaBase):
     __tablename__ = "t-deploy_auto"

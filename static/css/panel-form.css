@@ -1,0 +1,40 @@
+.form-row {
+    padding: 0.3rem 0;
+}
+
+.form-row:hover {
+    cursor:pointer;
+    background-color: rgba(0,0,0,.075);
+}
+.form-row *:hover{
+    cursor:pointer;
+}
+
+.form-row>div {
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.btn.btn-form {
+    padding: 0.1rem 1em;
+}
+.form-row button.form-global-new:hover {
+    color: #28a745;
+    background-color: #fff;
+    border-color: #fff;
+}
+.form-row button.form-global-new:not(:disabled):active{
+    color: #28a745;
+    background-color: #fff;
+    border-color: #fff;
+}
+.form-row button.form-global-del:hover {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.form-row button.form-global-del:not(:disabled):active{
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}

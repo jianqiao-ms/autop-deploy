@@ -17,16 +17,17 @@ import paramiko
 from classes.appliacation import LOGGER
 from classes.appliacation import Application
 from classes.handlers import NotInitialized
-from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup
+from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
+    SchemaProjectType, SchemaProject
 
 # CONST
 
 # Class&Function Defination
 """
 """
-class InventoryHandler(tornado.web.RequestHandler):
+class AssetsHandler(tornado.web.RequestHandler):
     """
-    Base class of inventory items handlers.
+    Base class of assets items handlers.
     """
     def get(self):
         headers = {"Content-Type":""}
@@ -48,6 +49,7 @@ class InventoryHandler(tornado.web.RequestHandler):
             self.application.mysql.add(item)
             self.application.mysql.commit()
         except IntegrityError as e:
+            print(e)
             self.application.mysql.rollback()
             _ = e.params.popitem()
             result = {"status":False, "msg":"Dumpicate `{}` valued ({})".format(_[0], _[1])}
@@ -65,8 +67,9 @@ class InventoryHandler(tornado.web.RequestHandler):
     def delete(self, *args, **kwargs):
         items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
         for item in items:
+            LOGGER.info("DELETE {} with id={}".format(self.__schema_alias__, item.id))
             self.application.mysql.delete(item)
-        self.finish("DELETED")
+        self.finish({"status":True, "msg":"DELETED"})
 
     @property
     def __arguments__(self):
@@ -91,20 +94,20 @@ class InventoryHandler(tornado.web.RequestHandler):
 
     @property
     def __prefix__(self):
-        return "inventory/"
+        return "assets/"
 
     @property
     def __view__(self):
-        return "inventory.html"
+        return "assets.html"
 
     @property
-    def __alias__(self):
+    def __schema_alias__(self):
         return "HUMANREADABLENAME"
 
 ###############################
 # Inventory item handlers
 ###############################
-class DistrictHandler(InventoryHandler):
+class DistrictHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaDistrict
@@ -114,10 +117,10 @@ class DistrictHandler(InventoryHandler):
         return "district.html"
     
     @property
-    def __alias__(self):
+    def __schema_alias__(self):
         return "District"
 
-class HostHandler(InventoryHandler):
+class HostHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaHost
@@ -163,7 +166,7 @@ class HostHandler(InventoryHandler):
         return {"status":True, "msg":hostname}
 
 
-class HostGroupHandler(InventoryHandler):
+class HostGroupHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaHostGroup
@@ -172,12 +175,32 @@ class HostGroupHandler(InventoryHandler):
     def __view__(self):
         return "host_group.html"
 
+class ProjectTypeHandler(AssetsHandler):
+    @property
+    def __schema__(self):
+        return SchemaProjectType
+
+    @property
+    def __view__(self):
+        return 'project_type.html'
+
+class ProjectHandler(AssetsHandler):
+    @property
+    def __schema__(self):
+        return SchemaProject
+
+    @property
+    def __view__(self):
+        return 'project.html'
+
 # application
 app_inventory = Application([
-    ("/inventory", InventoryHandler),
-    ("/inventory/district", DistrictHandler),
-    ("/inventory/host", HostHandler),
-    ("/inventory/hostgroup", HostGroupHandler),
+    ("/assets", AssetsHandler),
+    ("/assets/district", DistrictHandler),
+    ("/assets/host", HostHandler),
+    ("/assets/hostgroup", HostGroupHandler),
+    ("/assets/projecttype", ProjectTypeHandler),
+    ("/assets/project", ProjectHandler),
 ])
 
 # Logic

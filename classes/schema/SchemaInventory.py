@@ -64,6 +64,26 @@ class SchemaHostGroup(ModalBase ,SchemaBase):
                          secondary = HostToGroup,
                          back_populates = "groups")
 
+class SchemaProjectType(ModalBase, SchemaBase):
+    __tablename__ = "t-project_type"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    deploy_path = Column(String(128), nullable=False, unique=False, default="/data/apps")
+    run_path = Column(String(128), nullable=False, unique=False, default="/data/run")
+    projects = relationship("SchemaProject", backref = "type")
+
+class SchemaProject(ModalBase, SchemaBase):
+    __tablename__ = "t-project"
+
+    id = Column(Integer, primary_key=True)
+    visiblename = Column(String(48), nullable=False, unique=True)
+
+    deploy_name = Column(String(64), nullable=False)
+    gitlab_id = Column(Integer, nullable=False, unique=True)
+    type_id = Column(Integer, ForeignKey("t-project_type.id"))
+
 # Logic
 if __name__ == "__main__":
     pass
