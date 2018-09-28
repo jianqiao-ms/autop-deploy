@@ -24,15 +24,15 @@
             </div>
         </div>
     </form>
-    {% for item in object %}
+    {% for item in records %}
     <form action="/assets/district">
 
         <div class="form-row align-items-center">
             <div class="col-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="{{ district.id }}">
-                    <label class="form-check-label" for="{{ district.id }}">
-                        {% block col-in-row %} {{ item.visiblename }} {% end %}
+                    <input class="form-check-input" type="checkbox" id="{{ record.id }}">
+                    <label class="form-check-label" for="{{ record.id }}">
+                        {% block checkbox-lab %}{{ record.visiblename }}{% end %}
                     </label>
                 </div>
             </div>

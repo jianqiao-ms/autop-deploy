@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 import paramiko
 
 # Local Packages
-from classes.appliacation import LOGGER
-from classes.appliacation import Application
+# from classes.appliacation import LOGGER
+# from classes.appliacation import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
     SchemaProjectType, SchemaProject
@@ -33,8 +33,8 @@ class AssetsHandler(tornado.web.RequestHandler):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
 
-        self.finish(self.__json__) if headers["Content-Type"] == "application/json" else \
-            self.render(self.__prefix__ + self.__view__, object = self.__object__)
+        self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
+            self.render(self.__prefix__ + self.__view__, objects = self.__records__, object_alias = self.__schema_alias__)
 
     def post(self, *args, **kwargs):
         headers = {"Content-Type": ""}
@@ -62,12 +62,12 @@ class AssetsHandler(tornado.web.RequestHandler):
             self.finish(result) if headers["Content-Type"] == "application/json" else \
                 self.finish(result["msg"])
             return
-        self.finish(str(item.id))
+        self.finish({"status":True, "msg":str(item.id)})
 
     def delete(self, *args, **kwargs):
         items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
         for item in items:
-            LOGGER.info("DELETE {} with id={}".format(self.__schema_alias__, item.id))
+            # LOGGER.info("DELETE {} with id={}".format(self.__schema_alias__, item.id))
             self.application.mysql.delete(item)
         self.finish({"status":True, "msg":"DELETED"})
 
@@ -76,33 +76,34 @@ class AssetsHandler(tornado.web.RequestHandler):
         return {k: self.get_argument(k) for k in self.request.arguments}
 
     @property
-    def __object__(self):
+    def __schema__(self):
+        return NotInitialized
+    @property
+    def __schema_alias__(self):
+        return "HUMANREADABLENAME"
+    @property
+    def __records__(self):
         return self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all() if \
             self.__schema__ is not NotInitialized else \
             None
-
     @property
-    def __json__(self):
+    def __records_json__(self):
         records = self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
         rst = json.dumps([r.json() for r in records], ensure_ascii=False, indent=2)
         return rst if self.__schema__ is not NotInitialized else \
-            json.dumps({"ERROR":"Not supported Content-Type"})
-
-    @property
-    def __schema__(self):
-        return NotInitialized
+            json.dumps({"status":False, "msg":"Not supported Content-Type"})
 
     @property
     def __prefix__(self):
         return "assets/"
-
     @property
     def __view__(self):
         return "assets.html"
-
     @property
-    def __schema_alias__(self):
-        return "HUMANREADABLENAME"
+    def __url__(self):
+        return False
+
+
 
 ###############################
 # Inventory item handlers
@@ -111,23 +112,29 @@ class DistrictHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaDistrict
-
+    @property
+    def __schema_alias__(self):
+        return "HUMANREADABLENAME"
     @property
     def __view__(self):
         return "district.html"
-    
     @property
-    def __schema_alias__(self):
-        return "District"
+    def __url__(self):
+        return "district"
 
 class HostHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaHost
-
+    @property
+    def __schema_alias__(self):
+        return "Host"
     @property
     def __view__(self):
         return "host.html"
+    @property
+    def __url__(self):
+        return "host"
 
     def post_pre(self, item):
         hostname = self.get_hostname(item)
@@ -170,50 +177,60 @@ class HostGroupHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaHostGroup
-
+    @property
+    def __schema_alias__(self):
+        return "Host Group"
     @property
     def __view__(self):
         return "host_group.html"
+    @property
+    def __url__(self):
+        return "hostgroup"
 
 class ProjectTypeHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaProjectType
-
+    @property
+    def __schema_alias__(self):
+        return "Project Type"
     @property
     def __view__(self):
-        return 'project_type.html'
+        return "project_type.html"
+    @property
+    def __url__(self):
+        return "projecttype"
+
 
 class ProjectHandler(AssetsHandler):
     @property
     def __schema__(self):
         return SchemaProject
-
+    @property
+    def __schema_alias__(self):
+        return "Project"
     @property
     def __view__(self):
-        return 'project.html'
+        return "project.html"
+    @property
+    def __url__(self):
+        return "project"
 
 # application
-app_inventory = Application([
-    ("/assets", AssetsHandler),
-    ("/assets/district", DistrictHandler),
-    ("/assets/host", HostHandler),
-    ("/assets/hostgroup", HostGroupHandler),
-    ("/assets/projecttype", ProjectTypeHandler),
-    ("/assets/project", ProjectHandler),
-])
+handler_list = [
+    AssetsHandler,
+    DistrictHandler,
+    HostHandler,
+    HostGroupHandler,
+    ProjectTypeHandler,
+    ProjectHandler
+]
+route_rules = list(
+    map(lambda x:(str(x.__prefix__)+"/"+str(x.__url__) if x.__url__ else x.__prefix__, x), handler_list)
+)
+print(route_rules)
+app_inventory = tornado.web.Application(route_rules)
 
 # Logic
 if __name__ == "__main__":
-    conn = dict(
-        fqdn="192.168.3.9",
-        port=22,
-        username="root",
-        password=" "
-    )
-
-
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(**conn)
-    ssh.close()
+    pass

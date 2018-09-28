@@ -1,8 +1,4 @@
-{% extends assets.html %}
-
-{% block container %}
-    {% include ../modual/form-panel.html %}
-{% end %}
+{% extends assets-child-base.html %}
 
 
 
@@ -28,56 +24,19 @@ Relate to THE INCLUDE statement in block [container]
     </div>
 {% end %}
 
-<!--Modal For Create New Item-->
-{% block modal %}
-<div class="modal fade" id="newItemModal" tabindex="-1" role="dialog" aria-labelledby="newItemModalLable" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
+<!--
+BLOCK IN MODAL-NEW
+Relate to THE INCLUDE statement in block [container]
+-->
+{% block modal-body %}
+<form action="/assets/district" class="was-validated">
 
-
-
-
-
-
-
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="newItemModalLable">新建</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-
-
-
-
-
-
-
-            <div class="modal-body">
-                ...
-            </div>
-
-
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
+    <div class="form-row">
+        <div class="form-group col-sm-12">
+            <label for="districtVisiblename">District Name</label>
+            <input type="text" class="form-control" id="districtVisiblename" placeholder="District Name" name="visiblename" required>
         </div>
     </div>
-</div>
+
+</form>
 {% end %}

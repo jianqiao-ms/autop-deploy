@@ -1,9 +1,15 @@
-{% extends assets.html %}
+{% extends assets-child-base.html %}
 
+{% block modal-body %}
+<form action="/assets/district" class="was-validated">
 
-{% block container %}
-    {% include ../modual/form-panel.html %}
+    <div class="form-row">
+        <div class="form-group col-sm-12">
+            <label for="districtVisiblename">District Name</label>
+            <input type="text" class="form-control" id="districtVisiblename" placeholder="District Name" name="visiblename" required>
+        </div>
+    </div>
+
+</form>
 {% end %}
-
-
 

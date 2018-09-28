@@ -1,39 +1,46 @@
-.form-row {
+/*form作为展示表格时的样式定义*/
+
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row {
     padding: 0.3rem 0;
 }
 
-.form-row:hover {
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row:hover {
     cursor:pointer;
     background-color: rgba(0,0,0,.075);
 }
-.form-row *:hover{
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded  .form-row *:hover{
     cursor:pointer;
 }
 
-.form-row>div {
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row>div {
     overflow:hidden;
     text-overflow:ellipsis;
 }
 
-.btn.btn-form {
+/*按钮大小*/
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded  .btn.btn-form {
     padding: 0.1rem 1em;
 }
-.form-row button.form-global-new:hover {
+
+/*标题栏按钮hover active效果*/
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded  .form-row button.form-global-new:hover {
     color: #28a745;
     background-color: #fff;
     border-color: #fff;
 }
-.form-row button.form-global-new:not(:disabled):active{
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row button.form-global-new:not(:disabled):active{
     color: #28a745;
     background-color: #fff;
     border-color: #fff;
 }
-.form-row button.form-global-del:hover {
+
+/*行按钮hover active效果*/
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row button.form-global-del:hover {
     color: #fff;
     background-color: #dc3545;
     border-color: #dc3545;
 }
-.form-row button.form-global-del:not(:disabled):active{
+div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row button.form-global-del:not(:disabled):active{
     color: #fff;
     background-color: #dc3545;
     border-color: #dc3545;
