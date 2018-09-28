@@ -1,5 +1,5 @@
 <div class="container-fluid shadow p-3 mb-0 bg-white rounded">
-    <form action="/assets/district">
+    <form action="{{ formAction }}">
         <div class="form-row align-items-center text-white bg-success">
             <div class="col-sm-2">
                 <div class="form-check">
@@ -24,8 +24,8 @@
             </div>
         </div>
     </form>
-    {% for item in records %}
-    <form action="/assets/district">
+    {% for record in records %}
+    <form action="{{ formAction }}">
 
         <div class="form-row align-items-center">
             <div class="col-sm-2">

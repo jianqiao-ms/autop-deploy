@@ -16,11 +16,11 @@ Relate to THE INCLUDE statement in block [container]
 {% end %}
 {% block col-in-row %}
     <div class="col-sm-2">
-        {{ item.hostname }}
+        {{ record.hostname }}
     </div>
 
     <div class="col-sm-2">
-        <span>{{ item.ipaddr }}</span>
+        <span>{{ record.ipaddr }}</span>
     </div>
 {% end %}
 
@@ -29,14 +29,10 @@ BLOCK IN MODAL-NEW
 Relate to THE INCLUDE statement in block [container]
 -->
 {% block modal-body %}
-<form action="/assets/district" class="was-validated">
-
-    <div class="form-row">
-        <div class="form-group col-sm-12">
-            <label for="districtVisiblename">District Name</label>
-            <input type="text" class="form-control" id="districtVisiblename" placeholder="District Name" name="visiblename" required>
-        </div>
+<div class="form-row">
+    <div class="form-group col-sm-12">
+        <label for="districtVisiblename">District Name</label>
+        <input type="text" class="form-control" id="districtVisiblename" placeholder="District Name" name="visiblename" required>
     </div>
-
-</form>
+</div>
 {% end %}

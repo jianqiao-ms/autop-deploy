@@ -20,6 +20,7 @@ from classes.schema.Base import ModalBase, SchemaBase
 
 class SchemaDistrict(ModalBase, SchemaBase):
     __tablename__ = "t-district"
+    __visiblename__ = "District"
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
@@ -31,6 +32,7 @@ HostToGroup = Table("r-host-group", ModalBase.metadata,
 )
 class SchemaHost(ModalBase ,SchemaBase):
     __tablename__ = "t-host"
+    __visiblename__ = "Host"
 
     id              = Column(Integer, primary_key=True)
     ipaddr           = Column(String(15),  unique=True)
@@ -56,6 +58,7 @@ class SchemaHost(ModalBase ,SchemaBase):
 
 class SchemaHostGroup(ModalBase ,SchemaBase):
     __tablename__ = "t-host_group"
+    __visiblename__ = "Host Group"
 
     id = Column(Integer, primary_key= True)
     visiblename = Column(String(255), nullable=False)
@@ -66,6 +69,7 @@ class SchemaHostGroup(ModalBase ,SchemaBase):
 
 class SchemaProjectType(ModalBase, SchemaBase):
     __tablename__ = "t-project_type"
+    __visiblename__ = "Project Type"
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
@@ -76,6 +80,7 @@ class SchemaProjectType(ModalBase, SchemaBase):
 
 class SchemaProject(ModalBase, SchemaBase):
     __tablename__ = "t-project"
+    __visiblename__ = "Project"
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)

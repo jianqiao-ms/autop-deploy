@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 import paramiko
 
 # Local Packages
-# from classes.appliacation import LOGGER
-# from classes.appliacation import Application
+from classes.appliacation import LOGGER
+from classes.appliacation import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
     SchemaProjectType, SchemaProject
@@ -29,12 +29,16 @@ class AssetsHandler(tornado.web.RequestHandler):
     """
     Base class of assets items handlers.
     """
+    route_path = "/assets"
     def get(self):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
 
         self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
-            self.render(self.__prefix__ + self.__view__, objects = self.__records__, object_alias = self.__schema_alias__)
+            self.render(self.__prefix__ + self.__view__,
+                        records = self.__records__,
+                        schemaVisibleName = self.__schema__.__visiblename__,
+                        formAction = self.route_path)
 
     def post(self, *args, **kwargs):
         headers = {"Content-Type": ""}
@@ -79,9 +83,6 @@ class AssetsHandler(tornado.web.RequestHandler):
     def __schema__(self):
         return NotInitialized
     @property
-    def __schema_alias__(self):
-        return "HUMANREADABLENAME"
-    @property
     def __records__(self):
         return self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all() if \
             self.__schema__ is not NotInitialized else \
@@ -95,46 +96,31 @@ class AssetsHandler(tornado.web.RequestHandler):
 
     @property
     def __prefix__(self):
-        return "assets/"
+        return self.route_path.split("/")[1] + "/"
     @property
     def __view__(self):
         return "assets.html"
-    @property
-    def __url__(self):
-        return False
-
-
 
 ###############################
 # Inventory item handlers
 ###############################
 class DistrictHandler(AssetsHandler):
+    route_path = "/assets/district"
     @property
     def __schema__(self):
         return SchemaDistrict
     @property
-    def __schema_alias__(self):
-        return "HUMANREADABLENAME"
-    @property
     def __view__(self):
         return "district.html"
-    @property
-    def __url__(self):
-        return "district"
 
 class HostHandler(AssetsHandler):
+    route_path = "/assets/host"
     @property
     def __schema__(self):
         return SchemaHost
     @property
-    def __schema_alias__(self):
-        return "Host"
-    @property
     def __view__(self):
         return "host.html"
-    @property
-    def __url__(self):
-        return "host"
 
     def post_pre(self, item):
         hostname = self.get_hostname(item)
@@ -174,62 +160,49 @@ class HostHandler(AssetsHandler):
 
 
 class HostGroupHandler(AssetsHandler):
+    route_path = "/assets/hostgroup"
+
     @property
     def __schema__(self):
         return SchemaHostGroup
     @property
-    def __schema_alias__(self):
-        return "Host Group"
-    @property
     def __view__(self):
         return "host_group.html"
-    @property
-    def __url__(self):
-        return "hostgroup"
 
 class ProjectTypeHandler(AssetsHandler):
+    route_path = "/assets/projecttype"
+
     @property
     def __schema__(self):
         return SchemaProjectType
     @property
-    def __schema_alias__(self):
-        return "Project Type"
-    @property
     def __view__(self):
         return "project_type.html"
-    @property
-    def __url__(self):
-        return "projecttype"
 
 
 class ProjectHandler(AssetsHandler):
+    route_path = "/assets/project"
+
     @property
     def __schema__(self):
         return SchemaProject
     @property
-    def __schema_alias__(self):
-        return "Project"
-    @property
     def __view__(self):
         return "project.html"
-    @property
-    def __url__(self):
-        return "project"
+
 
 # application
-handler_list = [
-    AssetsHandler,
-    DistrictHandler,
-    HostHandler,
-    HostGroupHandler,
-    ProjectTypeHandler,
-    ProjectHandler
-]
-route_rules = list(
-    map(lambda x:(str(x.__prefix__)+"/"+str(x.__url__) if x.__url__ else x.__prefix__, x), handler_list)
-)
-print(route_rules)
-app_inventory = tornado.web.Application(route_rules)
+app_inventory = Application(list(map(
+    lambda x:(x.route_path, x),
+    [
+        AssetsHandler,
+        DistrictHandler,
+        HostHandler,
+        HostGroupHandler,
+        ProjectTypeHandler,
+        ProjectHandler
+    ]
+)))
 
 # Logic
 if __name__ == "__main__":

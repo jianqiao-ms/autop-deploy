@@ -27,7 +27,8 @@ def restricted(items):
 
 class NotInitialized(object):
     id = ""
-    visiblename = ''
+    visiblename = ""
+    __visiblename__ = ""
 
 
 # Logic
