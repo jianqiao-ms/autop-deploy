@@ -39,8 +39,7 @@ class SchemaHost(ModalBase ,SchemaBase):
     visiblename     = Column(String(48),  unique=True)
     hostname        = Column(String(255), unique=True)
 
-    is_proxy        = Column(Boolean,nullable = False, default=False)
-    type            = Column(Enum("host","template"), nullable=False, default="host")
+    type            = Column(Enum("host","template","proxy"), nullable=False, default="host")
 
     ssh_port        = Column(Integer, nullable=False, default=22)
     ssh_auth_type   = Column(Enum("password","rsa_key"), nullable=False, default="password")
@@ -51,6 +50,8 @@ class SchemaHost(ModalBase ,SchemaBase):
     ssh_proxy_id    = Column(Integer, ForeignKey('t-host.id'))
     template_id     = Column(Integer, ForeignKey('t-host.id'))
     district_id     = Column(Integer, ForeignKey('t-district.id'))
+    ssh_proxy       = relationship("SchemaHost", foreign_keys = [ssh_proxy_id])
+    template        = relationship("SchemaHost", foreign_keys = [template_id])
 
     groups = relationship("SchemaHostGroup",
                           secondary = HostToGroup,

@@ -29,10 +29,75 @@ BLOCK IN MODAL-NEW
 Relate to THE INCLUDE statement in block [container]
 -->
 {% block modal-body %}
-<div class="form-row">
-    <div class="form-group col-sm-12">
-        <label for="districtVisiblename">District Name</label>
-        <input type="text" class="form-control" id="districtVisiblename" placeholder="District Name" name="visiblename" required>
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6">
+        <label for="visiblename">Visible Name</label>
+        <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of Host" name="visiblename" required>
+    </div>
+    <div class="col-sm-6"></div>
+    <div class="form-group col-sm-6">
+        <label for="type">Type</label>
+        <select id="type" class="form-control" name="type">
+            <option selected>host</option>
+            <option>proxy</option>
+            <option>template</option>
+        </select>
     </div>
 </div>
+
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6 host-needed">
+        <label for="template">选择模板</label>
+        <select id="template" class="form-control" name="template_id">
+            <option selected>Choose...</option>
+            {% for item in records %}
+                {% if item.type == "template" %}
+                <option id="{{ item.id }}">{{ item }}</option>
+                {% end %}
+            {% end %}
+        </select>
+    </div>
+</div>
+
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6 template-needed">
+        <label for="ssh_user">SSH User</label>
+        <input type="text" class="form-control" id="ssh_user" placeholder="Visiblename of Host" name="ssh_user" disabled>
+    </div>
+
+    <div class="form-group col-sm-6 template-needed">
+        <label for="ssh_port">SSH Port</label>
+        <input type="text" class="form-control" id="ssh_port" placeholder="Visiblename of Host" name="ssh_port" disabled>
+    </div>
+
+    <div class="form-group col-sm-6 template-needed">
+        <label for="ssh_auth_type">SSH Auth Method</label>
+        <select id="ssh_auth_type" class="form-control" name="ssh_auth_type" disabled>
+            <option selected>password</option>
+            <option>rsa_key</option>
+        </select>
+    </div>
+
+    <div class="form-group col-sm-6 template-needed ssh-password-show">
+        <label for="ssh_password">SSH Password</label>
+        <input type="password" class="form-control" id="ssh_password" placeholder="SSH Password" name="ssh_password" disabled>
+    </div>
+
+    <div class="form-group col-sm-6 d-none custom-file-2 template-needed ssh-key-show">
+        <label for="ssh_key" class="custome-file-label-2">SSH RSA-Key</label>
+        <label for="ssh_key" class="custom-file-label text-secondary">SSH RSA-Key</label>
+        <input type="file" class="form-control-file custom-file-input" id="ssh_key" name="ssh_key">
+    </div>
+</div>
+
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6 host-needed">
+        <label for="ipaddr">IP Addr.</label>
+        <input type="text" class="form-control" id="ipaddr" placeholder="Host IP Address" name="ipaddr">
+    </div>
+</div>
+{% end %}
+
+{% block jss %}
+<script src="{{static_url('js/modal-new-host.js')}}"></script>
 {% end %}
