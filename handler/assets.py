@@ -38,11 +38,11 @@ class AssetsHandler(tornado.web.RequestHandler):
             self.render(self.__prefix__ + self.__view__,
                         records = self.__records__,
                         schemaVisibleName = self.__schema__.__visiblename__,
-                        formAction = self.route_path)
+                        formAction = self.route_path,
+                        **self.__render_object__)
 
     def post(self, *args, **kwargs):
-        headers = {"Content-Type": ""}
-        headers.update(self.request.headers)
+        result = None
         item = self.__schema__(**json_decode(self.request.body))
 
         prepare_func = getattr(self, "post_pre", None)
@@ -52,21 +52,17 @@ class AssetsHandler(tornado.web.RequestHandler):
         try:
             self.application.mysql.add(item)
             self.application.mysql.commit()
+            result = {"status":True, "msg":str(item.id)}
         except IntegrityError as e:
-            print(e)
             self.application.mysql.rollback()
-            _ = e.params.popitem()
-            result = {"status":False, "msg":"Dumpicate `{}` valued ({})".format(_[0], _[1])}
-            self.finish(result) if headers["Content-Type"] == "application/json" else \
-                self.finish(result["msg"])
+            result = {"status": False, "msg": e.__str__()}
             return
         except DBAPIError as e:
             self.application.mysql.rollback()
             result = {"status": False, "msg": e.__str__()}
-            self.finish(result) if headers["Content-Type"] == "application/json" else \
-                self.finish(result["msg"])
             return
-        self.finish({"status":True, "msg":str(item.id)})
+        finally:
+            self.finish(result)
 
     def delete(self, *args, **kwargs):
         items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
@@ -101,6 +97,10 @@ class AssetsHandler(tornado.web.RequestHandler):
     def __view__(self):
         return "assets.html"
 
+    @property
+    def __render_object__(self):
+        return dict()
+
 ###############################
 # Inventory item handlers
 ###############################
@@ -123,6 +123,8 @@ class HostHandler(AssetsHandler):
         return "host.html"
 
     def post_pre(self, item):
+        if item.type == "template":
+            return item
         hostname = self.get_hostname(item)
 
         if not hostname["status"]:
@@ -158,6 +160,11 @@ class HostHandler(AssetsHandler):
         ssh.close()
         return {"status":True, "msg":hostname}
 
+    @property
+    def __render_object__(self):
+        return dict(
+            districts = self.application.mysql.query(SchemaDistrict).all()
+        )
 
 class HostGroupHandler(AssetsHandler):
     route_path = "/assets/hostgroup"

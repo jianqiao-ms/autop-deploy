@@ -45,3 +45,13 @@ div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row button.form-globa
     background-color: #dc3545;
     border-color: #dc3545;
 }
+
+/*徽章 样式*/
+.badge {
+    line-height: 1.1;
+    vertical-align: text-bottom;
+}
+
+.form-check-input {
+    margin-top: 0.4em;
+}

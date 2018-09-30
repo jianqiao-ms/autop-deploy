@@ -32,8 +32,9 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="{{ record.id }}">
                     <label class="form-check-label" for="{{ record.id }}">
-                        {% block checkbox-lab %}{{ record.visiblename }}{% end %}
+                        {% block checkbox-lable %}{{ record.visiblename }}{% end %}
                     </label>
+                    <span class="badge badge-secondary">{{ record.type }}</span>
                 </div>
             </div>
 

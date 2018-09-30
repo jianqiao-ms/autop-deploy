@@ -8,4 +8,5 @@ div.custom-file-2>label.custome-file-label-2 {
 div.custom-file-2>label.custom-file-label {
     display: block;
     top: auto;
+    cursor: pointer;
 }

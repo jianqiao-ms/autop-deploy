@@ -4,7 +4,8 @@
 
 <!--
 BLOCK IN FORM-PANEL
-Relate to THE INCLUDE statement in block [container]
+Relate to THE INCLUDE statement in [ block container ]
+Included from form-panel.html
 -->
 {% block col-in-title %}
     <div class="col-sm-2">
@@ -20,7 +21,7 @@ Relate to THE INCLUDE statement in block [container]
     </div>
 
     <div class="col-sm-2">
-        <span>{{ record.ipaddr }}</span>
+        {{ record.ipaddr }}
     </div>
 {% end %}
 
@@ -48,42 +49,52 @@ Relate to THE INCLUDE statement in block [container]
 <div class="form-row border-bottom">
     <div class="form-group col-sm-6 host-needed">
         <label for="template">选择模板</label>
-        <select id="template" class="form-control" name="template_id">
-            <option selected>Choose...</option>
+        <select id="template" class="form-control foreign-key" name="template_id">
+            <option selected data-foreign-id="0">Choose...</option>
             {% for item in records %}
                 {% if item.type == "template" %}
-                <option id="{{ item.id }}">{{ item }}</option>
+                <option data-foreign-id="{{ item.id }}">{{ item }}</option>
                 {% end %}
+            {% end %}
+        </select>
+    </div>
+
+    <div class="form-group col-sm-6">
+        <label for="district">选择区域</label>
+        <select id="district" class="form-control foreign-key" name="district_id">
+            <option selected data-foreign-id="0">Choose...</option>
+            {% for district in districts %}
+                <option data-foreign-id="{{ district.id }}">{{ district.visiblename }}</option>
             {% end %}
         </select>
     </div>
 </div>
 
 <div class="form-row border-bottom">
-    <div class="form-group col-sm-6 template-needed">
+    <div class="form-group col-sm-6 no-host-with-template">
         <label for="ssh_user">SSH User</label>
-        <input type="text" class="form-control" id="ssh_user" placeholder="Visiblename of Host" name="ssh_user" disabled>
+        <input type="text" class="form-control" id="ssh_user" placeholder="SSH User Name" name="ssh_user">
     </div>
 
-    <div class="form-group col-sm-6 template-needed">
+    <div class="form-group col-sm-6 no-host-with-template">
         <label for="ssh_port">SSH Port</label>
-        <input type="text" class="form-control" id="ssh_port" placeholder="Visiblename of Host" name="ssh_port" disabled>
+        <input type="text" class="form-control" id="ssh_port" placeholder="SSH Port(default 22)" name="ssh_port">
     </div>
 
-    <div class="form-group col-sm-6 template-needed">
+    <div class="form-group col-sm-6 no-host-with-template">
         <label for="ssh_auth_type">SSH Auth Method</label>
-        <select id="ssh_auth_type" class="form-control" name="ssh_auth_type" disabled>
+        <select id="ssh_auth_type" class="form-control" name="ssh_auth_type">
             <option selected>password</option>
             <option>rsa_key</option>
         </select>
     </div>
 
-    <div class="form-group col-sm-6 template-needed ssh-password-show">
+    <div class="form-group col-sm-6 no-host-with-template ssh-password-show">
         <label for="ssh_password">SSH Password</label>
-        <input type="password" class="form-control" id="ssh_password" placeholder="SSH Password" name="ssh_password" disabled>
+        <input type="password" class="form-control" id="ssh_password" placeholder="SSH Password" name="ssh_password">
     </div>
 
-    <div class="form-group col-sm-6 d-none custom-file-2 template-needed ssh-key-show">
+    <div class="form-group col-sm-6 d-none custom-file-2 no-host-with-template ssh-key-show">
         <label for="ssh_key" class="custome-file-label-2">SSH RSA-Key</label>
         <label for="ssh_key" class="custom-file-label text-secondary">SSH RSA-Key</label>
         <input type="file" class="form-control-file custom-file-input" id="ssh_key" name="ssh_key">
@@ -91,7 +102,7 @@ Relate to THE INCLUDE statement in block [container]
 </div>
 
 <div class="form-row border-bottom">
-    <div class="form-group col-sm-6 host-needed">
+    <div class="form-group col-sm-6 no-template">
         <label for="ipaddr">IP Addr.</label>
         <input type="text" class="form-control" id="ipaddr" placeholder="Host IP Address" name="ipaddr">
     </div>
@@ -99,5 +110,5 @@ Relate to THE INCLUDE statement in block [container]
 {% end %}
 
 {% block jss %}
-<script src="{{static_url('js/modal-new-host.js')}}"></script>
+<script src="{{static_url('js/modal-new-body-host.js')}}"></script>
 {% end %}

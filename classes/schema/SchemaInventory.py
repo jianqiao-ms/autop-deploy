@@ -35,9 +35,9 @@ class SchemaHost(ModalBase ,SchemaBase):
     __visiblename__ = "Host"
 
     id              = Column(Integer, primary_key=True)
-    ipaddr           = Column(String(15),  unique=True)
-    visiblename     = Column(String(48),  unique=True)
-    hostname        = Column(String(255), unique=True)
+    ipaddr           = Column(String(15), unique=True, default="")
+    visiblename     = Column(String(48), unique=True, nullable=False)
+    hostname        = Column(String(255), unique=True, default="")
 
     type            = Column(Enum("host","template","proxy"), nullable=False, default="host")
 
