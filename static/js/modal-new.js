@@ -22,7 +22,7 @@ submitButton.click(function () {
     // });
     // var reqJSON = JSON.stringify(reqObject);
 
-    console.log(reqJson);
+    // console.log(reqJson);
 
     $.ajax({
         url:formAction,

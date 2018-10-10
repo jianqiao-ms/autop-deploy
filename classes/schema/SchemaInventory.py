@@ -24,7 +24,7 @@ class SchemaDistrict(ModalBase, SchemaBase):
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
-    hosts = relationship("SchemaHost", backref = 'district') # One-2-Many
+    hosts = relationship("SchemaHost", back_populates = "district", lazy="joined") # One-2-Many
 
 HostToGroup = Table("r-host-group", ModalBase.metadata,
     Column("host_id", ForeignKey("t-host.id"), primary_key = True),
@@ -50,6 +50,7 @@ class SchemaHost(ModalBase ,SchemaBase):
     ssh_proxy_id    = Column(Integer, ForeignKey('t-host.id'))
     template_id     = Column(Integer, ForeignKey('t-host.id'))
     district_id     = Column(Integer, ForeignKey('t-district.id'))
+    district        = relationship("SchemaDistrict", back_populates = "hosts", lazy="joined")
     ssh_proxy       = relationship("SchemaHost", foreign_keys = [ssh_proxy_id])
     template        = relationship("SchemaHost", foreign_keys = [template_id])
 

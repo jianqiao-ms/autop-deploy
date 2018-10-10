@@ -1,14 +1,22 @@
 var modalNew = $("div.modal#newItemModal");
-
-//主机类型 下拉列表选择 动作
 var modalNewFormRow             = modalNew.find("div.form-row");
 var modalNewFormGroup           = modalNewFormRow.find("div.form-group");
+
 var noHostFormGroup             = modalNewFormRow.find("div.form-group.noHost");
-var noHostWithTemplateFormGroup = modalNewFormRow.find("div.form-group.no-host-with-template");
+var noWithTemplateFormGroup     = modalNewFormRow.find("div.form-group.no-with-template");
 var noTemplateFormGroup         = modalNewFormRow.find("div.form-group.no-template");
 
-var typeSelect                  = modalNewFormGroup.find("select#type");
-var templateSelect              = modalNewFormGroup.find("select#template");
+
+var districtSelect              = modalNewFormRow.find("select#district");
+var typeSelect                  = modalNewFormRow.find("select#type");
+var templateSelect              = modalNewFormRow.find("select#template");
+var sshUserInput                = modalNewFormRow.find("input#ssh_user");
+var sshPortInput                = modalNewFormRow.find("input#ssh_port");
+var sshAuthTypeSelect           = modalNewFormRow.find("select#ssh_auth_type");
+var sshPasswordInput            = modalNewFormRow.find("input#ssh_password");
+var sshKeyInput                 = modalNewFormRow.find("input#ssh_key");
+var sshPasswordFormRow          = modalNewFormRow.find("div.form-group.ssh-password-show");
+var sshKeyFormRow               = modalNewFormRow.find("div.form-group.ssh-key-show");
 
 function enableAllFormGroup() {
     modalNewFormGroup.each(function () {
@@ -16,6 +24,7 @@ function enableAllFormGroup() {
     });
 }
 
+//选择类型 下拉列表选择 动作
 typeSelect.change(function () {
     enableAllFormGroup();
     var selected = typeSelect.find("option:selected").val();
@@ -33,40 +42,62 @@ typeSelect.change(function () {
             break;
     }
 });
+
+//选择模板 下拉列表选择 动作
 templateSelect.change(function () {
-    enableAllFormGroup();
-    var selected = parseInt(typeSelect.find("option:selected").attr("data-foreign-id"));
-    switch(selected) {
-        case 0:
-            noHostWithTemplateFormGroup.each(function () {
-                $(this).children().prop('disabled', false);
-            });
-            break;
-        default:
-            noHostWithTemplateFormGroup.each(function () {
-                $(this).children().prop('disabled', true);
-            });
-            break;
-    }
+    var selected = parseInt(templateSelect.find("option:selected").attr("data-foreign-id"));
+
+    $.ajax({
+        url:"/assets/host?id=" + selected,
+        contentType: "application/json",
+        type:"GET",
+        success: function (rst) {
+            var templatesObject = JSON.parse(rst);
+            console.log(templatesObject);
+
+            if (selected>0) {
+                districtSelect.val(templatesObject.district.visiblename).prop("selected", true).change();;
+                sshUserInput.val(templatesObject.ssh_user);
+                sshPortInput.val(templatesObject.ssh_port);
+                sshAuthTypeSelect.val(templatesObject.ssh_auth_type).prop("selected", true).change();
+                sshPasswordInput.val(templatesObject.ssh_password);
+                sshKeyInput.val(templatesObject.ssh_key);
+
+                noWithTemplateFormGroup.each(function () {
+                    $(this).children().prop('disabled', true);
+                });
+            } else {
+                noWithTemplateFormGroup.each(function () {
+                    $(this).children().prop('disabled', false);
+                });
+            }
+        }
+    });
+
+
+
 });
 
 //SSH验证类型 下拉列表选择 动作
-var sshAuthTypeSelect = modalNewFormRow.find("div.form-group>select#ssh_auth_type");
-var passwordInput = modalNewFormRow.find("div.form-group.ssh-password-show");
-var keyInput = modalNewFormRow.find("div.form-group.ssh-key-show");
-
 sshAuthTypeSelect.change(function () {
     console.log("change");
     var selected = sshAuthTypeSelect.find("option:selected").val();
     console.log(selected);
     switch(selected) {
         case "password":
-            keyInput.addClass("d-none");
-            passwordInput.removeClass("d-none");
+            sshKeyFormRow.addClass("d-none");
+            sshPasswordFormRow.removeClass("d-none");
             break;
         case "rsa_key":
-            passwordInput.addClass("d-none");
-            keyInput.removeClass("d-none");
+            sshPasswordFormRow.addClass("d-none");
+            sshKeyFormRow.removeClass("d-none");
             break;
     }
+});
+
+
+$(document).ready(function(){
+
+
+
 });

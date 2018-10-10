@@ -23,17 +23,29 @@ class SchemaBase():
     __table__ = NonSenseObject
     __tablename__ = ""
     __visiblename__ = ""
-    def __repr__(self):
-        line_format = "<{tablename}({columns})>"
-        column_name = [x.name+'={}' for x in self.__table__.columns]
-        line_format = line_format.format(tablename = self.__visiblename__, columns = ",".join(column_name))
-
-        data = [str(self.__dict__[x.name]) if self.__dict__[x.name] is not None else '""' for x in self.__table__.columns]
-        return line_format.format(*data)
+    # def __repr__(self):
+    #     line_format = "<{tablename}({columns})>"
+    #     column_name = [x.name+'={}' for x in self.__table__.columns]
+    #     line_format = line_format.format(tablename = self.__visiblename__, columns = ",".join(column_name))
+    #
+    #     data = [str(self.__dict__[x.name]) if self.__dict__[x.name] is not None else '""' for x in self.__table__.columns]
+    #     return line_format.format(*data)
 
     def json(self):
-        obj_dict = self.__dict__
-        return dict((key, obj_dict[key]) for key in obj_dict if not key.startswith("_"))
+        rst = dict()
+        for key in self.__dict__:
+            value = self.__dict__[key]
+            if not key.startswith("_"):
+                if isinstance(value, SchemaBase):
+                    rst[key] = value.json()
+                else:
+                    rst[key] = value
+        # return rst
+        return dict(
+            (key, self.__dict__[key] if not isinstance(self.__dict__[key], SchemaBase) else
+                    self.__dict__[key].json()
+             ) for key in self.__dict__.keys() if not key.startswith("_")
+        )
 # Logic
 if __name__ == "__main__":
     import os, json
@@ -50,8 +62,6 @@ if __name__ == "__main__":
         )
         mysql = scoped_session(sessionmaker(
             bind=engine))()  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
-
-        # session = mysql()
 
     ModalBase.metadata.drop_all(engine)
     ModalBase.metadata.create_all(engine)

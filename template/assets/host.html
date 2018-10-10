@@ -14,7 +14,12 @@ Included from form-panel.html
     <div class="col-sm-2">
         <span>FQDN</span>
     </div>
+    <div class="col-sm-2">
+        <span>Location</span>
+    </div>
 {% end %}
+{% block record-badge %}<span class="badge badge-secondary">{{ record.type }}</span>{% end %}
+
 {% block col-in-row %}
     <div class="col-sm-2">
         {{ record.hostname }}
@@ -22,6 +27,10 @@ Included from form-panel.html
 
     <div class="col-sm-2">
         {{ record.ipaddr }}
+    </div>
+
+    <div class="col-sm-2">
+        {{ record.district.visiblename }}
     </div>
 {% end %}
 
@@ -36,8 +45,17 @@ Relate to THE INCLUDE statement in block [container]
         <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of Host" name="visiblename" required>
     </div>
     <div class="col-sm-6"></div>
+    <div class="form-group col-sm-6 no-with-template">
+        <label for="district">选择区域</label>
+        <select id="district" class="form-control foreign-key" name="district_id">
+            <option selected data-foreign-id="0">Choose...</option>
+            {% for district in districts %}
+                <option data-foreign-id="{{ district.id }}">{{ district.visiblename }}</option>
+            {% end %}
+        </select>
+    </div>
     <div class="form-group col-sm-6">
-        <label for="type">Type</label>
+        <label for="type">选择类型</label>
         <select id="type" class="form-control" name="type">
             <option selected>host</option>
             <option>proxy</option>
@@ -47,41 +65,33 @@ Relate to THE INCLUDE statement in block [container]
 </div>
 
 <div class="form-row border-bottom">
-    <div class="form-group col-sm-6 host-needed">
+    <div class="form-group col-sm-6 host-needed no-template">
         <label for="template">选择模板</label>
         <select id="template" class="form-control foreign-key" name="template_id">
             <option selected data-foreign-id="0">Choose...</option>
             {% for item in records %}
                 {% if item.type == "template" %}
-                <option data-foreign-id="{{ item.id }}">{{ item }}</option>
+                <option data-foreign-id="{{ item.id }}">{{ item.visiblename }}</option>
                 {% end %}
             {% end %}
         </select>
     </div>
 
-    <div class="form-group col-sm-6">
-        <label for="district">选择区域</label>
-        <select id="district" class="form-control foreign-key" name="district_id">
-            <option selected data-foreign-id="0">Choose...</option>
-            {% for district in districts %}
-                <option data-foreign-id="{{ district.id }}">{{ district.visiblename }}</option>
-            {% end %}
-        </select>
-    </div>
+
 </div>
 
 <div class="form-row border-bottom">
-    <div class="form-group col-sm-6 no-host-with-template">
+    <div class="form-group col-sm-6 no-with-template">
         <label for="ssh_user">SSH User</label>
         <input type="text" class="form-control" id="ssh_user" placeholder="SSH User Name" name="ssh_user">
     </div>
 
-    <div class="form-group col-sm-6 no-host-with-template">
+    <div class="form-group col-sm-6 no-with-template">
         <label for="ssh_port">SSH Port</label>
         <input type="text" class="form-control" id="ssh_port" placeholder="SSH Port(default 22)" name="ssh_port">
     </div>
 
-    <div class="form-group col-sm-6 no-host-with-template">
+    <div class="form-group col-sm-6 no-with-template">
         <label for="ssh_auth_type">SSH Auth Method</label>
         <select id="ssh_auth_type" class="form-control" name="ssh_auth_type">
             <option selected>password</option>
@@ -89,12 +99,12 @@ Relate to THE INCLUDE statement in block [container]
         </select>
     </div>
 
-    <div class="form-group col-sm-6 no-host-with-template ssh-password-show">
+    <div class="form-group col-sm-6 no-with-template ssh-password-show">
         <label for="ssh_password">SSH Password</label>
         <input type="password" class="form-control" id="ssh_password" placeholder="SSH Password" name="ssh_password">
     </div>
 
-    <div class="form-group col-sm-6 d-none custom-file-2 no-host-with-template ssh-key-show">
+    <div class="form-group col-sm-6 d-none custom-file-2 no-with-template ssh-key-show">
         <label for="ssh_key" class="custome-file-label-2">SSH RSA-Key</label>
         <label for="ssh_key" class="custom-file-label text-secondary">SSH RSA-Key</label>
         <input type="file" class="form-control-file custom-file-input" id="ssh_key" name="ssh_key">

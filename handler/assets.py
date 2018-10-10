@@ -45,9 +45,9 @@ class AssetsHandler(tornado.web.RequestHandler):
         result = None
         item = self.__schema__(**json_decode(self.request.body))
 
-        prepare_func = getattr(self, "post_pre", None)
-        if prepare_func and callable(prepare_func):
-            item = prepare_func(item)
+        pre_func = getattr(self, "post_pre", None)
+        if pre_func and callable(pre_func):
+            item = pre_func(item)
 
         try:
             self.application.mysql.add(item)
@@ -67,7 +67,6 @@ class AssetsHandler(tornado.web.RequestHandler):
     def delete(self, *args, **kwargs):
         items = self.application.mysql.query(self.__schema__).filter(self.__schema__.id.in_(json_decode(self.request.body))).all()
         for item in items:
-            # LOGGER.info("DELETE {} with id={}".format(self.__schema_alias__, item.id))
             self.application.mysql.delete(item)
         self.finish({"status":True, "msg":"DELETED"})
 
@@ -86,6 +85,9 @@ class AssetsHandler(tornado.web.RequestHandler):
     @property
     def __records_json__(self):
         records = self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
+
+        print(records[0].__dict__)
+
         rst = json.dumps([r.json() for r in records], ensure_ascii=False, indent=2)
         return rst if self.__schema__ is not NotInitialized else \
             json.dumps({"status":False, "msg":"Not supported Content-Type"})
