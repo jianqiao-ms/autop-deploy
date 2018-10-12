@@ -1,10 +1,9 @@
-var modalNew = $("div.modal#newItemModal");
 var modalNewFormRow             = modalNew.find("div.form-row");
 var modalNewFormGroup           = modalNewFormRow.find("div.form-group");
 
-var noHostFormGroup             = modalNewFormRow.find("div.form-group.noHost");
-var noWithTemplateFormGroup     = modalNewFormRow.find("div.form-group.no-with-template");
-var noTemplateFormGroup         = modalNewFormRow.find("div.form-group.no-template");
+var noHostFormGroup             = modalNewFormRow.find(".noHost");
+var noWithTemplateFormGroup     = modalNewFormRow.find(".no-with-template");
+var noTemplateFormGroup         = modalNewFormRow.find(".no-type-template");
 
 
 var districtSelect              = modalNewFormRow.find("select#district");
@@ -32,12 +31,13 @@ typeSelect.change(function () {
         case "proxy":
         case "host":
             noHostFormGroup.each(function () {
-                $(this).children().prop('disabled', true);
+                $(this).prop('disabled', true);
             });
             break;
         case "template":
             noTemplateFormGroup.each(function () {
-                $(this).children().prop('disabled', true);
+                $(this).resetDefault();
+                $(this).prop('disabled', true);
             });
             break;
     }
@@ -52,11 +52,10 @@ templateSelect.change(function () {
         contentType: "application/json",
         type:"GET",
         success: function (rst) {
-            var templatesObject = JSON.parse(rst);
-            console.log(templatesObject);
+            var templatesObject = JSON.parse(rst)[0];
 
             if (selected>0) {
-                districtSelect.val(templatesObject.district.visiblename).prop("selected", true).change();;
+                districtSelect.val(templatesObject.district.visiblename).prop("selected", true).change();
                 sshUserInput.val(templatesObject.ssh_user);
                 sshPortInput.val(templatesObject.ssh_port);
                 sshAuthTypeSelect.val(templatesObject.ssh_auth_type).prop("selected", true).change();
@@ -64,11 +63,12 @@ templateSelect.change(function () {
                 sshKeyInput.val(templatesObject.ssh_key);
 
                 noWithTemplateFormGroup.each(function () {
-                    $(this).children().prop('disabled', true);
+                    $(this).prop('disabled', true);
                 });
             } else {
                 noWithTemplateFormGroup.each(function () {
-                    $(this).children().prop('disabled', false);
+                    $(this).resetDefault();
+                    $(this).prop('disabled', false);
                 });
             }
         }
@@ -80,9 +80,7 @@ templateSelect.change(function () {
 
 //SSH验证类型 下拉列表选择 动作
 sshAuthTypeSelect.change(function () {
-    console.log("change");
     var selected = sshAuthTypeSelect.find("option:selected").val();
-    console.log(selected);
     switch(selected) {
         case "password":
             sshKeyFormRow.addClass("d-none");
@@ -93,11 +91,4 @@ sshAuthTypeSelect.change(function () {
             sshKeyFormRow.removeClass("d-none");
             break;
     }
-});
-
-
-$(document).ready(function(){
-
-
-
 });

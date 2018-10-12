@@ -24,7 +24,7 @@ class SchemaDistrict(ModalBase, SchemaBase):
 
     id = Column(Integer, primary_key=True)
     visiblename = Column(String(48), nullable=False, unique=True)
-    hosts = relationship("SchemaHost", back_populates = "district", lazy="joined") # One-2-Many
+    hosts = relationship("SchemaHost", back_populates = "district") # One-2-Many
 
 HostToGroup = Table("r-host-group", ModalBase.metadata,
     Column("host_id", ForeignKey("t-host.id"), primary_key = True),

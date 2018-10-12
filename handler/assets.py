@@ -86,9 +86,7 @@ class AssetsHandler(tornado.web.RequestHandler):
     def __records_json__(self):
         records = self.application.mysql.query(self.__schema__).filter_by(**self.__arguments__).all()
 
-        print(records[0].__dict__)
-
-        rst = json.dumps([r.json() for r in records], ensure_ascii=False, indent=2)
+        rst = json.dumps([r.dict() for r in records], ensure_ascii=False, indent=2)
         return rst if self.__schema__ is not NotInitialized else \
             json.dumps({"status":False, "msg":"Not supported Content-Type"})
 
