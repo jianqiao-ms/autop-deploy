@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{static_url('bootstrap/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/global_container.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/second_nav.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/shadow.css')}}">
+    <link rel="stylesheet" href="{{static_url('css/form-input-file.css')}}">
+    {% block css %}{% end %}<!-- Optional StyleSheet -->
+    {% block csss %}{% end %}<!-- Optional StyleSheet -->
+
+    <title>{% block title %}Auto Operation System{% end %}</title>
+</head>
+<body>
+    {% block header %}{% end %}
+    {% block second_nav %}{% end %}
+
+    <div class="container-fluid global">
+        {% block container %}{% end %}
+    </div>
+    {% block modal %}{% end %}
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{{static_url('bootstrap/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{static_url('bootstrap/popper.min.js')}}"></script>
+    <script src="{{static_url('bootstrap/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/func.js')}}"></script>
+    {% block js %}{% end %}<!-- Optional JavaScript -->
+    {% block jss %}{% end %}<!-- Optional JavaScript -->
+
+</body>
+</html>

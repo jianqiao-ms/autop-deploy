@@ -1,0 +1,18 @@
+div.custom-file-2 {
+    position: relative;
+}
+div.custom-file-2>label.custome-file-label-2 {
+    display: block;
+}
+
+div.custom-file-2>label.custom-file-label {
+    display: block;
+    top: auto;
+    cursor: pointer;
+    left: 5px;
+    right: 5px;
+}
+.custom-file-label::after {
+    color:#fff;
+    background-color: #17a2b8;
+}
