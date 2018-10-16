@@ -49,22 +49,20 @@ class AssetsHandler(tornado.web.RequestHandler):
         if pre_func and callable(pre_func):
             try:
                 item = pre_func(item)
-            except:
-                pass
+            except Exception as e:
+                LOGGER.exception('Failed to get host name of {}'.format(item.ipaddr))
+                self.finish({"status":False, "msg":e.__str__()})
+                return
 
         try:
             self.application.mysql.add(item)
             self.application.mysql.commit()
             result = {"status":True, "msg":str(item.id)}
-        except IntegrityError as e:
-            pass
-            self.application.mysql.rollback()
-            result = {"status": False, "msg": e.__str__()}
-        except DBAPIError as e:
-            pass
-            self.application.mysql.rollback()
+        except Exception as e:
+            LOGGER.exception('Failed to get host name of {}'.format(item.ipaddr))
             result = {"status": False, "msg": e.__str__()}
         finally:
+            self.application.mysql.rollback()
             self.finish(result)
 
     def delete(self, *args, **kwargs):
@@ -128,16 +126,17 @@ class HostHandler(AssetsHandler):
     def post_pre(self, item):
         if item.type == "template":
             return item
-        hostname = self.get_hostname(item)
+        try:
+            hostname = self.get_hostname(item)
+        except Exception as e:
+            raise e
 
-        if not hostname["status"]:
-            raise Exception(hostname)
-        item.hostname = hostname["msg"]
+        item.hostname = hostname
         return item
 
     def get_hostname(self, host):
         conn = dict()
-        conn["timeout"] = 3
+        conn["timeout"] = 1
         conn["hostname"] = host.ipaddr
         conn["port"] = 22 if not host.ssh_port else host.ssh_port
         conn["username"] = host.ssh_user
@@ -145,22 +144,12 @@ class HostHandler(AssetsHandler):
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        try:
-            ssh.connect(**conn)
-        except timeout:
-            pass
-            return {"status":False, "msg":"Host {} not avilable, process terminated".format(host.ipaddr)}
-        except paramiko.ssh_exception.AuthenticationException:
-            pass
-            return {"status":False, "msg":"Authentication failed"}
-        except Exception as e:
-            pass
-            return {"status":False, "msg":e.__str__()}
+        ssh.connect(**conn)
 
         stdin, stdout, stderr = ssh.exec_command("hostname")
         hostname = stdout.read().decode()
         ssh.close()
-        return {"status":True, "msg":hostname}
+        return hostname
 
     @property
     def __render_object__(self):
