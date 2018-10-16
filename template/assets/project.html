@@ -1,1 +1,13 @@
 {% extends assets-child-base.html %}
+
+{% block modal-body %}
+<div class="form-group col-sm-6">
+        <label for="district">选择Project</label>
+        <select id="district" class="form-control foreign-key  no-with-template" name="district_id" data-default="Choose...">
+            <option selected data-foreign-id="0">Choose...</option>
+            {% for project in gitlab_projects %}
+                <option data-foreign-id="{{ project['id'] }}">{{ project['name'] }}</option>
+            {% end %}
+        </select>
+    </div>
+{% end %}

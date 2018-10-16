@@ -18,7 +18,7 @@ from classes.appliacation import LOGGER
 from classes.appliacation import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
-    SchemaProjectType, SchemaProject
+    SchemaProject
 
 # CONST
 
@@ -167,20 +167,22 @@ class HostGroupHandler(AssetsHandler):
     def __view__(self):
         return "host_group.html"
 
-class ProjectTypeHandler(AssetsHandler):
-    route_path = "/assets/projecttype"
-
-    @property
-    def __schema__(self):
-        return SchemaProjectType
-    @property
-    def __view__(self):
-        return "project_type.html"
-
-
 class ProjectHandler(AssetsHandler):
     route_path = "/assets/project"
 
+    async def get(self):
+        headers = {"Content-Type": ""}
+        headers.update(self.request.headers)
+
+        gitlab_projects = await self.application.gitlab.get_all_projects()
+
+
+        self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
+            self.render(self.__prefix__ + self.__view__,
+                        records=self.__records__,
+                        schemaVisibleName=self.__schema__.__visiblename__,
+                        formAction=self.route_path,
+                        gitlab_projects = gitlab_projects)
     @property
     def __schema__(self):
         return SchemaProject
@@ -197,7 +199,6 @@ app_inventory = Application(list(map(
         DistrictHandler,
         HostHandler,
         HostGroupHandler,
-        ProjectTypeHandler,
         ProjectHandler
     ]
 )))
