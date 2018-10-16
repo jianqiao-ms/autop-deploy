@@ -14,7 +14,16 @@ from classes.appliacation import Application
 # Class&Function Defination
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
+        self.pre_get()
         self.render('base.html')
+    def pre_get(self):
+        a = self.test()
+    def test(self):
+        try:
+            raise Exception("in func test")
+        except Exception as e:
+            self.finish(e.__str__())
+            self.request.finish()
 
 app_dashboard = Application([
     ('/', IndexHandler),

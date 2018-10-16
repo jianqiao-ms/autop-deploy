@@ -47,20 +47,23 @@ class AssetsHandler(tornado.web.RequestHandler):
 
         pre_func = getattr(self, "post_pre", None)
         if pre_func and callable(pre_func):
-            item = pre_func(item)
+            try:
+                item = pre_func(item)
+            except:
+                pass
 
         try:
             self.application.mysql.add(item)
             self.application.mysql.commit()
             result = {"status":True, "msg":str(item.id)}
         except IntegrityError as e:
+            pass
             self.application.mysql.rollback()
             result = {"status": False, "msg": e.__str__()}
-            return
         except DBAPIError as e:
+            pass
             self.application.mysql.rollback()
             result = {"status": False, "msg": e.__str__()}
-            return
         finally:
             self.finish(result)
 
@@ -128,14 +131,13 @@ class HostHandler(AssetsHandler):
         hostname = self.get_hostname(item)
 
         if not hostname["status"]:
-            self.finish(hostname["msg"])
-            return
+            raise Exception(hostname)
         item.hostname = hostname["msg"]
         return item
 
     def get_hostname(self, host):
         conn = dict()
-        conn["timeout"] = 30
+        conn["timeout"] = 3
         conn["hostname"] = host.ipaddr
         conn["port"] = 22 if not host.ssh_port else host.ssh_port
         conn["username"] = host.ssh_user

@@ -14,7 +14,6 @@ modalNew.on("hidden.bs.modal",function () {
 
 submitButton.click(function () {
     var reqJson = newItemForm.serializeJson();
-
     //
     //
     //
