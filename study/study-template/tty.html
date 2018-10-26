@@ -1,0 +1,18 @@
+{% extends base.html %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/css/study-websockets.css" />
+    <link rel="stylesheet" href="/static/xterm/xterm.css" />
+    <script src="/static/xterm/xterm.js"></script>
+    <script src="/static/xterm/addons/fit/fit.js"></script>
+{% end %}
+
+{% block body %}
+    <div class="terminal-container">
+        <div class="terminal"></div>
+    </div>
+{% end %}
+
+{% block js %}
+    <script src="/static/js/study-websockets.js"></script>
+{% end %}
