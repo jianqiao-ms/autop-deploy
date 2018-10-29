@@ -7,8 +7,6 @@
 import tornado.web
 
 # Local Packages
-from classes.appliacation import Application
-
 # CONST
 
 # Class&Function Defination
@@ -25,7 +23,7 @@ class IndexHandler(tornado.web.RequestHandler):
             self.finish(e.__str__())
             self.request.finish()
 
-app_dashboard = Application([
+app_dashboard = list([
     ('/', IndexHandler),
 ])
 

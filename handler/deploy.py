@@ -12,7 +12,6 @@ from sqlalchemy.exc import IntegrityError
 
 # Local Packages
 from classes.appliacation import LOGGER
-from classes.appliacation import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaDeploy import SchemaAutoRule, SchemaAutoHistory, SchemaManul
 
@@ -98,7 +97,7 @@ class ManulHandler(DeployHandler):
         return 'manul.html'
 
 # application
-app_deploy = Application([
+app_deploy = list([
     ('/deploy', DeployHandler),
     ('/deploy/auto', AutoRuleHandler),
     ('/deploy/manul', ManulHandler),

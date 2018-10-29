@@ -174,7 +174,8 @@ class ProjectHandler(AssetsHandler):
         headers = {"Content-Type": ""}
         headers.update(self.request.headers)
 
-        gitlab_projects = await self.application.gitlab.get_all_projects()
+        # gitlab_projects = await self.application.gitlab.get_all_projects()
+        gitlab_projects = []
 
 
         self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
@@ -192,7 +193,8 @@ class ProjectHandler(AssetsHandler):
 
 
 # application
-app_inventory = Application(list(map(
+from tornado.routing import RuleRouter
+app_inventory = list(map(
     lambda x:(x.route_path, x),
     [
         AssetsHandler,
@@ -201,7 +203,7 @@ app_inventory = Application(list(map(
         HostGroupHandler,
         ProjectHandler
     ]
-)))
+))
 
 # Logic
 if __name__ == "__main__":

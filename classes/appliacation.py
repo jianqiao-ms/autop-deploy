@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import tornado.web
 from tornado.log import access_log
 from tornado.httpclient import AsyncHTTPClient as HTTPClient
-from tornado.httpclient import HTTPRequest
+from tornado.httpclient import HTTPClient as SyncHTTPClient
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -37,7 +37,7 @@ class Application(tornado.web.Application):
     def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
         super(Application, self).__init__(handlers, default_host, transforms, **SETTINGS)
         self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
-        self.gitlab = GitlabServer()
+
         if "log_function" in self.settings:
             LOGGER.warning("Dumplicate log_function in settings")
 
@@ -49,6 +49,8 @@ class Application(tornado.web.Application):
             LOGGER.info("MySQL connected!")
             self.schemas = self.engine.table_names()
 
+        self.gitlab = GitlabServer()
+
     def log_request(self, handler):
         request_time = 1000.0 * handler.request.request_time()
         access_log.info("%d %s %.2fms", handler.get_status(),
@@ -58,21 +60,40 @@ class GitlabServer():
     def __init__(self):
         self.url = "http://gitlab.shangweiec.com/api/v4/"
         self.token = "K2faEp9ofGwNWNBpUo-L"
+        self.client = HTTPClient()
+        httpclient = SyncHTTPClient()
+        try:
+            version = json.loads(
+                httpclient.fetch("http://gitlab.shangweiec.com/api/v4/version",
+                                 headers={"PRIVATE-TOKEN": self.token}).body.decode()
+            )
+            LOGGER.info("Gitlab Connected! Version: {}".format(str(version["version"])))
+        except Exception as e:
+            LOGGER.exception("Gitlab connect failed")
+            exit(1)
 
     async def get_all_projects(self):
+        api = "projects?simple=true&per_page=100"
         result = list()
-        http_client = HTTPClient()
-        url = self.url + "projects?per_page=100"
-        respons = await http_client.fetch(url, headers = {"PRIVATE-TOKEN":self.token})
+        respons = await self.read_api(api)
         result.extend(json.loads(respons.body.decode()))
-        a = respons.headers["X-Next-Page"]
-        while a:
-            respons = await http_client.fetch(self.url + "projects?per_page=100&page={}".format(a), headers={"PRIVATE-TOKEN": self.token})
+        __np = respons.headers["X-Next-Page"]
+        while __np:
+            respons = await self.read_api("projects?simple=true&per_page=100&page={}".format(__np))
             result.extend(json.loads(respons.body.decode()))
-            a = respons.headers["X-Next-Page"]
+            __np = respons.headers["X-Next-Page"]
 
         return result
 
+    async def read_api(self, api):
+        if api.startswith("/"):
+            api = api[1:]
+        try:
+            respons = await self.client.fetch(self.url + api, headers={"PRIVATE-TOKEN": self.token})
+            return respons
+        except Exception as e:
+            LOGGER.exception('Error occur reading api [{}]'.format(api))
+            return
 # Logic
 if __name__ == "__main__":
     pass

@@ -74,10 +74,27 @@ class SchemaProject(ModalBase, SchemaBase):
     __visiblename__ = "Project"
 
     id = Column(Integer, primary_key=True)
+    gitlab_id = Column(Integer, nullable=False)
+    parent_id = Column(Integer, ForeignKey('t-project.id'))
     visiblename = Column(String(48), nullable=False, unique=True)
+    repo = Column(String(256),nullable=False)
+    standalone = Column(Boolean, default=True)
+    role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project", default="")
 
-    deploy_name = Column(String(64), nullable=False)
-    gitlab_id = Column(Integer, nullable=False, unique=True)
+    ci_rule = relationship("SchemaCIRule", back_populates="project", lazy="joined")
+    children = relationship("SchemaProject")
+
+class SchemaCIRule(ModalBase, SchemaBase):
+    __tablename__ = "t-ci_rule"
+    __visiblename__ = "CI Rule"
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey("t-project.id"))
+    build_cmd = Column(String(256), default="")
+    package_name = Column(String(32), default="")
+
+
+    project = relationship("SchemaProject", back_populates = "ci_rule")
 
 # Logic
 if __name__ == "__main__":

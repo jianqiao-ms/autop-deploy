@@ -1,13 +1,57 @@
 {% extends assets-child-base.html %}
 
 {% block modal-body %}
-<div class="form-group col-sm-6">
-        <label for="district">选择Project</label>
-        <select id="district" class="form-control foreign-key  no-with-template" name="district_id" data-default="Choose...">
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6">
+        <label for="project">选择Project</label>
+        <select id="project" class="form-control foreign-key  no-with-template" name="district_id" data-default="Choose...">
             <option selected data-foreign-id="0">Choose...</option>
             {% for project in gitlab_projects %}
-                <option data-foreign-id="{{ project['id'] }}">{{ project['name'] }}</option>
+                <option data-foreign-id="{{ project['id'] }}">{{ project['name_with_namespace'] }}</option>
             {% end %}
         </select>
     </div>
+    <div class="form-group col-sm-6">
+        <label for="visiblename">Visiblename</label>
+        <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of Project" name="visiblename">
+    </div>
+</div>
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-6">
+        <label for="standalone">Standalone or not</label>
+        <div class="btn-group checkbox-in-grid" data-toggle="buttons">
+            <label class="btn btn-outline-secondary checkbox-in-grid active">
+                <input type="checkbox" id="standalone" checked> Standalone?
+            </label>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="col-sm-3">
+        <div class="form-row tree">
+            <div class="col-sm-12">
+                Root
+                <div class="form-row">
+                    <div class="col-sm-12">warranty-client</div>
+                    <div class="col-sm-12">warranty-manager</div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-sm-9">
+
+    </div>
+</div>
+{% end %}
+
+
+{% block csss %}
+<link rel="stylesheet" href="{{static_url('css/form-checkbox-in-grid.css')}}">
+<link rel="stylesheet" href="{{static_url('css/directory-tree.css')}}">
+{% end %}
+
+{% block jss %}
+<script src="{{static_url('js/modal-new-body-project.js')}}"></script>
 {% end %}

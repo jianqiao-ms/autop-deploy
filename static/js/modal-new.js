@@ -14,25 +14,6 @@ modalNew.on("hidden.bs.modal",function () {
 
 submitButton.click(function () {
     var reqJson = newItemForm.serializeJson();
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // var reqArray = newItemForm.serializeArray();
-    // var reqObject = Object();
-    // reqArray.forEach(function (formObject, index, array) {
-    //     _ = {};_[formObject.name] = formObject.is("select")?formObject.selected.attr("id"):formObject.value;
-    //     $.extend(reqObject, _)
-    // });
-    // var reqJSON = JSON.stringify(reqObject);
-
-    // console.log(reqJson);
-
     $.ajax({
         url:formAction,
         ContentType: "application/json",
