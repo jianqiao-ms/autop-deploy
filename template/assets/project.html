@@ -4,7 +4,7 @@
 <div class="form-row border-bottom">
     <div class="form-group col-sm-6">
         <label for="project">选择Project</label>
-        <select id="project" class="form-control foreign-key  no-with-template" name="district_id" data-default="Choose...">
+        <select id="project" class="form-control foreign-key  no-with-template" name="gitlab_id" data-default="Choose...">
             <option selected data-foreign-id="0">Choose...</option>
             {% for project in gitlab_projects %}
                 <option data-foreign-id="{{ project['id'] }}">{{ project['name_with_namespace'] }}</option>
@@ -16,32 +16,34 @@
         <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of Project" name="visiblename">
     </div>
 </div>
+
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-12">
+    <label for="repo">Repo URL</label>
+        <input type="text" readonly class="form-control-plaintext" id="repo" name="repo" value="">
+    </div>
+</div>
+
+
 <div class="form-row border-bottom">
     <div class="form-group col-sm-6">
         <label for="standalone">Standalone or not</label>
         <div class="btn-group checkbox-in-grid" data-toggle="buttons">
             <label class="btn btn-outline-secondary checkbox-in-grid active">
-                <input type="checkbox" id="standalone" checked> Standalone?
+                <input type="checkbox" id="standalone" name="standalone" checked> Standalone?
             </label>
         </div>
     </div>
 </div>
-<div class="form-row">
-    <div class="col-sm-3">
-        <div class="form-row tree">
-            <div class="col-sm-12">
-                Root
-                <div class="form-row">
-                    <div class="col-sm-12">warranty-client</div>
-                    <div class="col-sm-12">warranty-manager</div>
-                </div>
-            </div>
 
-
+<div class="form-row border-bottom tree">
+    <div class="col-sm-12">
+        <i class="far fa-folder-open"></i> <a>Root</a>
+        <div class="form-row">
+            <div class="col-sm-12"><i class="far fa-folder-open"></i> <a>src</a></div>
+            <div class="col-sm-12"><i class="far fa-file"></i> <a>.gitignore</a></div>
+            <div class="col-sm-12"><i class="far fa-file"></i> <a>pom.xml</a></div>
         </div>
-    </div>
-    <div class="col-sm-9">
-
     </div>
 </div>
 {% end %}

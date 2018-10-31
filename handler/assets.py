@@ -59,7 +59,7 @@ class AssetsHandler(tornado.web.RequestHandler):
             self.application.mysql.commit()
             result = {"status":True, "msg":str(item.id)}
         except Exception as e:
-            LOGGER.exception('Failed to get host name of {}'.format(item.ipaddr))
+            LOGGER.exception('Error occur during create item')
             result = {"status": False, "msg": e.__str__()}
         finally:
             self.application.mysql.rollback()
@@ -191,9 +191,7 @@ class ProjectHandler(AssetsHandler):
     def __view__(self):
         return "project.html"
 
-
 # application
-from tornado.routing import RuleRouter
 app_inventory = list(map(
     lambda x:(x.route_path, x),
     [
@@ -201,7 +199,7 @@ app_inventory = list(map(
         DistrictHandler,
         HostHandler,
         HostGroupHandler,
-        ProjectHandler
+        ProjectHandler,
     ]
 ))
 

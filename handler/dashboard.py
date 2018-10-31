@@ -12,8 +12,7 @@ import tornado.web
 # Class&Function Defination
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
-        self.pre_get()
-        self.render('base.html')
+        self.render('index.html')
     def pre_get(self):
         a = self.test()
     def test(self):

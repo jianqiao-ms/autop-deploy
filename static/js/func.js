@@ -5,6 +5,9 @@ $.fn.extend({
         var formDataObject = Object();
         allInput.each(function () {
             var whatWeWant = $(this).is("select.foreign-key")?parseInt($(this).find(":selected").attr("data-foreign-id")):$(this).val();
+            if ($(this).is("input[type=checkbox]")) {
+                whatWeWant = $(this).prop("checked");
+            }
             if (whatWeWant === 0) {
                 return
             }

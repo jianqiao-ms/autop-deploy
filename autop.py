@@ -11,6 +11,7 @@ from tornado.ioloop import IOLoop
 
 # Local Packages
 from classes.appliacation import Application
+from handler.gitlab import app_api
 from handler.dashboard import app_dashboard
 from handler.assets import app_inventory
 from handler.deploy import app_deploy
@@ -20,6 +21,7 @@ from handler.deploy import app_deploy
 
 # Class&Function Defination
 router_rules = list()
+router_rules.extend(app_api)
 router_rules.extend(app_dashboard)
 router_rules.extend(app_inventory)
 router_rules.extend(app_deploy)

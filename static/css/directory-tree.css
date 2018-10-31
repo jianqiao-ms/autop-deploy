@@ -1,72 +1,36 @@
-.form-row.tree {
-    margin-top: 20px;
-}
-.form-row.tree .col-sm-12 {
-    padding-left: 21px;
-    position: relative;
-    box-sizing: border-box;
-}
+.tree {
+  margin-top: 20px; }
+  .tree ul {
+    list-style: none;
+    padding-left: 5px; }
+    .tree ul li {
+      padding-left: 16px;
+      position: relative;
+      box-sizing: border-box; }
+      .tree ul li:before {
+        content: '';
+        height: 1px;
+        width: 10px;
+        background-color: #333;
+        position: absolute;
+        top: 10px;
+        left: 0;
+        margin: auto; }
+      .tree ul li::after {
+        content: '';
+        width: 1px;
+        height: 100%;
+        background-color: #333;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0; }
+      .tree ul li:last-child::after {
+        height: 10px; }
+    .tree ul a {
+      cursor: pointer; }
+      .tree ul a:hover {
+        color: #333;
+        text-decoration: none; }
 
-.form-row.tree .form-row{
-    margin-left: 0;
-}
-
-
-
-.tree .col-sm-12:before {
-    content: '';
-    height: 1px;
-    width: 18px;
-    background-color: #333;
-    position: absolute;
-    top: 10px;
-    left: 0;
-    margin: auto;
-}
-.tree .col-sm-12:after {
-    content: '';
-    width: 1px;
-    height: 100%;
-    background-color: #333;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-}
-.tree>.col-sm-12:after {
-    height: 0!important;
-}
-
-.tree .col-sm-12:last-child:after {
-    height: 10px;
-}
-
-
-.tree>.col-sm-12:before {
-    content: '';
-    height: 1px;
-    width: 12px;
-    background-color: #333;
-    position: absolute;
-    top: 10px;
-    left: 6px;
-    margin: auto;
-}
-.tree>.col-sm-12:after {
-    content: '';
-    width: 1px;
-    height: 100%;
-    background-color: #333;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 6px;
-}
-
-.tree .col-sm-12 {
-    cursor: pointer;
-}
-
-.tree .col-sm-12:hover {
-    background-color: #f8f9fa;
-}
+/*# sourceMappingURL=directory-tree.css.map */
