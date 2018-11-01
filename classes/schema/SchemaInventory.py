@@ -77,9 +77,8 @@ class SchemaProject(ModalBase, SchemaBase):
     gitlab_id = Column(Integer, nullable=False)
     parent_id = Column(Integer, ForeignKey('t-project.id'))
     visiblename = Column(String(48), nullable=False, unique=True)
-    repo = Column(String(256),nullable=False)
     standalone = Column(Boolean, default=True)
-    role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project", default="")
+    role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project")
 
     ci_rule = relationship("SchemaCIRule", back_populates="project", lazy="joined")
     children = relationship("SchemaProject")
