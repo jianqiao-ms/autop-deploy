@@ -175,8 +175,6 @@ class ProjectHandler(AssetsHandler):
         headers.update(self.request.headers)
 
         gitlab_projects = await self.application.gitlab.get_all_projects()
-        # gitlab_projects = []
-
 
         self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
             self.render(self.__prefix__ + self.__view__,
@@ -184,6 +182,8 @@ class ProjectHandler(AssetsHandler):
                         schemaVisibleName=self.__schema__.__visiblename__,
                         formAction=self.route_path,
                         gitlab_projects = gitlab_projects)
+    def post_pre(self, item):
+        pass
     @property
     def __schema__(self):
         return SchemaProject

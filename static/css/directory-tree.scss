@@ -1,20 +1,20 @@
 // https://codepen.io/athimannil/pen/KfhEb
 
 .tree{
-    display: none;
     div[class*=col-] {
         padding-left: 20px;
         .form-row {
             margin-left: 0;
             div[class*=col-] {
                 padding-left: 20px ;
+                height: calc(1.8125rem + 2px);
                 &:before{
                     content: '';
                     height: 1px;
                     width: 10px;
                     background-color: #333;
                     position: absolute;
-                    top: 10px;
+                    top: calc(1.8125rem/2 - 2px);
                     left: 6px;
                     margin: auto;
                 }
@@ -30,7 +30,7 @@
                 }
                 &:last-child{
                     &::after{
-                        height: 10px;
+                        height: calc(1.8125rem/2 - 2px);
                     }
                 }
             }
@@ -43,5 +43,12 @@
                 text-decoration: none;
             }
         }
+    }
+    select.tag-select {
+        display: inline-block;
+        width: auto!important;
+        padding:0;
+        background-color:transparent;
+        cursor: pointer;
     }
 }
