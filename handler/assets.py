@@ -182,8 +182,31 @@ class ProjectHandler(AssetsHandler):
                         schemaVisibleName=self.__schema__.__visiblename__,
                         formAction=self.route_path,
                         gitlab_projects = gitlab_projects)
-    def post_pre(self, item):
-        pass
+    def post(self, *args, **kwargs):
+        result = None
+        _project = json_decode(self.request.body)
+        child = _project.pop("param")
+
+        try:
+            project = self.__schema__(**_project)
+            self.application.mysql.add(project)
+            self.application.mysql.commit()
+
+            for name, role in child.items():
+                self.application.mysql.add(self.__schema__(**{
+                    "visiblename":name,
+                    "role":role,
+                    "parent_id":project.id
+                }))
+            self.application.mysql.commit()
+
+            result = {"status":True, "msg":'Successfully create project'}
+        except Exception as e:
+            LOGGER.exception('Error occur during create item')
+            result = {"status": False, "msg": e.__str__()}
+        finally:
+            self.application.mysql.rollback()
+            self.finish(result)
     @property
     def __schema__(self):
         return SchemaProject

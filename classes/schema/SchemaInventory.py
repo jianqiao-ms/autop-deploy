@@ -74,7 +74,7 @@ class SchemaProject(ModalBase, SchemaBase):
     __visiblename__ = "Project"
 
     id = Column(Integer, primary_key=True)
-    gitlab_id = Column(Integer, nullable=False)
+    gitlab_id = Column(Integer)
     parent_id = Column(Integer, ForeignKey('t-project.id'))
     visiblename = Column(String(48), nullable=False, unique=True)
     standalone = Column(Boolean, default=True)
