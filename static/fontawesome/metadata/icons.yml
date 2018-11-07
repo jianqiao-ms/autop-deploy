@@ -4597,7 +4597,7 @@ eye:
       - seen
       - show
       - sight
-      - views
+      - view
       - visible
   styles:
     - solid
@@ -4627,7 +4627,7 @@ eye-slash:
       - show
       - toggle
       - unseen
-      - views
+      - view
       - visible
       - visiblity
   styles:

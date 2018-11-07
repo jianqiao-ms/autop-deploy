@@ -48,7 +48,7 @@ templateSelect.change(function () {
     let selected = parseInt(templateSelect.find("option:selected").attr("data-foreign-id"));
 
     $.ajax({
-        url:"/assets/host?id=" + selected,
+        url:"/inventory/host?id=" + selected,
         contentType: "application/json",
         type:"GET",
         success: function (rst) {

@@ -14,7 +14,7 @@ from classes.handlers import RequestHandler
 # CONST
 
 # Class&Function Defination
-class IOApiHandler(RequestHandler):
+class InventoryApiHandler(RequestHandler):
     __route_base__ = "/api/v1"
     __route_path__ = ""
     def get(self):
@@ -50,9 +50,9 @@ class IOApiHandler(RequestHandler):
             self.application.mysql.delete(item)
         self.finish({"status":True, "msg":"DELETED"})
 
-    @property
-    def route(self):
-        return os.path.join(self.__route_base__, self.__route_path__)
+    @classmethod
+    def route(cls):
+        return os.path.join(cls.__route_base__, cls.__route_path__)
     @property
     def __schema__(self):
         return NotInitialized

@@ -5,33 +5,29 @@
 
 # 3rd-party Packages
 import tornado.options
-from tornado.routing import RuleRouter, Rule, PathMatches
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
 # Local Packages
 from classes.appliacation import Application
-from handler.gitlab import app_api
-from handler.dashboard import app_dashboard
-from handler.assets import app_inventory
-from handler.deploy import app_deploy
-import handler.api.IO.Route as IORoute
+from handler.dashboard import route as IndexRoute
+from handler.api.Inventory.Route import route as IORoute
+from handler.view.Inventory.Route import route as InventoryRoute
 
 # CONST
 
 
 # Class&Function Defination
 router_rules = list()
-# router_rules.extend(app_api)
-# router_rules.extend(app_dashboard)
-# router_rules.extend(app_inventory)
-# router_rules.extend(app_deploy)
-router_rules.extend(IORoute.route)
+router_rules.extend(IndexRoute)
+router_rules.extend(IORoute)
+router_rules.extend(InventoryRoute)
 
 # Logic
 if __name__ == '__main__':
     tornado.options.options.logging = None
     tornado.options.parse_command_line()
     server = HTTPServer(Application(router_rules))
+    # server = HTTPServer(application)
     server.listen(60000)
     IOLoop.current().start()

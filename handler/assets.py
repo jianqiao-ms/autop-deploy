@@ -27,9 +27,9 @@ from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHos
 """
 class AssetsHandler(tornado.web.RequestHandler):
     """
-    Base class of assets items handlers.
+    Base class of inventory items handlers.
     """
-    route_path = "/assets"
+    route_path = "/inventory"
     def get(self):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
@@ -96,7 +96,7 @@ class AssetsHandler(tornado.web.RequestHandler):
         return self.route_path.split("/")[1] + "/"
     @property
     def __view__(self):
-        return "assets.html"
+        return "inventory.html"
 
     @property
     def __render_object__(self):
@@ -106,7 +106,7 @@ class AssetsHandler(tornado.web.RequestHandler):
 # Inventory item handlers
 ###############################
 class DistrictHandler(AssetsHandler):
-    route_path = "/assets/district"
+    route_path = "/inventory/district"
     @property
     def __schema__(self):
         return SchemaDistrict
@@ -115,7 +115,7 @@ class DistrictHandler(AssetsHandler):
         return "district.html"
 
 class HostHandler(AssetsHandler):
-    route_path = "/assets/host"
+    route_path = "/inventory/host"
     @property
     def __schema__(self):
         return SchemaHost
@@ -158,7 +158,7 @@ class HostHandler(AssetsHandler):
         )
 
 class HostGroupHandler(AssetsHandler):
-    route_path = "/assets/hostgroup"
+    route_path = "/inventory/hostgroup"
 
     @property
     def __schema__(self):
@@ -168,7 +168,7 @@ class HostGroupHandler(AssetsHandler):
         return "host_group.html"
 
 class ProjectHandler(AssetsHandler):
-    route_path = "/assets/project"
+    route_path = "/inventory/project"
 
     async def get(self):
         headers = {"Content-Type": ""}

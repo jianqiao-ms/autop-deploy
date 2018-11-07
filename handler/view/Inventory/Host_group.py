@@ -7,13 +7,13 @@
 
 # Local Packages
 from classes.schema.SchemaInventory import SchemaHostGroup
-from ._base import IOApiHandler
+from ._base import InventoryViewHandler
 
 
 # CONST
 
 # Class&Function Defination
-class HostgroupIOApiHandler(IOApiHandler):
+class HostgroupInventoryViewHandler(InventoryViewHandler):
     __route_path__ = "hostgroup"
 
     @property

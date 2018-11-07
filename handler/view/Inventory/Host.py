@@ -6,19 +6,19 @@
 # 3rd-party Packages
 
 # Local Packages
-from classes.schema.SchemaInventory import SchemaProject
-from ._base import IOApiHandler
+from classes.schema.SchemaInventory import SchemaHost
+from ._base import InventoryViewHandler
 
 
 # CONST
 
 # Class&Function Defination
-class ProjectIOApiHandler(IOApiHandler):
-    __route_path__ = "project"
+class HostInventoryViewHandler(InventoryViewHandler):
+    __route_path__ = "host"
 
     @property
     def __schema__(self):
-        return SchemaProject
+        return SchemaHost
 
 
 # Logic

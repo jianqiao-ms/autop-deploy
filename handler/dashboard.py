@@ -22,7 +22,7 @@ class IndexHandler(tornado.web.RequestHandler):
             self.finish(e.__str__())
             self.request.finish()
 
-app_dashboard = list([
+route = list([
     ('/', IndexHandler),
 ])
 

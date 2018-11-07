@@ -6,19 +6,19 @@
 # 3rd-party Packages
 
 # Local Packages
-from classes.schema.SchemaInventory import SchemaHost
-from ._base import IOApiHandler
+from classes.schema.SchemaInventory import SchemaHostGroup
+from ._base import InventoryApiHandler
 
 
 # CONST
 
 # Class&Function Defination
-class HostIOApiHandler(IOApiHandler):
-    __route_path__ = "host"
+class HostgroupInventoryApiHandler(InventoryApiHandler):
+    __route_path__ = "hostgroup"
 
     @property
     def __schema__(self):
-        return SchemaHost
+        return SchemaHostGroup
 
 
 # Logic

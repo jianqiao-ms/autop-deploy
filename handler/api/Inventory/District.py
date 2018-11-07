@@ -7,11 +7,11 @@
 
 # Local Packages
 from classes.schema.SchemaInventory import SchemaDistrict
-from ._base import IOApiHandler
+from ._base import InventoryApiHandler
 # CONST
 
 # Class&Function Defination
-class DistrictIOApiHandler(IOApiHandler):
+class DistrictInventoryApiHandler(InventoryApiHandler):
     __route_path__ = "district"
     @property
     def __schema__(self):
