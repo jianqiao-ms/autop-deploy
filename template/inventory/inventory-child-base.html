@@ -8,6 +8,18 @@
     {% include ../modual/modal-new.html %}
 {% end %}
 
+
+{% block modal-body %}
+
+<div class="form-row">
+    <div class="form-group col-sm-12">
+        <label for="visiblename">Visible Name</label>
+        <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of District" name="visiblename" required>
+    </div>
+</div>
+
+{% end %}
+
 {% block css %}
 <link rel="stylesheet" href="{{static_url('css/panel-form.css')}}">
 {% end %}
@@ -15,3 +27,4 @@
 <script src="{{static_url('js/form-panel.js')}}"></script>
 <script src="{{static_url('js/modal-new.js')}}"></script>
 {% end %}
+
