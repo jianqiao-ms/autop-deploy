@@ -12,7 +12,8 @@ from ._base import InventoryViewHandler
 
 # Class&Function Defination
 class DashboardInventoryViewHandler(InventoryViewHandler):
-    pass
+    def get_pre(self):
+        return None
 
     
 

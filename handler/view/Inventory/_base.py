@@ -15,10 +15,18 @@ from classes.handlers import RequestHandler
 
 # Class&Function Defination
 class InventoryViewHandler(RequestHandler):
+    """
+    展示页面Handler
+    继承这个类并重写__schema__和__template__属性，get方法默认查询__schema__所有记录并渲染__template__模板返回
+    如果要自定义返回的内容，重写get_pre()方法
+
+    render模板的数据格式：
+    [{字段：值, 字段：值, ...}]
+    """
     __route_base__ = "/view/inventory"
     __route_path__ = ""
     def get(self):
-        pre_func = getattr(self, "getpre", None)
+        pre_func = getattr(self, "get_pre", None)
         if pre_func and callable(pre_func):
             try:
                 self.render(self.__template__, data= pre_func())
@@ -26,7 +34,8 @@ class InventoryViewHandler(RequestHandler):
                 LOGGER.exception(e.__str__())
                 self.finish({"status": False, "msg": e.__str__()})
                 return
-        self.render(self.__template__, data= None)
+        else:
+            self.render(self.__template__, data = None)
 
     def get_pre(self):
         return self.__records_json__
@@ -49,13 +58,7 @@ class InventoryViewHandler(RequestHandler):
     def __records_json__(self):
         if self.__schema__ is not NotInitialized:
             records = self.application.mysql.query(self.__schema__).all()
-            return json.dumps([r.dict() for r in records], ensure_ascii=False, indent=2)
-
-        return json.dumps({"status": False, "msg": "No Schema Specific"})
-
-
-
-
+            return [r.dict() for r in records]
 
 # Logic
 if __name__ == '__main__':

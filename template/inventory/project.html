@@ -1,14 +1,18 @@
 {% extends inventory-child-base.html %}
 
+{% block variables %}
+    {% set formAction = "/api/v1/inventory/project" %}
+    {% set inventoryVisibleName = "项目" %}
+{% end %}
+
+
 {% block modal-body %}
 <div class="form-row border-bottom">
     <div class="form-group col-sm-6">
         <label for="project">选择Project</label>
         <select id="project" class="form-control foreign-key  no-with-template" name="gitlab_id" data-default="Choose...">
             <option selected data-foreign-id="0">Choose...</option>
-            {% for project in gitlab_projects %}
-                <option data-foreign-id="{{ project['id'] }}">{{ project['name_with_namespace'] }}</option>
-            {% end %}
+            {% comment 通过$.ready() 添加 下拉列表options %}
         </select>
     </div>
     <div class="form-group col-sm-6">
@@ -20,7 +24,7 @@
 <div class="form-row border-bottom">
     <div class="form-group col-sm-6">
         <label for="standalone">Standalone or not</label>
-        <div class="btn-group checkbox-in-grid" data-toggle="buttons">
+        <div class="btn-group checkbox-in-grid" >
             <label class="btn btn-outline-secondary checkbox-in-grid active">
                 <input type="checkbox" id="standalone" name="standalone" checked> Standalone?
             </label>

@@ -1,5 +1,7 @@
 /*form作为展示表格时的样式定义*/
-
+div.container-fluid.shadow {
+    box-shadow: 0.1rem -0.1rem 0.7rem rgba(0,0,0,.15)!important
+}
 div.container-fluid.shadow.p-3.mb-0.bg-white.rounded .form-row {
     padding: 0.3rem 0;
 }

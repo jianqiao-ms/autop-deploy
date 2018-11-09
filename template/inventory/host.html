@@ -1,6 +1,9 @@
 {% extends inventory-child-base.html %}
 
-
+{% block variables %}
+    {% set formAction = "/api/v1/inventory/host" %}
+    {% set inventoryVisibleName = "主机" %}
+{% end %}
 
 <!--
 BLOCK IN FORM-PANEL
@@ -49,9 +52,7 @@ Relate to THE INCLUDE statement in block [container]
         <label for="district">选择区域</label>
         <select id="district" class="form-control foreign-key  no-with-template" name="district_id" data-default="Choose...">
             <option selected data-foreign-id="0">Choose...</option>
-            {% for district in districts %}
-                <option data-foreign-id="{{ district.id }}">{{ district.visiblename }}</option>
-            {% end %}
+            {% comment 通过$.ready() 添加 下拉列表options %}
         </select>
     </div>
     <div class="form-group col-sm-6">
@@ -69,15 +70,13 @@ Relate to THE INCLUDE statement in block [container]
         <label for="template">选择模板</label>
         <select id="template" class="form-control foreign-key  no-type-template" name="template_id" data-default="Choose...">
             <option selected data-foreign-id="0">Choose...</option>
-            {% for item in records %}
-                {% if item.type == "template" %}
-                <option data-foreign-id="{{ item.id }}">{{ item.visiblename }}</option>
+            {% for record in data %}
+                {% if record.type == "template" %}
+                <option data-foreign-id="{{ item.id }}">{{ record.visiblename }}</option>
                 {% end %}
             {% end %}
         </select>
     </div>
-
-
 </div>
 
 <div class="form-row border-bottom">

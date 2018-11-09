@@ -165,7 +165,7 @@ class HostGroupHandler(AssetsHandler):
         return SchemaHostGroup
     @property
     def __view__(self):
-        return "host_group.html"
+        return "hostgroup.html"
 
 class ProjectHandler(AssetsHandler):
     route_path = "/inventory/project"

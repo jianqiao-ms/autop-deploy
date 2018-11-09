@@ -50,5 +50,26 @@ $.fn.extend({
                 $(this).val(defaultValue).prop("selected", true).change();
                 break;
         }
+    },
+
+    active:function () {
+        if (!$(this).hasClass("active")) {
+            $(this).addClass("active")
+        }
+    },
+    deactive:function () {
+        if ($(this).hasClass("active")) {
+            $(this).removeClass("active")
+        }
+    },
+    enable:function () {
+        if ($(this).prop("disabled")) {
+            $(this).prop("disabled", false)
+        }
+    },
+    disable:function () {
+        if (!$(this).prop("disabled")) {
+            $(this).prop("disabled", true)
+        }
     }
 });

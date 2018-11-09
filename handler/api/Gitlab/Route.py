@@ -12,24 +12,28 @@ from tornado.web import RequestHandler
 
 # Class&Function Defination
 class GitlabHandler(RequestHandler):
-    route_path = "/api/gitlab.*"
+    __route_base__ = "/api/v1/gitlab"
+    __route_path__ = ".*"
 
     async def get(self):
         headers = {"Content-Type": ""}
         headers.update(self.request.headers)
 
-        api = self.request.uri[12:]
+        api = self.request.uri[len(self.__route_base__)+1:]
         _ = await self.application.gitlab.read_api(api)
         try:
             respons = _.body.decode()
         except:
             respons = "[]"
 
-        if headers["Content-Type"] == "application/json":
-            self.finish(respons)
+        self.finish(respons)
 
-app_api = list(map(
-    lambda x:(x.route_path, x),
+    @classmethod
+    def route(cls):
+        return cls.__route_base__ + cls.__route_path__
+
+route = list(map(
+    lambda x:(x.route(), x),
     [
         GitlabHandler,
     ]

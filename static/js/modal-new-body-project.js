@@ -1,7 +1,6 @@
-let modalNewFormRow             = modalNew.find("div.form-row");
-let projectSelect               = modalNewFormRow.find("select#project");
-let nameInput                   = modalNewFormRow.find("input#visiblename");
-let standaloneCheckbox          = modalNewFormRow.find("input#standalone");
+let projectSelect               = newInventoryFormRow.find("select#project");
+let nameInput                   = newInventoryFormRow.find("input#visiblename");
+let standaloneCheckbox          = newInventoryFormRow.find("input#standalone");
 
 function FolderTreeChild(name, type="tree") {
     if (type !== "tree") {
@@ -29,13 +28,13 @@ function FolderTree(rootname="Root") {
     this.update = function (selectedOption) {
         let selectedGitlabProjectId = selectedOption.attr("data-foreign-id");
         let selectedGitlabProjectName = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ') + 3);
-        let object = this;
+        let tree = this;
 
         this.resetDefault();
         this.root.html(selectedGitlabProjectName);
         $.ajax({
             type: "GET",
-            url: "/api/gitlab/projects/" + selectedGitlabProjectId + "/repository/tree",
+            url: "/api/v1/gitlab/projects/" + selectedGitlabProjectId + "/repository/tree",
             beforeSend: function (request) {
                 request.setRequestHeader("Content-Type", "application/json");
             },
@@ -49,9 +48,9 @@ function FolderTree(rootname="Root") {
                 }
 
                 $(fileArray).each(function () {
-                    object.addChild($(this)[0].name, $(this)[0].type)
+                    tree.addChild($(this)[0].name, $(this)[0].type)
                 });
-                object.tree.show();
+                tree.tree.show();
             }
         });
     }
@@ -61,7 +60,8 @@ let folderTree                  = new FolderTree();
 
 projectSelect.change(function () {
     let selectedOption  = projectSelect.find("option:selected");
-    let project_name    = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ')+3);
+    // let project_name    = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ')+3);
+    let project_name    = selectedOption.val();
     if (selectedOption.val() === "Choose...") {
         nameInput.val("");
         folderTree.resetDefault();
@@ -79,7 +79,18 @@ projectSelect.change(function () {
 
 
 standaloneCheckbox.change(function () {
-    let tagSelect = modalNewFormRow.find("select.tag-select");
+    let selectedOption  = projectSelect.find("option:selected");
+
+    if (!standaloneCheckbox.prop("checked")) {
+        if (selectedOption.val() === "Choose...") {
+            console.log("Alerm! Choose project first!");
+            standaloneCheckbox.prop("checked", true);
+        } else {
+            standaloneCheckbox.parent().deactive();
+        }
+    }
+
+    let tagSelect = newInventoryFormRow.find("select.tag-select");
     if (standaloneCheckbox.prop("checked")) {
         tagSelect.each(function () {
             $(this).prop("disabled", true)
@@ -91,3 +102,27 @@ standaloneCheckbox.change(function () {
     }
 });
 
+/* 从API模块获取数据填充modal组件
+* =====================================================================================================================
+* =====================================================================================================================
+*/
+
+// 从API模块获取数据填充modal组件
+function gitlabProjectOption(gitlabProject) {
+    return '<option data-foreign-id="'+ gitlabProject.id +'">'+ gitlabProject.name_with_namespace +'</option>'
+}
+
+
+$(document).ready(function () {
+    $.ajax({
+        type: "GET",
+        url: "/api/v1/gitlab/projects?simple=true",
+        success: function (rst) {
+            let allProjects = JSON.parse(rst);
+            let c = allProjects.length;
+            while (c--) {
+                projectSelect.append(gitlabProjectOption(allProjects[c]))
+            }
+        }
+    });
+});

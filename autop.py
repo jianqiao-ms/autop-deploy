@@ -11,6 +11,7 @@ from tornado.ioloop import IOLoop
 # Local Packages
 from classes.appliacation import Application
 from handler.dashboard import route as IndexRoute
+from handler.api.Gitlab.Route import route as GitlabRoute
 from handler.api.Inventory.Route import route as IORoute
 from handler.view.Inventory.Route import route as InventoryRoute
 
@@ -20,6 +21,7 @@ from handler.view.Inventory.Route import route as InventoryRoute
 # Class&Function Defination
 router_rules = list()
 router_rules.extend(IndexRoute)
+router_rules.extend(GitlabRoute)
 router_rules.extend(IORoute)
 router_rules.extend(InventoryRoute)
 

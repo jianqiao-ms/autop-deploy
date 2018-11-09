@@ -8,7 +8,7 @@
 # Local Packages
 from .District      import DistrictInventoryApiHandler
 from .Host          import HostInventoryApiHandler
-from .Host_group    import HostgroupInventoryApiHandler
+from .Hostgroup    import HostgroupInventoryApiHandler
 from .Project       import ProjectInventoryApiHandler
 # CONST
 
