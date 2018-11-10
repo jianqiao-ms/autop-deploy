@@ -6,6 +6,7 @@ import os.path
 import json
 
 # 3rd-party Packages
+
 # Local Packages
 from classes.appliacation import LOGGER
 from classes.handlers import NotInitialized
@@ -15,7 +16,7 @@ from classes.handlers import RequestHandler
 
 # Class&Function Defination
 class InventoryApiHandler(RequestHandler):
-    __route_base__ = "/api/v1"
+    __route_base__ = "/api/v1/inventory"
     __route_path__ = ""
     def get(self):
         self.finish(self.__records__)

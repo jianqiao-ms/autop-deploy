@@ -57,7 +57,9 @@ class InventoryViewHandler(RequestHandler):
     @property
     def __records_json__(self):
         if self.__schema__ is not NotInitialized:
-            records = self.application.mysql.query(self.__schema__).all()
+            records = self.application.mysql.query(self.__schema__).order_by(self.__schema__.id).all()
+            for r in records:
+                print(r.visiblename)
             return [r.dict() for r in records]
 
 # Logic

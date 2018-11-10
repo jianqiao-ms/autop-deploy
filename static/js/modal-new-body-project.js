@@ -112,8 +112,8 @@ function gitlabProjectOption(gitlabProject) {
     return '<option data-foreign-id="'+ gitlabProject.id +'">'+ gitlabProject.name_with_namespace +'</option>'
 }
 
-
 $(document).ready(function () {
+    titleNewBtn.disable();
     $.ajax({
         type: "GET",
         url: "/api/v1/gitlab/projects?simple=true",
@@ -123,6 +123,7 @@ $(document).ready(function () {
             while (c--) {
                 projectSelect.append(gitlabProjectOption(allProjects[c]))
             }
+            titleNewBtn.enable();
         }
     });
 });

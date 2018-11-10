@@ -19,7 +19,7 @@ newInventoryModal.on("hidden.bs.modal",function () {
 });
 
 submitButton.click(function () {
-    let reqJson = newItemForm.serializeJson();
+    let reqJson = newInventoryForm.serializeJson();
     console.log(reqJson);
 
     $.ajax({

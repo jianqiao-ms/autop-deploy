@@ -33,7 +33,10 @@ $.fn.extend({
             paramFormDataObject[$(this).attr("name")] = whatWeWant;
         });
 
-        formDataObject["param"] = paramFormDataObject;
+        if (paramInput.length) {
+            formDataObject["param"] = paramFormDataObject;
+        }
+
         return JSON.stringify(formDataObject)
     },
 

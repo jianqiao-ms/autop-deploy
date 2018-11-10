@@ -4,7 +4,7 @@
 # Official packages
 
 # 3rd-party Packages
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Table, Column, ForeignKey, \
     Integer, String, Enum, Boolean
 
@@ -75,25 +75,27 @@ class SchemaProject(ModalBase, SchemaBase):
 
     id = Column(Integer, primary_key=True)
     gitlab_id = Column(Integer)
+
     parent_id = Column(Integer, ForeignKey('t-project.id'))
+    # parent = relationship("SchemaProject", remote_side=[id], lazy="joined")
+    children = relationship("SchemaProject",backref=backref('parent', remote_side=[id],lazy="joined", join_depth=1))
+
     visiblename = Column(String(48), nullable=False, unique=True)
     standalone = Column(Boolean, default=True)
     role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project")
 
-    ci_rule = relationship("SchemaCIRule", back_populates="project", lazy="joined")
-    children = relationship("SchemaProject")
+    ci_rule_id = Column(Integer, ForeignKey("t-ci_rule.id"))
+    ci_rule = relationship("SchemaCIRule", back_populates="projects", lazy="joined")
 
 class SchemaCIRule(ModalBase, SchemaBase):
     __tablename__ = "t-ci_rule"
     __visiblename__ = "CI Rule"
 
     id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey("t-project.id"))
     build_cmd = Column(String(256), default="")
     package_name = Column(String(32), default="")
 
-
-    project = relationship("SchemaProject", back_populates = "ci_rule")
+    projects = relationship("SchemaProject", back_populates = "ci_rule")
 
 # Logic
 if __name__ == "__main__":
