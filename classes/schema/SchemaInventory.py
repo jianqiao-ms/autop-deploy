@@ -92,6 +92,8 @@ class SchemaCIRule(ModalBase, SchemaBase):
     __visiblename__ = "CI Rule"
 
     id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey("t-project.id"))
+    branch_name = Column(String(16))
     build_cmd = Column(String(256), default="")
     package_name = Column(String(32), default="")
 

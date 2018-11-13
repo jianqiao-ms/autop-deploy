@@ -14,6 +14,9 @@ from handler.dashboard import route as IndexRoute
 from handler.api.Gitlab.Route import route as GitlabRoute
 from handler.api.Inventory.Route import route as IORoute
 from handler.view.Inventory.Route import route as InventoryRoute
+from handler.view.CI.Route import route as CIRouter
+from handler.view.CD.Route import route as CDRouter
+
 
 # CONST
 
@@ -24,6 +27,8 @@ router_rules.extend(IndexRoute)
 router_rules.extend(GitlabRoute)
 router_rules.extend(IORoute)
 router_rules.extend(InventoryRoute)
+router_rules.extend(CIRouter)
+router_rules.extend(CDRouter)
 
 # Logic
 if __name__ == '__main__':

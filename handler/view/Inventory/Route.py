@@ -6,11 +6,11 @@
 # 3rd-party Packages
 
 # Local Packages
-from .Dashboard     import DashboardInventoryViewHandler
-from .District      import DistrictInventoryViewHandler
-from .Host          import HostInventoryViewHandler
-from .Host_group    import HostgroupInventoryViewHandler
-from .Project       import ProjectInventoryViewHandler
+from handler.view.Inventory.Dashboard import DashboardInventoryViewHandler
+from handler.view.Inventory.District import DistrictInventoryViewHandler
+from handler.view.Inventory.Host import HostInventoryViewHandler
+from handler.view.Inventory.Host_group import HostgroupInventoryViewHandler
+from handler.view.Inventory.Project import ProjectInventoryViewHandler
 # CONST
 
 # Class&Function Defination
