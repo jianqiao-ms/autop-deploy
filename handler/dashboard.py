@@ -7,16 +7,22 @@
 import tornado.web
 
 # Local Packages
-from classes.appliacation import Application
-
 # CONST
 
 # Class&Function Defination
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('base.html')
+        self.render('index.html')
+    def pre_get(self):
+        a = self.test()
+    def test(self):
+        try:
+            raise Exception("in func test")
+        except Exception as e:
+            self.finish(e.__str__())
+            self.request.finish()
 
-app_dashboard = Application([
+route = list([
     ('/', IndexHandler),
 ])
 

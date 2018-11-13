@@ -2,12 +2,12 @@
 #-* coding: utf-8 -*
 
 # Official packages
-import json
+
 # 3rd-party Packages
 from sqlalchemy.ext.declarative import declarative_base
 
 # Local Packages
-
+from classes.newdict import dict
 
 # CONST
 

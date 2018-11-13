@@ -1,6 +1,9 @@
-div.terminal {
-    background-color: black;
-    width: 80em;
-    height: 24em;
+div.terminal-container {
+    background-color: #cccccc;
     color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }

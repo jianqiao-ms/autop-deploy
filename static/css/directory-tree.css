@@ -1,0 +1,40 @@
+.tree div[class*=col-] {
+  padding-left: 20px; }
+  .tree div[class*=col-] .form-row {
+    margin-left: 0; }
+    .tree div[class*=col-] .form-row div[class*=col-] {
+      padding-left: 20px;
+      height: calc(1.8125rem + 2px); }
+      .tree div[class*=col-] .form-row div[class*=col-]:before {
+        content: '';
+        height: 1px;
+        width: 10px;
+        background-color: #333;
+        position: absolute;
+        top: calc(1.8125rem/2 - 2px);
+        left: 6px;
+        margin: auto; }
+      .tree div[class*=col-] .form-row div[class*=col-]::after {
+        content: '';
+        width: 1px;
+        height: 100%;
+        background-color: #333;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 6px; }
+      .tree div[class*=col-] .form-row div[class*=col-]:last-child::after {
+        height: calc(1.8125rem/2 - 2px); }
+  .tree div[class*=col-] a {
+    cursor: pointer; }
+    .tree div[class*=col-] a:hover {
+      color: #333;
+      text-decoration: none; }
+.tree select.tag-select {
+  display: inline-block;
+  width: auto !important;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer; }
+
+/*# sourceMappingURL=directory-tree.css.map */

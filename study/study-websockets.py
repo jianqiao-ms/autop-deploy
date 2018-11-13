@@ -5,6 +5,7 @@
 import os, sys
 import shlex
 import subprocess
+import select
 
 # 3rd-party Packages
 import paramiko
@@ -21,7 +22,7 @@ from tornado.iostream import StreamClosedError
 
 # CONST
 desc_proxy = dict(
-    hostname = '192.168.3.9',
+    hostname = '192.168.3.34',
     port = 22,
     username = 'root',
     password = ' ',
@@ -59,25 +60,13 @@ class MainHandler(tornado.web.RequestHandler):
             traceback.print_exc()
             self.finish()
 
+class StaticHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('static.html')
+
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('base.html')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        self.render('tty.html')
 
 class SockMainHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -86,59 +75,18 @@ class SockMainHandler(tornado.websocket.WebSocketHandler):
         proxy.connect(**desc_proxy)
 
         self.shell = proxy.invoke_shell()
-        import select
-        self.r, self.w, self.e = select.select([self.shell ], [], [])
-
-        IOLoop.current().add_handler(self.r[0],self.recv, IOLoop.READ)
+        IOLoop.current().add_handler(self.shell,self.recv, IOLoop.READ)
 
     def recv(self, *args):
-        while True:
-            data = self.shell .recv(1024)
-            self.write_message(data)
+        a = self.shell.recv(128)
+        self.write_message(a)
 
     def on_message(self, message):
-        self.r[0].send(message + '\r\n')
+        self.shell.send(message)
 
     def on_close(self):
+        self.shell.close()
         print("WebSocket closed")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class AsyncHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.finish('aysnc')
-
-class AjaxHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("base.html")
-
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
 
 # Logic
 if __name__ == "__main__":
@@ -152,7 +100,7 @@ if __name__ == "__main__":
     parse_command_line()
     application = Application([
         ('/', IndexHandler),
-        ('/aysnc', AsyncHandler),
+        ('/static', StaticHandler),
         ('/websocket', SockMainHandler),
     ], **settings)
 

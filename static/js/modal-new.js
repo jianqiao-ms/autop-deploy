@@ -1,38 +1,26 @@
-var modalNew = $("div.modal#newItemModal");
-var newItemForm = $("div#newItemModal>div>div>div.modal-body>form");
-var formAction = newItemForm.attr("action");
-var submitButton = $("div#newItemModal>div.modal-lg>div.modal-content>div.modal-footer>button.btn-primary");
+newInventoryModal       = $("div.modal#newInventoryModal");
+newInventoryForm        = $("div#newInventoryModal>div>div>div.modal-body>form");
+newInventoryFormRow     = newInventoryForm.find("div.form-row");
+newInventoryFormGroup   = newInventoryFormRow.find("div.form-group");
+visibleNameInput        = newInventoryFormRow.find("input#visiblename");
+formAction              = newInventoryForm.attr("action");
 
-modalNew.on("hidden.bs.modal",function () {
-    $(this).find("input").each(function () {
+
+
+let submitButton        = $("div#newInventoryModal>div.modal-lg>div.modal-content>div.modal-footer>button.btn-primary");
+
+newInventoryModal.on("hidden.bs.modal",function () {
+    $(this).find("select").each(function () {
         $(this).resetDefault()
     });
-    $(this).find("select").each(function () {
+    $(this).find("input").each(function () {
         $(this).resetDefault()
     });
 });
 
 submitButton.click(function () {
-    var reqJson = newItemForm.serializeJson();
-
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // var reqArray = newItemForm.serializeArray();
-    // var reqObject = Object();
-    // reqArray.forEach(function (formObject, index, array) {
-    //     _ = {};_[formObject.name] = formObject.is("select")?formObject.selected.attr("id"):formObject.value;
-    //     $.extend(reqObject, _)
-    // });
-    // var reqJSON = JSON.stringify(reqObject);
-
-    // console.log(reqJson);
+    let reqJson = newInventoryForm.serializeJson();
+    console.log(reqJson);
 
     $.ajax({
         url:formAction,

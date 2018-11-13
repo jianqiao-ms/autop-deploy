@@ -1,0 +1,19 @@
+{% extends inventory-child-base.html %}
+
+{% block variables %}
+    {% set formAction = "/api/v1/inventory/district" %}
+    {% set inventoryVisibleName = "区域" %}
+{% end %}
+
+
+
+{% block modal-body %}
+
+<div class="form-row border-bottom">
+    <div class="form-group col-sm-12">
+        <label for="visiblename">VisibleName</label>
+        <input type="text" class="form-control" id="visiblename" placeholder="Visiblename of District" name="visiblename" required>
+    </div>
+</div>
+
+{% end %}

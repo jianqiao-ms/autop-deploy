@@ -1,0 +1,101 @@
+{% extends inventory.html %}
+
+
+{% block container %}
+    {% block variables %}
+        {% comment 这里声明【 formAction|inventoryVisibleName 】两个变量， 用于初始化【内容表格】 和 【新建项目modal】%}
+    {% end %}
+
+    {% comment 内容表格 %}
+    <div class="container-fluid shadow p-3 mb-0 bg-white rounded">
+        <form action="{{ formAction }}">
+            <div class="form-row align-items-center text-white bg-success">
+                <div class="col-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="allCheck">
+                        <label class="form-check-label" for="allCheck">
+                            全选
+                        </label>
+                    </div>
+                </div>
+                {% block col-in-title %}{% end %}
+
+                <div class="col-sm"></div>
+
+                <div class="col-sm-auto">
+                    <button type="button" class="btn btn-outline-light btn-form form-global-new" data-toggle="modal"
+                            data-target="#newInventoryModal">新建</button>
+                </div>
+
+                <div class="col-sm-auto">
+                    <button type="button" class="btn btn-outline-light btn-form form-global-del">删除</button>
+                </div>
+            </div>
+        </form>
+        {% for record in data %}
+        <form action="{{ formAction }}">
+
+            <div class="form-row align-items-center">
+                <div class="col-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="{{ record.id }}">
+                        <label class="form-check-label" for="{{ record.id }}">
+                            {% block checkbox-lable %}{{ record.visiblename }}{% end %}
+                        </label>
+                        {% block record-badge %}{% end %}
+                    </div>
+                </div>
+
+
+                {% block col-in-row %}{% end %}
+
+
+
+                <div class="col"></div>
+
+                <div class="col-sm-auto">
+                    <button type="button" class="btn btn-outline-warning  btn-form">修改</button>
+                </div>
+
+                <div class="col-sm-auto">
+                    <button type="button" class="btn btn-outline-danger btn-form">删除</button>
+                </div>
+
+            </div>
+        </form>
+        {% end %}
+    </div>
+
+    {% comment inventory 新建项目 modal %}
+    <div class="modal fade" id="newInventoryModal" tabindex="-1" role="dialog" aria-labelledby="newInventoryModalLable"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newItemModalLable">新建 {{ inventoryVisibleName }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ formAction }}">
+                    {% block modal-body %}{% end %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% end %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{static_url('css/panel-form.css')}}">
+{% end %}
+{% block js %}
+<script src="{{static_url('js/form-panel.js')}}"></script>
+<script src="{{static_url('js/modal-new.js')}}"></script>
+{% end %}

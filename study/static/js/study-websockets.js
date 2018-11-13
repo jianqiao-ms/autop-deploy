@@ -1,10 +1,20 @@
-var ws = new WebSocket("ws://192.168.2.200:60000/websocket");
-var block_terminal = $("div.terminal");
+//
+container = $("div.terminal-container");
 
-ws.onopen = function() {
-   ws.send("ls");
+
+// Terminal.applyAddon(fit);
+var term = new Terminal({
+    "cursorBlink":true
+});
+term.open(document.getElementById('terminal'));
+var ws = new WebSocket("ws://"+ window.location.host +"/websocket");
+
+ws.onmessage = function (e) {
+    console.log(e);
+    term.write(e.data);
 };
-ws.onmessage = function (evt) {
-   console.log(evt.data);
-   block_terminal.append(evt.data);
-};
+
+term.on('data', function (data) {
+    console.log(data);
+    ws.send(data);
+});

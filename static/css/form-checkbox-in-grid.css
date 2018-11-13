@@ -1,0 +1,19 @@
+div.checkbox-in-grid {
+    display: block;
+}
+label.checkbox-in-grid {
+    width: 100%;
+}
+label.checkbox-in-grid.active {
+    background-color: #28a745!important;
+}
+label.checkbox-in-grid:focus {
+    -webkit-box-shadow: none!important;
+    -moz-box-shadow: none!important;
+    box-shadow: none!important;
+}
+label.checkbox-in-grid.focus {
+    -webkit-box-shadow: none!important;
+    -moz-box-shadow: none!important;
+    box-shadow: none!important;
+}

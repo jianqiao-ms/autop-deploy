@@ -10,7 +10,7 @@
 # CONST
 
 # Class&Function Defination
-class NewDict(dict):
+class dict(dict):
     def __getattr__(self, item):
         return self.get(item)
     def __setattr__(self, key, value):

@@ -4,7 +4,7 @@
 # Official packages
 
 # 3rd-party Packages
-from tornado.web import RequestHandler
+import tornado.web
 from tornado.escape import json_encode
 
 # Local Packages
@@ -30,6 +30,8 @@ class NotInitialized(object):
     visiblename = ""
     __visiblename__ = ""
 
+class RequestHandler(tornado.web.RequestHandler):
+    pass
 
 # Logic
 if __name__ == '__main__':

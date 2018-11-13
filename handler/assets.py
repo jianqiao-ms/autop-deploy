@@ -18,7 +18,7 @@ from classes.appliacation import LOGGER
 from classes.appliacation import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
-    SchemaProjectType, SchemaProject
+    SchemaProject
 
 # CONST
 
@@ -27,9 +27,9 @@ from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHos
 """
 class AssetsHandler(tornado.web.RequestHandler):
     """
-    Base class of assets items handlers.
+    Base class of inventory items handlers.
     """
-    route_path = "/assets"
+    route_path = "/inventory"
     def get(self):
         headers = {"Content-Type":""}
         headers.update(self.request.headers)
@@ -47,21 +47,22 @@ class AssetsHandler(tornado.web.RequestHandler):
 
         pre_func = getattr(self, "post_pre", None)
         if pre_func and callable(pre_func):
-            item = pre_func(item)
+            try:
+                item = pre_func(item)
+            except Exception as e:
+                LOGGER.exception('Failed to get host name of {}'.format(item.ipaddr))
+                self.finish({"status":False, "msg":e.__str__()})
+                return
 
         try:
             self.application.mysql.add(item)
             self.application.mysql.commit()
             result = {"status":True, "msg":str(item.id)}
-        except IntegrityError as e:
-            self.application.mysql.rollback()
+        except Exception as e:
+            LOGGER.exception('Error occur during create item')
             result = {"status": False, "msg": e.__str__()}
-            return
-        except DBAPIError as e:
-            self.application.mysql.rollback()
-            result = {"status": False, "msg": e.__str__()}
-            return
         finally:
+            self.application.mysql.rollback()
             self.finish(result)
 
     def delete(self, *args, **kwargs):
@@ -95,7 +96,7 @@ class AssetsHandler(tornado.web.RequestHandler):
         return self.route_path.split("/")[1] + "/"
     @property
     def __view__(self):
-        return "assets.html"
+        return "inventory.html"
 
     @property
     def __render_object__(self):
@@ -105,7 +106,7 @@ class AssetsHandler(tornado.web.RequestHandler):
 # Inventory item handlers
 ###############################
 class DistrictHandler(AssetsHandler):
-    route_path = "/assets/district"
+    route_path = "/inventory/district"
     @property
     def __schema__(self):
         return SchemaDistrict
@@ -114,7 +115,7 @@ class DistrictHandler(AssetsHandler):
         return "district.html"
 
 class HostHandler(AssetsHandler):
-    route_path = "/assets/host"
+    route_path = "/inventory/host"
     @property
     def __schema__(self):
         return SchemaHost
@@ -125,17 +126,17 @@ class HostHandler(AssetsHandler):
     def post_pre(self, item):
         if item.type == "template":
             return item
-        hostname = self.get_hostname(item)
+        try:
+            hostname = self.get_hostname(item)
+        except Exception as e:
+            raise e
 
-        if not hostname["status"]:
-            self.finish(hostname["msg"])
-            return
-        item.hostname = hostname["msg"]
+        item.hostname = hostname
         return item
 
     def get_hostname(self, host):
         conn = dict()
-        conn["timeout"] = 30
+        conn["timeout"] = 1
         conn["hostname"] = host.ipaddr
         conn["port"] = 22 if not host.ssh_port else host.ssh_port
         conn["username"] = host.ssh_user
@@ -143,22 +144,12 @@ class HostHandler(AssetsHandler):
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        try:
-            ssh.connect(**conn)
-        except timeout:
-            pass
-            return {"status":False, "msg":"Host {} not avilable, process terminated".format(host.ipaddr)}
-        except paramiko.ssh_exception.AuthenticationException:
-            pass
-            return {"status":False, "msg":"Authentication failed"}
-        except Exception as e:
-            pass
-            return {"status":False, "msg":e.__str__()}
+        ssh.connect(**conn)
 
         stdin, stdout, stderr = ssh.exec_command("hostname")
         hostname = stdout.read().decode()
         ssh.close()
-        return {"status":True, "msg":hostname}
+        return hostname
 
     @property
     def __render_object__(self):
@@ -167,29 +158,55 @@ class HostHandler(AssetsHandler):
         )
 
 class HostGroupHandler(AssetsHandler):
-    route_path = "/assets/hostgroup"
+    route_path = "/inventory/hostgroup"
 
     @property
     def __schema__(self):
         return SchemaHostGroup
     @property
     def __view__(self):
-        return "host_group.html"
-
-class ProjectTypeHandler(AssetsHandler):
-    route_path = "/assets/projecttype"
-
-    @property
-    def __schema__(self):
-        return SchemaProjectType
-    @property
-    def __view__(self):
-        return "project_type.html"
-
+        return "hostgroup.html"
 
 class ProjectHandler(AssetsHandler):
-    route_path = "/assets/project"
+    route_path = "/inventory/project"
 
+    async def get(self):
+        headers = {"Content-Type": ""}
+        headers.update(self.request.headers)
+
+        gitlab_projects = await self.application.gitlab.get_all_projects()
+
+        self.finish(self.__records_json__) if headers["Content-Type"] == "application/json" else \
+            self.render(self.__prefix__ + self.__view__,
+                        records=self.__records__,
+                        schemaVisibleName=self.__schema__.__visiblename__,
+                        formAction=self.route_path,
+                        gitlab_projects = gitlab_projects)
+    def post(self, *args, **kwargs):
+        result = None
+        _project = json_decode(self.request.body)
+        child = _project.pop("param")
+
+        try:
+            project = self.__schema__(**_project)
+            self.application.mysql.add(project)
+            self.application.mysql.commit()
+
+            for name, role in child.items():
+                self.application.mysql.add(self.__schema__(**{
+                    "visiblename":name,
+                    "role":role,
+                    "parent_id":project.id
+                }))
+            self.application.mysql.commit()
+
+            result = {"status":True, "msg":'Successfully create project'}
+        except Exception as e:
+            LOGGER.exception('Error occur during create item')
+            result = {"status": False, "msg": e.__str__()}
+        finally:
+            self.application.mysql.rollback()
+            self.finish(result)
     @property
     def __schema__(self):
         return SchemaProject
@@ -197,19 +214,17 @@ class ProjectHandler(AssetsHandler):
     def __view__(self):
         return "project.html"
 
-
 # application
-app_inventory = Application(list(map(
+app_inventory = list(map(
     lambda x:(x.route_path, x),
     [
         AssetsHandler,
         DistrictHandler,
         HostHandler,
         HostGroupHandler,
-        ProjectTypeHandler,
-        ProjectHandler
+        ProjectHandler,
     ]
-)))
+))
 
 # Logic
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 # Official packages
 
 # 3rd-party Packages
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Table, Column, ForeignKey, \
     Integer, String, Enum, Boolean
 
@@ -69,27 +69,35 @@ class SchemaHostGroup(ModalBase ,SchemaBase):
                          secondary = HostToGroup,
                          back_populates = "groups")
 
-class SchemaProjectType(ModalBase, SchemaBase):
-    __tablename__ = "t-project_type"
-    __visiblename__ = "Project Type"
-
-    id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
-
-    deploy_path = Column(String(128), nullable=False, unique=False, default="/data/apps")
-    run_path = Column(String(128), nullable=False, unique=False, default="/data/run")
-    projects = relationship("SchemaProject", backref = "type")
-
 class SchemaProject(ModalBase, SchemaBase):
     __tablename__ = "t-project"
     __visiblename__ = "Project"
 
     id = Column(Integer, primary_key=True)
-    visiblename = Column(String(48), nullable=False, unique=True)
+    gitlab_id = Column(Integer)
 
-    deploy_name = Column(String(64), nullable=False)
-    gitlab_id = Column(Integer, nullable=False, unique=True)
-    type_id = Column(Integer, ForeignKey("t-project_type.id"))
+    parent_id = Column(Integer, ForeignKey('t-project.id'))
+    children = relationship("SchemaProject",backref=backref('parent', remote_side=[id],lazy="joined", join_depth=1),
+                            lazy="joined", join_depth=1)
+
+    visiblename = Column(String(48), nullable=False, unique=True)
+    standalone = Column(Boolean, default=True)
+    role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project")
+
+    ci_rule_id = Column(Integer, ForeignKey("t-ci_rule.id"))
+    ci_rule = relationship("SchemaCIRule", back_populates="projects", lazy="joined")
+
+class SchemaCIRule(ModalBase, SchemaBase):
+    __tablename__ = "t-ci_rule"
+    __visiblename__ = "CI Rule"
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey("t-project.id"))
+    branch_name = Column(String(16))
+    build_cmd = Column(String(256), default="")
+    package_name = Column(String(32), default="")
+
+    projects = relationship("SchemaProject", back_populates = "ci_rule")
 
 # Logic
 if __name__ == "__main__":
