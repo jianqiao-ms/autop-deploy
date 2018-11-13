@@ -77,8 +77,8 @@ class SchemaProject(ModalBase, SchemaBase):
     gitlab_id = Column(Integer)
 
     parent_id = Column(Integer, ForeignKey('t-project.id'))
-    # parent = relationship("SchemaProject", remote_side=[id], lazy="joined")
-    children = relationship("SchemaProject",backref=backref('parent', remote_side=[id],lazy="joined", join_depth=1))
+    children = relationship("SchemaProject",backref=backref('parent', remote_side=[id],lazy="joined", join_depth=1),
+                            lazy="joined", join_depth=1)
 
     visiblename = Column(String(48), nullable=False, unique=True)
     standalone = Column(Boolean, default=True)

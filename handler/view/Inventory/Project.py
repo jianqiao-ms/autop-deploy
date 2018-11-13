@@ -16,6 +16,12 @@ from ._base import InventoryViewHandler
 class ProjectInventoryViewHandler(InventoryViewHandler):
     __route_path__ = "project"
 
+    def get_pre(self):
+        return list(filter(
+            lambda x:x.gitlab_id,
+            self.__records_json__
+        ))
+
     @property
     def __schema__(self):
         return SchemaProject

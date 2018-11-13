@@ -1,17 +1,20 @@
 $.fn.extend({
     // Serialize form into json data
     serializeJson: function() {
-        let allInput = $(this).find("div[class='form-row border-bottom'],div[class='border-bottom form-row']").find("input:visible:enabled, select:visible:enabled");
+        let allInput = $(this).find("div.form-row").find("input:visible:enabled, select:visible:enabled");
         let formDataObject = {};
         allInput.each(function () {
-            let whatWeWant = $(this).is("select.foreign-key")?parseInt($(this).find(":selected").attr("data-foreign-id")):$(this).val();
-            if ($(this).is("input[type=checkbox]")) {
-                whatWeWant = $(this).prop("checked");
+            switch(true) {
+                case $(this).is("select.foreign-key"):
+                    whatWeWant = parseInt($(this).find(":selected").attr("data-foreign-id"));
+                    break;
+                case $(this).is("input[type=checkbox]"):
+                    whatWeWant = $(this).prop("checked");
+                    break;
+                default:
+                    whatWeWant = $(this).val();
             }
-            if (whatWeWant === 0) {
-                return
-            }
-            if (whatWeWant === "") {
+            if (whatWeWant === 0 || whatWeWant === "") {
                 return
             }
             formDataObject[$(this).attr("name")] = whatWeWant;
