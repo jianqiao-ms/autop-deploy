@@ -1,19 +1,19 @@
 
-let noHostFormGroup             = newInventoryFormRow.find(".noHost");
-let noWithTemplateFormGroup     = newInventoryFormRow.find(".no-with-template");
-let noTemplateFormGroup         = newInventoryFormRow.find(".no-type-template");
+var noHostFormGroup             = newInventoryFormRow.find(".noHost");
+var noWithTemplateFormGroup     = newInventoryFormRow.find(".no-with-template");
+var noTemplateFormGroup         = newInventoryFormRow.find(".no-type-template");
 
 
-let districtSelect              = newInventoryFormRow.find("select#district");
-let typeSelect                  = newInventoryFormRow.find("select#type");
-let templateSelect              = newInventoryFormRow.find("select#template");
-let sshUserInput                = newInventoryFormRow.find("input#ssh_user");
-let sshPortInput                = newInventoryFormRow.find("input#ssh_port");
-let sshAuthTypeSelect           = newInventoryFormRow.find("select#ssh_auth_type");
-let sshPasswordInput            = newInventoryFormRow.find("input#ssh_password");
-let sshKeyInput                 = newInventoryFormRow.find("input#ssh_key");
-let sshPasswordFormGroup        = newInventoryFormRow.find("div.form-group.ssh-password-show");
-let sshKeyFormGroup             = newInventoryFormRow.find("div.form-group.ssh-key-show");
+var districtSelect              = newInventoryFormRow.find("select#district");
+var typeSelect                  = newInventoryFormRow.find("select#type");
+var templateSelect              = newInventoryFormRow.find("select#template");
+var sshUserInput                = newInventoryFormRow.find("input#ssh_user");
+var sshPortInput                = newInventoryFormRow.find("input#ssh_port");
+var sshAuthTypeSelect           = newInventoryFormRow.find("select#ssh_auth_type");
+var sshPasswordInput            = newInventoryFormRow.find("input#ssh_password");
+var sshKeyInput                 = newInventoryFormRow.find("input#ssh_key");
+var sshPasswordFormGroup        = newInventoryFormRow.find("div.form-group.ssh-password-show");
+var sshKeyFormGroup             = newInventoryFormRow.find("div.form-group.ssh-key-show");
 
 function enableAllFormGroup() {
     newInventoryFormGroup.each(function () {
@@ -24,7 +24,7 @@ function enableAllFormGroup() {
 //选择类型 下拉列表选择 动作
 typeSelect.change(function () {
     enableAllFormGroup();
-    let selected = typeSelect.find("option:selected").val();
+    var selected = typeSelect.find("option:selected").val();
     switch(selected) {
         case "proxy":
         case "host":
@@ -43,14 +43,14 @@ typeSelect.change(function () {
 
 //选择模板 下拉列表选择 动作
 templateSelect.change(function () {
-    let selected = parseInt(templateSelect.find("option:selected").attr("data-foreign-id"));
+    var selected = parseInt(templateSelect.find("option:selected").attr("data-foreign-id"));
 
     $.ajax({
         url:"/inventory/host?id=" + selected,
         contentType: "application/json",
         type:"GET",
         success: function (rst) {
-            let templatesObject = JSON.parse(rst)[0];
+            var templatesObject = JSON.parse(rst)[0];
 
             if (selected>0) {
                 districtSelect.val(templatesObject.district.visiblename).prop("selected", true).change();
@@ -78,7 +78,7 @@ templateSelect.change(function () {
 
 //SSH验证类型 下拉列表选择 动作
 sshAuthTypeSelect.change(function () {
-    let selected = sshAuthTypeSelect.find("option:selected").val();
+    var selected = sshAuthTypeSelect.find("option:selected").val();
     switch(selected) {
         case "password":
             sshKeyFormGroup.addClass("d-none");

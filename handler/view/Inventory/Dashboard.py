@@ -7,7 +7,7 @@
 
 # Local Packages
 from classes.schema.SchemaInventory import SchemaDistrict
-from ._base import InventoryViewHandler
+from .Inventory import InventoryViewHandler
 # CONST
 
 # Class&Function Defination

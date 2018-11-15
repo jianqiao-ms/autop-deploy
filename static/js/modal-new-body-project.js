@@ -1,6 +1,6 @@
-let projectSelect               = newInventoryFormRow.find("select#project");
-let nameInput                   = newInventoryFormRow.find("input#visiblename");
-let standaloneCheckbox          = newInventoryFormRow.find("input#standalone");
+var projectSelect               = newInventoryFormRow.find("select#project");
+var nameInput                   = newInventoryFormRow.find("input#visiblename");
+var standaloneCheckbox          = newInventoryFormRow.find("input#standalone");
 
 function FolderTreeChild(name, type="tree") {
     if (type !== "tree") {
@@ -26,9 +26,9 @@ function FolderTree(rootname="Root") {
         this.childZone.html("");
     };
     this.update = function (selectedOption) {
-        let selectedGitlabProjectId = selectedOption.attr("data-foreign-id");
-        let selectedGitlabProjectName = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ') + 3);
-        let tree = this;
+        var selectedGitlabProjectId = selectedOption.attr("data-foreign-id");
+        var selectedGitlabProjectName = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ') + 3);
+        var tree = this;
 
         this.resetDefault();
         this.root.html(selectedGitlabProjectName);
@@ -39,7 +39,7 @@ function FolderTree(rootname="Root") {
                 request.setRequestHeader("Content-Type", "application/json");
             },
             success: function (rst) {
-                let fileArray = JSON.parse(rst);
+                var fileArray = JSON.parse(rst);
 
                 if (fileArray.length === 0) {
                     console.log("空项目");
@@ -56,12 +56,12 @@ function FolderTree(rootname="Root") {
     }
 }
 
-let folderTree                  = new FolderTree();
+var folderTree                  = new FolderTree();
 
 projectSelect.change(function () {
-    let selectedOption  = projectSelect.find("option:selected");
-    // let project_name    = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ')+3);
-    let project_name    = selectedOption.val();
+    var selectedOption  = projectSelect.find("option:selected");
+    // var project_name    = selectedOption.val().substring(selectedOption.val().lastIndexOf(' / ')+3);
+    var project_name    = selectedOption.val();
     if (selectedOption.val() === "Choose...") {
         nameInput.val("");
         folderTree.resetDefault();
@@ -79,7 +79,7 @@ projectSelect.change(function () {
 
 
 standaloneCheckbox.change(function () {
-    let selectedOption  = projectSelect.find("option:selected");
+    var selectedOption  = projectSelect.find("option:selected");
 
     if (!standaloneCheckbox.prop("checked")) {
         if (selectedOption.val() === "Choose...") {
@@ -90,7 +90,7 @@ standaloneCheckbox.change(function () {
         }
     }
 
-    let tagSelect = newInventoryFormRow.find("select.tag-select");
+    var tagSelect = newInventoryFormRow.find("select.tag-select");
     if (standaloneCheckbox.prop("checked")) {
         tagSelect.each(function () {
             $(this).prop("disabled", true)
@@ -118,8 +118,8 @@ $(document).ready(function () {
         type: "GET",
         url: "/api/v1/gitlab/projects?simple=true",
         success: function (rst) {
-            let allProjects = JSON.parse(rst);
-            let c = allProjects.length;
+            var allProjects = JSON.parse(rst);
+            var c = allProjects.length;
             while (c--) {
                 projectSelect.append(gitlabProjectOption(allProjects[c]))
             }

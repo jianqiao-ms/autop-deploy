@@ -6,11 +6,11 @@
 # 3rd-party Packages
 
 # Local Packages
-from handler.view.Inventory.Dashboard import DashboardInventoryViewHandler
-from handler.view.Inventory.District import DistrictInventoryViewHandler
-from handler.view.Inventory.Host import HostInventoryViewHandler
-from handler.view.Inventory.Host_group import HostgroupInventoryViewHandler
-from handler.view.Inventory.Project import ProjectInventoryViewHandler
+from handler.view.Inventory.Inventory import DashboardInventoryViewHandler
+from handler.view.Inventory.Inventory import DistrictInventoryViewHandler
+from handler.view.Inventory.Inventory import HostInventoryViewHandler
+from handler.view.Inventory.Inventory import HostgroupInventoryViewHandler
+from handler.view.Inventory.Inventory import ProjectInventoryViewHandler
 # CONST
 
 # Class&Function Defination
@@ -25,6 +25,7 @@ route = list(map(
     ]
 ))
 
+print(route)
 # Logic
 if __name__ == '__main__':
     pass

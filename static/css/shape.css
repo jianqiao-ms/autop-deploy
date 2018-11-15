@@ -1,0 +1,12 @@
+.circle-default {
+  width: 160px;
+  height: 160px;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto; }
+  .circle-default *[class*=fa] {
+    height: 100%; }
+  .circle-default g {
+    background-color: #6c757d; }
+
+/*# sourceMappingURL=shape.css.map */

@@ -85,19 +85,18 @@ class SchemaProject(ModalBase, SchemaBase):
     role = Column(Enum("public", "product", "parent"), comment="Role in package for M-in-O Java project")
 
     ci_rule_id = Column(Integer, ForeignKey("t-ci_rule.id"))
-    ci_rule = relationship("SchemaCIRule", back_populates="projects", lazy="joined")
+    ci_rule = relationship("SchemaCIRule", lazy="joined")
 
 class SchemaCIRule(ModalBase, SchemaBase):
     __tablename__ = "t-ci_rule"
     __visiblename__ = "CI Rule"
 
     id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey("t-project.id"))
     branch_name = Column(String(16))
     build_cmd = Column(String(256), default="")
     package_name = Column(String(32), default="")
 
-    projects = relationship("SchemaProject", back_populates = "ci_rule")
+    # projects = relationship("SchemaProject", back_populates = "ci_rule")
 
 # Logic
 if __name__ == "__main__":

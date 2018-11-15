@@ -1,8 +1,8 @@
 $.fn.extend({
     // Serialize form into json data
     serializeJson: function() {
-        let allInput = $(this).find("div.form-row").find("input:visible:enabled, select:visible:enabled");
-        let formDataObject = {};
+        var allInput = $(this).children("div.form-row:not(.param)").find("input:visible:enabled, select:visible:enabled");
+        var formDataObject = {};
         allInput.each(function () {
             switch(true) {
                 case $(this).is("select.foreign-key"):
@@ -20,23 +20,25 @@ $.fn.extend({
             formDataObject[$(this).attr("name")] = whatWeWant;
         });
 
-        let paramInput = $(this).find("div.param").find("input:visible:enabled, select:visible:enabled");
-        let paramFormDataObject = {};
-        paramInput.each(function () {
-            let whatWeWant = $(this).is("select.foreign-key")?parseInt($(this).find(":selected").attr("data-foreign-id")):$(this).val();
-            if ($(this).is("input[type=checkbox]")) {
-                whatWeWant = $(this).prop("checked");
-            }
-            if (whatWeWant === 0) {
-                return
-            }
-            if (whatWeWant === "") {
-                return
-            }
-            paramFormDataObject[$(this).attr("name")] = whatWeWant;
-        });
-
+        var paramInput = $(this).children("div.param").find("input:visible:enabled, select:visible:enabled");
         if (paramInput.length) {
+            var paramFormDataObject = {};
+            paramInput.each(function () {
+                switch(true) {
+                    case $(this).is("select.foreign-key"):
+                        whatWeWant = parseInt($(this).find(":selected").attr("data-foreign-id"));
+                        break;
+                    case $(this).is("input[type=checkbox]"):
+                        whatWeWant = $(this).prop("checked");
+                        break;
+                    default:
+                        whatWeWant = $(this).val();
+                }
+                if (whatWeWant === 0 || whatWeWant === "") {
+                    return
+                }
+                paramFormDataObject[$(this).attr("name")] = whatWeWant;
+            });
             formDataObject["param"] = paramFormDataObject;
         }
 
@@ -45,8 +47,8 @@ $.fn.extend({
 
     // Reset input or select item
     resetDefault:function () {
-        let elementType = $(this)[0].tagName;
-        let defaultValue = $(this).attr("data-default");
+        var elementType = $(this)[0].tagName;
+        var defaultValue = $(this).attr("data-default");
 
         switch(elementType) {
             case "INPUT":

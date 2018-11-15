@@ -7,7 +7,7 @@
 
 # Local Packages
 from classes.schema.SchemaInventory import SchemaHostGroup
-from ._base import InventoryViewHandler
+from .Inventory import InventoryViewHandler
 
 
 # CONST

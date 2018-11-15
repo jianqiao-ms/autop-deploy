@@ -1,0 +1,14 @@
+.circle-default {
+    $size : 160px;
+    width: $size;
+    height: $size;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    *[class*=fa] {
+        height: 100%;
+    }
+    g {
+        background-color: #6c757d;
+    }
+}
