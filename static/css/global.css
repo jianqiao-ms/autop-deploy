@@ -1,3 +1,45 @@
+.circle-icon {
+  position: relative;
+  cursor: pointer; }
+  .circle-icon:after {
+    content: '';
+    display: block;
+    padding-top: 100%; }
+  .circle-icon div {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: 100%; }
+  .circle-icon ~ span {
+    font-size: 2.5rem; }
+    @media (max-width: 991.98px) {
+      .circle-icon ~ span {
+        font-size: 2rem; } }
+    @media (max-width: 767.98px) {
+      .circle-icon ~ span {
+        font-size: 1rem; } }
+  .circle-icon *[class*=fa] {
+    height: 100%;
+    font-size: 6rem; }
+    @media (max-width: 991.98px) {
+      .circle-icon *[class*=fa] {
+        font-size: 4.5rem; } }
+    @media (max-width: 767.98px) {
+      .circle-icon *[class*=fa] {
+        font-size: 3.5rem; } }
+    @media (max-width: 575.98px) {
+      .circle-icon *[class*=fa] {
+        font-size: 1.75rem; } }
 
+.shadow-hover[class*=col] {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: 7px;
+  margin-right: 7px; }
+.shadow-hover a {
+  text-decoration: none; }
+.shadow-hover:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); }
 
 /*# sourceMappingURL=global.css.map */

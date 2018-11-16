@@ -1,2 +1,0 @@
-.circle-default{position:relative;cursor:pointer}.circle-default:after{content:'';display:block;padding-top:100%}.circle-default div{position:absolute;margin-left:auto;margin-right:auto;width:100%;height:100%}.circle-default ~ span{font-size:1.5vw}.circle-default *[class*=fa]{height:100%;font-size:6vw}.circle-default *[class*=fa]:hover{color:#fff}
-/*# sourceMappingURL=shape.min.css.map */

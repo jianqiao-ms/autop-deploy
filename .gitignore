@@ -1,17 +1,10 @@
 .idea/
 *.pyc
-<<<<<<< HEAD
-tmp/
-=======
 *test*
-
-upload/*
 *.json
-
 access.log
 access.log.*
 autop.log
 autop.log.*
 tornado.log
 tornado.log.*
->>>>>>> web-shell

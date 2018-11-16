@@ -1,15 +1,11 @@
 {% extends inventory.html %}
 
-{% block css %}
-<link rel="stylesheet" href="{{static_url('css/inventory/dashboard.min.css')}}">
-{% end %}
-
 {% block global-container %}
 <div class="container">
     <div class="row text-center">
             <div class="col text-truncate shadow-hover">
                 <a class="text-dark" href="/view/inventory/district">
-                    <div class="rounded-circle circle-default bg-secondary">
+                    <div class="rounded-circle circle-icon bg-secondary text-light">
                         <div>
                             <i class="fas fa-map-marked-alt"></i>
                         </div>
@@ -19,7 +15,7 @@
             </div>
         <div class="col text-truncate shadow-hover">
             <a class="text-dark" href="/view/inventory/host">
-                <div class="rounded-circle circle-default bg-secondary ">
+                <div class="rounded-circle circle-icon bg-secondary text-light">
                     <div>
                         <i class="fas fa-server"></i>
                     </div>
@@ -29,7 +25,7 @@
         </div>
         <div class="col text-truncate shadow-hover">
             <a class="text-dark" href="/view/inventory/hostgroup">
-                <div class="rounded-circle circle-default bg-secondary ">
+                <div class="rounded-circle circle-icon bg-secondary text-light">
                     <div>
                         <span class="fa-layers fa-fw">
                             <i class="fas fa-server " data-fa-transform="up-1.6  right-1.6"></i>
@@ -43,7 +39,7 @@
         </div>
         <div class="col text-truncate shadow-hover">
             <a class="text-dark" href="/view/inventory/product">
-                <div class="rounded-circle circle-default bg-secondary ">
+                <div class="rounded-circle circle-icon bg-secondary text-light">
                     <div>
                         <i class="fas fa-code"></i>
                     </div>

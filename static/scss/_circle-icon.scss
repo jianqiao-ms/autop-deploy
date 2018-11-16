@@ -1,0 +1,45 @@
+// 正圆形
+@import "../bootstrap/scss/functions";
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/mixins/breakpoints";
+@import "mixins/responsive-box";
+
+.circle-icon {
+  @include responsive-box(100%);
+  cursor: pointer;
+
+  ~ span {
+    font-size: $h1-font-size;
+    @include media-breakpoint-down(md) {
+      & {
+        font-size: $h2-font-size;
+      }
+    }
+    @include media-breakpoint-down(sm) {
+      & {
+        font-size: $font-size-base;
+      }
+    }
+  }
+
+  *[class*=fa] {
+    height: 100%;
+
+    font-size: $display1-size;
+    @include media-breakpoint-down(md) {
+      & {
+        font-size: $display3-size;
+      }
+    }
+    @include media-breakpoint-down(sm) {
+      & {
+        font-size: $display4-size;
+      }
+    }
+    @include media-breakpoint-down(xs) {
+      & {
+        font-size: $h3-font-size;
+      }
+    }
+  }
+}
