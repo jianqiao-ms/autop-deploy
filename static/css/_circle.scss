@@ -1,0 +1,22 @@
+// 正圆形
+@import "../bootstrap/scss/functions";
+@import "../bootstrap/scss/variables";
+@import "square";
+
+.circle-default {
+  @include responsive-box(100%);
+  cursor: pointer;
+  color: $light;
+
+  ~ span {
+    font-size: 1.5vw;
+  }
+
+  *[class*=fa] {
+    height: 100%;
+    font-size: 5vw;
+    &:hover {
+        color: #fff;
+    }
+  }
+}

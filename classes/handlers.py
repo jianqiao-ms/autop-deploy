@@ -64,8 +64,8 @@ class ViewRequestHandler(RequestHandler):
     __route_item__      = ""
 
     @property
-    def __template_new__(self):
-        return "{}/new/{}.html".format(self.__route_module__, self.__route_item__)
+    def __template_new__(cls):
+        return "{}/new/{}.html".format(cls.__route_module__, cls.__route_item__)
 
     @property
     def __template__(self):

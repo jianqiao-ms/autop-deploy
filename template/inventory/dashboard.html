@@ -1,51 +1,56 @@
 {% extends inventory.html %}
 
+{% block css %}
+<link rel="stylesheet" href="{{static_url('css/inventory/dashboard.min.css')}}">
+{% end %}
 
-{% block container %}
-
-
+{% block global-container %}
 <div class="container">
     <div class="row text-center">
-        <div class="col text-truncate shadow-hover">
-            <div class="rounded-circle circle-default bg-secondary text-light">
-                <div>
-                    <i class="fas fa-map-marked-alt"></i>
-                </div>
+            <div class="col text-truncate shadow-hover">
+                <a class="text-dark" href="/view/inventory/district">
+                    <div class="rounded-circle circle-default bg-secondary">
+                        <div>
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                    </div>
+                    <span>District</span>
+                </a>
             </div>
-            <span>District</span>
+        <div class="col text-truncate shadow-hover">
+            <a class="text-dark" href="/view/inventory/host">
+                <div class="rounded-circle circle-default bg-secondary ">
+                    <div>
+                        <i class="fas fa-server"></i>
+                    </div>
+                </div>
+                <span>Host</span>
+            </a>
         </div>
         <div class="col text-truncate shadow-hover">
-            <div class="rounded-circle circle-default bg-secondary text-light">
-                <div>
-                    <i class="fas fa-server"></i>
+            <a class="text-dark" href="/view/inventory/hostgroup">
+                <div class="rounded-circle circle-default bg-secondary ">
+                    <div>
+                        <span class="fa-layers fa-fw">
+                            <i class="fas fa-server " data-fa-transform="up-1.6  right-1.6"></i>
+                            <i class="fas fa-square text-secondary" data-fa-transform="down-1.6 left-1"></i>
+                            <i class="fas fa-server" data-fa-transform="down-1.6 left-1.6"></i>
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <span>Host</span>
+                <span>Host Group</span>
+            </a>
         </div>
         <div class="col text-truncate shadow-hover">
-            <div class="rounded-circle circle-default bg-secondary text-light">
-                <div>
-                    <span class="fa-layers fa-fw">
-                        <i class="fas fa-server " data-fa-transform="up-1.6  right-1.6"></i>
-                        <i class="fas fa-square text-secondary" data-fa-transform="down-1.6 left-1"></i>
-                        <i class="fas fa-server" data-fa-transform="down-1.6 left-1.6"></i>
-                    </span>
+            <a class="text-dark" href="/view/inventory/product">
+                <div class="rounded-circle circle-default bg-secondary ">
+                    <div>
+                        <i class="fas fa-code"></i>
+                    </div>
                 </div>
-            </div>
-            <span>Host Group</span>
+                <span>Product</span>
+            </a>
         </div>
-        <div class="col text-truncate shadow-hover">
-            <div class="rounded-circle circle-default bg-secondary text-light">
-                <div>
-                    <i class="fas fa-code"></i>
-                </div>
-            </div>
-            <span>Product</span>
-        </div>
-
     </div>
-
 </div>
-
-
 {% end %}
