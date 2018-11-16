@@ -25,7 +25,6 @@ route = list(map(
     ]
 ))
 
-print(route)
 # Logic
 if __name__ == '__main__':
     pass

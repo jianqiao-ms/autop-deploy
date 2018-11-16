@@ -7,7 +7,7 @@ formAction              = newInventoryForm.attr("action");
 
 
 
-let submitButton        = $("div#newInventoryModal>div.modal-lg>div.modal-content>div.modal-footer>button.btn-primary");
+submitButton        = $("div#newInventoryModal>div.modal-lg>div.modal-content>div.modal-footer>button.btn-primary");
 
 newInventoryModal.on("hidden.bs.modal",function () {
     $(this).find("select").each(function () {
@@ -19,7 +19,7 @@ newInventoryModal.on("hidden.bs.modal",function () {
 });
 
 submitButton.click(function () {
-    let reqJson = newInventoryForm.serializeJson();
+    reqJson = newInventoryForm.serializeJson();
     console.log(reqJson);
 
     $.ajax({
