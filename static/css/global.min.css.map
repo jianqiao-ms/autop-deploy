@@ -1,7 +1,7 @@
 {
 "version": 3,
 "mappings": "AAMA,YAAa,CCLT,QAAQ,CAAE,QAAQ,CDOpB,MAAM,CAAE,OAAO,CCNb,kBAAO,CACH,OAAO,CAAE,EAAE,CACX,OAAO,CAAE,KAAK,CACd,WAAW,CDEO,IAAI,CCA1B,gBAAI,CACA,QAAQ,CAAE,QAAQ,CAClB,WAAW,CAAE,IAAI,CACjB,YAAY,CAAE,IAAI,CAClB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CDFlB,mBAAO,CACL,SAAS,CE+PiB,MAAqB,CCjM/C,4BAAyB,CH5DvB,mBAAE,CACA,SAAS,CE6Pa,IAAmB,EClM7C,4BAAyB,CHvDvB,mBAAE,CACA,SAAS,CE4Oa,IAAI,EFvOhC,yBAAa,CACX,MAAM,CAAE,IAAI,CAEZ,SAAS,CE4PiB,IAAI,CC9M9B,4BAAyB,CH5CvB,yBAAE,CACA,SAAS,CE2Pa,MAAM,EChNhC,4BAAyB,CHvCvB,yBAAE,CACA,SAAS,CEuPa,MAAM,ECjNhC,4BAAyB,CHlCvB,yBAAE,CACA,SAAS,CEoOa,OAAsB,EEvQlD,yBAAc,CACZ,YAAY,CAAE,GAAG,CACjB,aAAa,CAAE,GAAG,CAClB,WAAW,CAAE,GAAG,CAChB,YAAY,CAAE,GAAG,CAEnB,eAAE,CACF,eAAe,CAAE,IAAI,CAErB,mBAAQ,CACN,UAAU,CFyNgB,8BAA+B",
-"sources": ["../scss/_circle-icon.scss","../scss/mixins/_responsive-box.scss","../bootstrap/scss/_variables.scss","../bootstrap/scss/mixins/_breakpoints.scss","../scss/_hover-shadow.scss"],
+"sources": ["../../../../Workspace/autop/static/scss/_circle-icon.scss","../../../../Workspace/autop/static/scss/mixins/_responsive-box.scss","../../../../Workspace/autop/static/bootstrap/scss/_variables.scss","../../../../Workspace/autop/static/bootstrap/scss/mixins/_breakpoints.scss","../../../../Workspace/autop/static/scss/_hover-shadow.scss"],
 "names": [],
 "file": "global.min.css"
 }

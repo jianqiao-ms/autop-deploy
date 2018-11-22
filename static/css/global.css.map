@@ -1,7 +1,7 @@
 {
 "version": 3,
 "mappings": "AAMA,YAAa;ECLT,QAAQ,EAAE,QAAQ;EDOpB,MAAM,EAAE,OAAO;ECNb,kBAAO;IACH,OAAO,EAAE,EAAE;IACX,OAAO,EAAE,KAAK;IACd,WAAW,EDEO,IAAI;ECA1B,gBAAI;IACA,QAAQ,EAAE,QAAQ;IAClB,WAAW,EAAE,IAAI;IACjB,YAAY,EAAE,IAAI;IAClB,KAAK,EAAE,IAAI;IACX,MAAM,EAAE,IAAI;EDFlB,mBAAO;IACL,SAAS,EE+PiB,MAAqB;ICjM/C,4BAAyB;MH5DvB,mBAAE;QACA,SAAS,EE6Pa,IAAmB;IClM7C,4BAAyB;MHvDvB,mBAAE;QACA,SAAS,EE4Oa,IAAI;EFvOhC,yBAAa;IACX,MAAM,EAAE,IAAI;IAEZ,SAAS,EE4PiB,IAAI;IC9M9B,4BAAyB;MH5CvB,yBAAE;QACA,SAAS,EE2Pa,MAAM;IChNhC,4BAAyB;MHvCvB,yBAAE;QACA,SAAS,EEuPa,MAAM;ICjNhC,4BAAyB;MHlCvB,yBAAE;QACA,SAAS,EEoOa,OAAsB;;AEvQlD,yBAAc;EACZ,YAAY,EAAE,GAAG;EACjB,aAAa,EAAE,GAAG;EAClB,WAAW,EAAE,GAAG;EAChB,YAAY,EAAE,GAAG;AAEnB,eAAE;EACF,eAAe,EAAE,IAAI;AAErB,mBAAQ;EACN,UAAU,EFyNgB,iCAA+B",
-"sources": ["../scss/_circle-icon.scss","../scss/mixins/_responsive-box.scss","../bootstrap/scss/_variables.scss","../bootstrap/scss/mixins/_breakpoints.scss","../scss/_hover-shadow.scss"],
+"sources": ["../../../../Workspace/autop/static/scss/_circle-icon.scss","../../../../Workspace/autop/static/scss/mixins/_responsive-box.scss","../../../../Workspace/autop/static/bootstrap/scss/_variables.scss","../../../../Workspace/autop/static/bootstrap/scss/mixins/_breakpoints.scss","../../../../Workspace/autop/static/scss/_hover-shadow.scss"],
 "names": [],
 "file": "global.css"
 }
