@@ -6,7 +6,7 @@ import os, sys
 import shlex
 import subprocess
 import select
-
+import asyncio
 # 3rd-party Packages
 import paramiko
 
@@ -44,15 +44,16 @@ def fsub():
     IOLoop.current().add_handler(fd, recv, IOLoop.current().READ)
 
 class MainHandler(tornado.web.RequestHandler):
-    async def get(self):
+    @asyncio.coroutine
+    def get(self):
         p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
                        stderr=subprocess.STDOUT, universal_newlines=True)
         try:
-            a = await p.stdout.read_until(b'\n')
+            a = yield from p.stdout.read_until(b'\n')
             self.write(a.decode())
             self.flush()
             while True:
-                a = await p.stdout.read_until(b'\n')
+                a = yield p.stdout.read_until(b'\n')
                 self.write(a.decode())
                 self.flush()
         except StreamClosedError as e:
