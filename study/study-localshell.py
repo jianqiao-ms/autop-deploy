@@ -9,6 +9,7 @@ import select
 import asyncio
 # 3rd-party Packages
 import paramiko
+import subprocess
 
 import tornado.web
 import tornado.websocket
@@ -46,7 +47,7 @@ def fsub():
 class MainHandler(tornado.web.RequestHandler):
     @asyncio.coroutine
     def get(self):
-        p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
+        p = Subprocess(shlex.split('ping -c 3 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
                        stderr=subprocess.STDOUT, universal_newlines=True)
         try:
             a = yield from p.stdout.read_until(b'\n')
@@ -71,24 +72,17 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class SockMainHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        proxy = paramiko.SSHClient()
-        proxy.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        proxy.connect(**desc_proxy)
+        p = subprocess.Popen("/bin/bash", stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                       stderr=subprocess.STDOUT, universal_newlines=False)
+        def recv(*args):
+            outs, errs = p.communicate()
+            print(outs)
 
-        self.shell = proxy.invoke_shell()
-        IOLoop.current().add_handler(self.shell,self.recv, IOLoop.READ)
+            self.write_message(outs)
+            self.write_message(errs)
 
-    def recv(self, *args):
-        a = self.shell.recv(128)
-        self.write_message(a)
-
-    def on_message(self, message):
-        self.shell.send(message)
-
-    def on_close(self):
-        self.shell.close()
-        print("WebSocket closed")
-
+        IOLoop.current().add_handler(p.stdout.fileno(), recv, IOLoop.current().READ)
+        p.communicate("ls")
 # Logic
 if __name__ == "__main__":
     parse_command_line()
@@ -98,13 +92,12 @@ if __name__ == "__main__":
         "static_path": os.path.join(os.path.dirname(__file__), "static"),
     }
 
-    # parse_command_line()
-    # application = Application([
-    #     ('/', IndexHandler),
-    #     ('/static', StaticHandler),
-    #     ('/websocket', SockMainHandler),
-    # ], **settings)
-    #
-    # application.listen(60000)
-    fsub()
+    parse_command_line()
+    application = Application([
+        ('/', IndexHandler),
+        ('/static', StaticHandler),
+        ('/websocket', SockMainHandler),
+    ], **settings)
+
+    application.listen(60000)
     IOLoop.current().start()
