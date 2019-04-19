@@ -7,7 +7,7 @@ import json
 
 # 3rd-party Packages
 # Local Packages
-from classes.appliacation import LOGGER
+from classes.application import LOGGER
 from classes.handlers import NotInitialized
 from classes.handlers import RequestHandler
 

@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 import paramiko
 
 # Local Packages
-from classes.appliacation import LOGGER
-from classes.appliacation import Application
+from classes.application import LOGGER
+from classes.application import Application
 from classes.handlers import NotInitialized
 from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
     SchemaProject

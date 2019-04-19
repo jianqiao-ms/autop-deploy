@@ -11,7 +11,7 @@ from tornado.escape import json_decode, json_encode
 from sqlalchemy.exc import IntegrityError
 
 # Local Packages
-from classes.appliacation import LOGGER
+from classes.application import LOGGER
 from classes.handlers import NotInitialized
 from classes.schema.SchemaDeploy import SchemaAutoRule, SchemaAutoHistory, SchemaManul
 

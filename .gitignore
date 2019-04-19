@@ -2,9 +2,4 @@
 *.pyc
 *test*
 *.json
-access.log
-access.log.*
-autop.log
-autop.log.*
-tornado.log
-tornado.log.*
+logs/*log*

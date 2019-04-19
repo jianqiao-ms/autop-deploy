@@ -1,1 +1,1 @@
-Default location of logfiles.
+Default path storing log file.

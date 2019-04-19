@@ -9,52 +9,43 @@ from concurrent.futures import ThreadPoolExecutor
 
 # 3rd-party Packages
 import tornado.web
-from tornado.log import access_log
 from tornado.httpclient import AsyncHTTPClient as HTTPClient
 from tornado.httpclient import HTTPClient as SyncHTTPClient
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-
 # Local Packages
+from .logger import *
 
 # CONST
-LOG_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/logging.json")
 MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/mysql.json")
 SETTINGS = {
-        'login_url': '/login',
-        'template_path': os.path.join(os.path.dirname(__file__), "../template"),
-        "static_path": os.path.join(os.path.dirname(__file__), "../static"),
-        "debug":True
-    }
+    'login_url': '/login',
+    'template_path': os.path.join(os.path.dirname(__file__), "../template"),
+    "static_path": os.path.join(os.path.dirname(__file__), "../static"),
+    "debug":True
+}
 
-with open(LOG_CONFIG_FILE, "r") as file:
-    logging.config.dictConfig(json.load(file))
-    LOGGER = logging.getLogger("autop")
 
 # Class&Function Defination
 class Application(tornado.web.Application):
     def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
         super(Application, self).__init__(handlers, default_host, transforms, **SETTINGS)
         self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
-
-        if "log_function" in self.settings:
-            LOGGER.warning("Dumplicate log_function in settings")
-
-        with open(MYSQL_CONFIG_FILE, "r") as file:
-            self.engine = create_engine(
-                "mysql+pymysql://{user}:{passwd}@{host}:{port}/{database}?charset=utf8".format(**json.load(file)),
-            )
-            self.mysql = scoped_session(sessionmaker(bind=self.engine))() # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
-            LOGGER.info("MySQL connected!")
-            self.schemas = self.engine.table_names()
-
         self.gitlab = GitlabServer()
 
-    def log_request(self, handler):
+    def log_request(self, handler) -> None:
+        if handler.get_status() < 400:
+            log_method = access_log.info
+        elif handler.get_status() < 500:
+            log_method = access_log.warning
+        else:
+            log_method = access_log.error
         request_time = 1000.0 * handler.request.request_time()
-        access_log.info("%d %s %.2fms", handler.get_status(),
-                   handler._request_summary(), request_time)
+        log_method("%s \"%d %s %s\" %.2fms", handler.request.remote_ip, handler.get_status(),
+                   handler.request.method, handler.request.uri, request_time
+        )
+
+class RequestHandler(tornado.web.RequestHandler):
+    pass
 
 class GitlabServer():
     def __init__(self):
@@ -67,9 +58,9 @@ class GitlabServer():
                 httpclient.fetch("http://gitlab.shangweiec.com/api/v4/version",
                                  headers={"PRIVATE-TOKEN": self.token}).body.decode()
             )
-            LOGGER.info("Gitlab Connected! Version: {}".format(str(version["version"])))
+            log.info("gitlab Connected! Version: {}".format(str(version["version"])))
         except Exception as e:
-            LOGGER.exception("Gitlab connect failed")
+            log.exception("gitlab connect failed")
             exit(1)
 
     async def get_all_projects(self):
@@ -92,7 +83,7 @@ class GitlabServer():
             respons = await self.client.fetch(self.url + api, headers={"PRIVATE-TOKEN": self.token})
             return respons
         except Exception as e:
-            LOGGER.exception('Error occur reading api [{}]'.format(api))
+            log.exception('Error occur reading api [{}]'.format(api))
             return
 # Logic
 if __name__ == "__main__":

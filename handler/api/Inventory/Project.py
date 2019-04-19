@@ -7,7 +7,7 @@ import json
 # 3rd-party Packages
 
 # Local Packages
-from classes.appliacation import LOGGER
+from classes.application import LOGGER
 from classes.schema.SchemaInventory import SchemaProject
 from ._base import InventoryApiHandler
 
