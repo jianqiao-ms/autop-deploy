@@ -1,3 +1,4 @@
-__all__ = ["GitlabReceiver"]
+__all__ = ['CIArtifactReceiver', 'CIScriptGenerator']
 
-from .receiver import GitlabReceiver
+from ci import CIArtifactReceiver
+from ci import CIScriptGenerator

@@ -4,7 +4,6 @@
 # Official packages
 import os
 import json
-import logging.config
 from concurrent.futures import ThreadPoolExecutor
 
 # 3rd-party Packages
@@ -13,7 +12,8 @@ from tornado.httpclient import AsyncHTTPClient as HTTPClient
 from tornado.httpclient import HTTPClient as SyncHTTPClient
 
 # Local Packages
-from .logger import *
+from logger import *
+from ci_artifact_token_manager import CIArtifactTokenManager
 
 # CONST
 MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/mysql.json")
@@ -24,13 +24,13 @@ SETTINGS = {
     "debug":True
 }
 
-
 # Class&Function Defination
 class Application(tornado.web.Application):
     def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
         super(Application, self).__init__(handlers, default_host, transforms, **SETTINGS)
         self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
         self.gitlab = GitlabServer()
+        self.catm = CIArtifactTokenManager()
 
     def log_request(self, handler) -> None:
         if handler.get_status() < 400:
@@ -52,8 +52,8 @@ class GitlabServer():
         self.url = "http://gitlab.shangweiec.com/api/v4/"
         self.token = "K2faEp9ofGwNWNBpUo-L"
         self.client = HTTPClient()
-        httpclient = SyncHTTPClient()
         try:
+            httpclient = SyncHTTPClient()
             version = json.loads(
                 httpclient.fetch("http://gitlab.shangweiec.com/api/v4/version",
                                  headers={"PRIVATE-TOKEN": self.token}).body.decode()
@@ -81,7 +81,7 @@ class GitlabServer():
             api = api[1:]
         try:
             respons = await self.client.fetch(self.url + api, headers={"PRIVATE-TOKEN": self.token})
-            return respons
+            return respons.body.decode()
         except Exception as e:
             log.exception('Error occur reading api [{}]'.format(api))
             return

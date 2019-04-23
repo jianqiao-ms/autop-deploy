@@ -1,0 +1,1 @@
+# Default upload path of ci artifacts

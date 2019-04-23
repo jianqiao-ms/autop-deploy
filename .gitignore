@@ -3,3 +3,4 @@
 *test*
 *.json
 logs/*log*
+*.jar
