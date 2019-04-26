@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 #-* coding: utf-8 -*
 
-__all__ = ['Application', 'RequestHandler', 'logger.*', 'CIArtifactTokenManager']
-
 from application import Application
 from application import RequestHandler
+from application import RESTRequestHandler
+from application import BashRequestHandler
 
 from logger import *
 

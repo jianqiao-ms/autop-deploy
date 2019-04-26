@@ -4,3 +4,5 @@
 *.json
 logs/*log*
 *.jar
+upload/*
+!upload/README.md
