@@ -101,11 +101,12 @@ class CIArtifactReceiver(BashRequestHandler):
 
 
             token_map           = self.application.catm[self.request.headers['Artifact-Token']]
-            filename            = os.path.basename(token_map['project']['artifact']) + "---{branch}---{commit}".format(
+            self.ci_filename    = os.path.basename(token_map['project']['artifact'])
+            self.filename       = self.ci_filename + "---{branch}---{commit}".format(
                 branch = token_map['ci_branch_name'],
                 commit = token_map['ci_commit_short_sha']
             )
-            self.fp             = open(os.path.join('upload', filename), 'wb')
+            self.fp             = open(os.path.join('upload', self.filename), 'wb')
             self.ci_sha         = self.request.headers['SHA']
             self.hash_sha256    = hashlib.sha256()
         except:
@@ -115,8 +116,8 @@ class CIArtifactReceiver(BashRequestHandler):
     def put(self):
         if self.hash_sha256.hexdigest() == self.ci_sha:
             self.fp.close()
+            self.finish("echo 上传文件完成!Local : {} Remote : {}".format(self.ci_filename, self.fp.name))
             self.application.catm.pop(self.request.headers['Artifact-Token'])
-            self.finish("echo 上传文件完成!")
         else:
             del self.fp
             self.application.catm.pop(self.request.headers['Artifact-Token'])
