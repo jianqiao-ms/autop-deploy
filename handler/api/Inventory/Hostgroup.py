@@ -6,7 +6,7 @@
 # 3rd-party Packages
 
 # Local Packages
-from classes.schema.SchemaInventory import SchemaHostGroup
+from classes.database.SchemaInventory import SchemaHostGroup
 from ._base import InventoryApiHandler
 
 

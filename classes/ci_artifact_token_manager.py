@@ -4,11 +4,12 @@
 # Official packages
 import os
 import secrets
+import logging
 
 # 3rd-party Packages
 
 # Local Packages
-from logger import log
+
 
 
 # CONST

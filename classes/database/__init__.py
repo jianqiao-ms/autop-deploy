@@ -1,11 +1,14 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 #-* coding: utf-8 -*
+
+from public import BaseTable
 
 # Official packages
 
 # 3rd-party Packages
 
 # Local Packages
+from project import TableProject
 
 # CONST
 

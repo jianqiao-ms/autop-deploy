@@ -9,7 +9,7 @@ from sqlalchemy import Table, Column, ForeignKey, \
     Integer, String, Enum, Boolean, DateTime
 
 # Local Packages
-from classes.schema.Base import ModalBase, SchemaBase
+from classes.database.public import Base
 
 # CONST
 

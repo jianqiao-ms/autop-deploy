@@ -6,7 +6,7 @@
 # 3rd-party Packages
 
 # Local Packages
-from classes.schema.SchemaInventory import SchemaProject
+from classes.database.SchemaInventory import SchemaProject
 from .Inventory import InventoryViewHandler
 
 

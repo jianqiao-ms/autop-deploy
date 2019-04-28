@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 # Local Packages
 from classes.application import LOGGER
 from classes.handlers import NotInitialized
-from classes.schema.SchemaDeploy import SchemaAutoRule, SchemaAutoHistory, SchemaManul
+from classes.database.SchemaDeploy import SchemaAutoRule, SchemaAutoHistory, SchemaManul
 
 # CONST
 

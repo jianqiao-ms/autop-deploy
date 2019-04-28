@@ -8,7 +8,7 @@ import json
 
 # Local Packages
 from classes.application import LOGGER
-from classes.schema.SchemaInventory import SchemaProject
+from classes.database.SchemaInventory import SchemaProject
 from ._base import InventoryApiHandler
 
 # CONST

@@ -6,7 +6,7 @@
 # 3rd-party Packages
 
 # Local Packages
-from classes.schema.SchemaInventory import SchemaDistrict
+from classes.database.SchemaInventory import SchemaDistrict
 from .Inventory import InventoryViewHandler
 # CONST
 

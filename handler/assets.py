@@ -17,7 +17,7 @@ import paramiko
 from classes.application import LOGGER
 from classes.application import Application
 from classes.handlers import NotInitialized
-from classes.schema.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
+from classes.database.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
     SchemaProject
 
 # CONST

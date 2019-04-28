@@ -3,6 +3,7 @@
 
 # Official packages
 import os
+import logging
 import json
 import secrets
 import hashlib
@@ -17,7 +18,6 @@ from classes import RequestHandler
 from classes import RESTRequestHandler
 from classes import BashRequestHandler
 from classes import CIArtifactTokenManager
-from classes import log
 
 # CONST
 
