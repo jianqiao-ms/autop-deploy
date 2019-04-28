@@ -9,8 +9,8 @@ import json
 
 # Local Packages
 from classes.application import LOGGER
-from classes.handlers import NotInitialized
-from classes.handlers import RequestHandler
+from classes.req_handler import NotInitialized
+from classes.req_handler import RequestHandler
 
 # CONST
 

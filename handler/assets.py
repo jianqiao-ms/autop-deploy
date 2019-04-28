@@ -16,7 +16,7 @@ import paramiko
 # Local Packages
 from classes.application import LOGGER
 from classes.application import Application
-from classes.handlers import NotInitialized
+from classes.req_handler import NotInitialized
 from classes.database.SchemaInventory import SchemaDistrict, SchemaHost, SchemaHostGroup, \
     SchemaProject
 

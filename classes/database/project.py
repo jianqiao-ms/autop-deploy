@@ -9,7 +9,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 # Local Packages
-from database import BaseTable
+from public import BaseTable, Base
 
 # CONST
 
@@ -30,4 +30,18 @@ class TableProject(BaseTable):
 
 # Logic
 if __name__ == '__main__':
-    pass
+    from sqlalchemy import create_engine
+    # from sqlalchemy.orm import sessionmaker
+
+    from classes import ConfigManager
+    mysql_config = ConfigManager().get_config().db
+    engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
+        host = mysql_config['host'],
+        port = mysql_config['port'],
+        user = mysql_config['user'],
+        password = mysql_config['password'],
+        dbname = mysql_config['database']
+    ))
+    # Session = sessionmaker(bind=engine)
+    # session = Session()
+    Base.metadata.create_all(engine)

@@ -11,13 +11,9 @@ import hashlib
 # 3rd-party Packages
 from tornado.web import stream_request_body
 from tornado.web import HTTPError
-from tornado.web import Finish
 
 # Local Packages
-from classes import RequestHandler
-from classes import RESTRequestHandler
 from classes import BashRequestHandler
-from classes import CIArtifactTokenManager
 
 # CONST
 
@@ -110,7 +106,7 @@ class CIArtifactReceiver(BashRequestHandler):
             self.ci_sha         = self.request.headers['SHA']
             self.hash_sha256    = hashlib.sha256()
         except:
-            log.exception("创建文件出错")
+            logging.exception("创建文件出错")
             self.application.catm.pop(self.request.headers['Artifact-Token'])
             raise HTTPError(503, reason="echo 服务器创建文件出错 && exit 201")
     def put(self):

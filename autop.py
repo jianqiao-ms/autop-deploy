@@ -22,7 +22,6 @@ ROUTE.extend(route)
 
 # Logic
 if __name__ == '__main__':
-
     cm = ConfigManager()
     lm = LogManager()
     lm.get_base_logger()

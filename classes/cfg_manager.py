@@ -27,7 +27,7 @@ class Configuration():
         static_path     = os.path.join(__BASEPATH__, "static")
     )
     db = dict(
-        server          =  'localhost',
+        host          =  'localhost',
         port            =  3306,
         user            =  'user',
         password        =  'password',

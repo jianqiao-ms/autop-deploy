@@ -11,25 +11,24 @@ from sqlalchemy.ext.declarative import declarative_base
 # CONST
 
 # Class&Function Defination
-BaseTable = declarative_base()
+Base = BaseTable = declarative_base()
 
 
 # Logic
 if __name__ == "__main__":
-    import os, json
     from sqlalchemy import create_engine
-    from sqlalchemy.orm import scoped_session, sessionmaker
+    from sqlalchemy.orm import sessionmaker
 
-    from classes.database.SchemaInventory import *
-    from classes.database.SchemaDeploy import *
+    from classes import ConfigManager
 
-    MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(__file__), "../../conf/mysql.json")
-    with open(MYSQL_CONFIG_FILE, "r") as file:
-        engine = create_engine(
-            "mysql+pymysql://{user}:{passwd}@{host}:{port}/{database}?charset=utf8".format(**json.load(file)),
-        )
-        mysql = scoped_session(sessionmaker(
-            bind=engine))()  # http://docs.sqlalchemy.org/en/latest/orm/contextual.html#sqlalchemy.orm.scoping.scoped_session
-
+    mysql_config = ConfigManager().get_config().db
+    engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
+        host=mysql_config['host'],
+        port=mysql_config['port'],
+        user=mysql_config['user'],
+        password=mysql_config['password'],
+        dbname=mysql_config['database']
+    ))
     Session = sessionmaker(bind=engine)
     session = Session()
+    Base.metadata.create_all(engine)

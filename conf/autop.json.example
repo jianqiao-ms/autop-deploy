@@ -1,0 +1,19 @@
+{
+  "app": {
+    "debug": true,
+    "upload_path": "/var/run/autop/upload"
+  },
+  "db": {
+    "server": "localhost",
+    "port": 3306,
+    "user": "user",
+    "password": "password",
+    "database": "database"
+  },
+  "log": {
+    "level": "info",
+    "console": true,
+    "path": "/var/logs/autop/logs",
+    "format": "[%(asctime)s] %(levelname)s %(filename)s %(funcName)s %(lineno)d -- %(message)s"
+  }
+}

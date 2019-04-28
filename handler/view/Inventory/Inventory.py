@@ -8,9 +8,9 @@ import json
 # 3rd-party Packages
 # Local Packages
 from classes.application import LOGGER
-from classes.handlers import NotInitialized
-from classes.handlers import RequestHandler
-from classes.handlers import ViewRequestHandler
+from classes.req_handler import NotInitialized
+from classes.req_handler import RequestHandler
+from classes.req_handler import ViewRequestHandler
 
 # CONST
 
