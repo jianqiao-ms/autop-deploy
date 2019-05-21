@@ -44,6 +44,58 @@ class Configuration():
         self.db.update(kwargs['db'])
         self.log.update(kwargs['log'])
 
+    def validate(self):
+        # 验证upload目录是否可写
+        logging.info("Configuration validate start")
+        try:
+            with open(os.path.join(self.app['upload_path'], '__configuration_validate__'), 'w')  as fp:
+                fp.write('configuration validate only. Delete free.')
+            fp.close()
+            os.remove(fp.name)
+            logging.info(
+                'Configuration upload_path \"{}\" validate OK'.format(self.app['upload_path']))
+        except:
+            logging.exception(
+                'Configuration upload_path \"{}\" validate Failed'.format(self.app['upload_path']))
+            exit(102)
+
+        # 验证log目录是否可写
+        try:
+            with open(os.path.join(self.log['path'], '__configuration_validate__'),'w')  as fp:
+                fp.write('configuration validate only. Delete free.')
+            fp.close()
+            os.remove(fp.name)
+            logging.info(
+                'Configuration log_path \"{}\" validate OK'.format(self.log['path']))
+        except:
+            logging.exception(
+                'Configuration log_path \"{}\" validate Failed'.format(self.log['path']))
+            exit(103)
+        logging.info("Configuration validata ok")
+
+        # 验证MySQL配置，并返回mysql connection session
+        try:
+            from sqlalchemy import create_engine
+            from sqlalchemy.orm import sessionmaker
+            from classes import ConfigManager
+
+            engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
+                host        = self.db['host'],
+                port        = self.db['port'],
+                user        = self.db['user'],
+                password    = self.db['password'],
+                dbname      = self.db['database']
+            ))
+            session = sessionmaker(bind=engine)()
+            session.close()
+            logging.info(
+                'Configuration db \"{}\" validate OK'.format(self.db['host']))
+        except:
+            logging.exception(
+                'Configuration db@\"{}\" validate Failed'.format(self.db['host']))
+            exit(103)
+        logging.info("Configuration validata ok")
+
 class ConfigManager():
     def get_config(self):
         logging.info("Configuration read start")
@@ -61,10 +113,10 @@ class ConfigManager():
             fp.close()
             os.remove(fp.name)
             logging.info(
-                'Configuration validate upload_path \"{}\" is valid'.format(self.configuration.app['upload_path']))
+                'Configuration upload_path \"{}\" validate OK'.format(self.configuration.app['upload_path']))
         except:
             logging.exception(
-                'Configuration validate upload_path \"{}\" is invalid'.format(self.configuration.app['upload_path']))
+                'Configuration upload_path \"{}\" validate invalid'.format(self.configuration.app['upload_path']))
             exit(102)
 
         # 验证log目录是否可写
@@ -74,10 +126,10 @@ class ConfigManager():
             fp.close()
             os.remove(fp.name)
             logging.info(
-                'Configuration validate log_path \"{}\" valid'.format(self.configuration.log['path']))
+                'Configuration log_path \"{}\" validate valid'.format(self.configuration.log['path']))
         except:
             logging.exception(
-                'Configuration validate log_path \"{}\" invalid'.format(self.configuration.log['path']))
+                'Configuration log_path \"{}\" validate invalid'.format(self.configuration.log['path']))
             exit(103)
         logging.info("Configuration validata ok")
 

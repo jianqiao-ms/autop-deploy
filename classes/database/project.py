@@ -1,6 +1,12 @@
 #! /usr/bin/env python3
 #-* coding: utf-8 -*
 
+"""
+包含
+    Project
+    ProjectType
+    ProjectCIHistory
+"""
 # Official packages
 
 # 3rd-party Packages
@@ -14,6 +20,19 @@ from public import BaseTable, Base
 # CONST
 
 # Class&Function Defination
+class TableProjectType(BaseTable):
+    __tablename__   = "project_type"
+
+    id              = Column(Integer, primary_key = True)
+    name            = Column(String(32))
+    deploy_path     = Column(String(256))
+    link_type       = Column(Enum('soft', 'hard'), nullable = True)
+    link_path       = Column(String(256))
+    start_cmd       = Column(String(64))
+    restart_cmd     = Column(String(64))
+
+    member = relationship('TableProject')
+
 class TableProject(BaseTable):
     """自关联表"""
     __tablename__   = 'project'
@@ -26,17 +45,19 @@ class TableProject(BaseTable):
     path            = Column(String(32))
     artifact_path   = Column(String(128))
 
-    repo_id = Column(Integer, ForeignKey('project.id'))
-    children        = relationship('TableProject', backref = backref('parent', remote_side = [id]))
+    repo_id         = Column(Integer, ForeignKey('project.id'))
+    children        = relationship('TableProject', backref = backref('repo', remote_side = [id]))
+
+    type_id         = Column(Integer, ForeignKey('project_type.id'))
+    type            = relationship(TableProjectType, backref = 'member')
 
 class TableProjectCIHistory(BaseTable):
-    __tablename__ = "project_ci_history"
+    __tablename__   = "project_ci_history"
 
-    id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('project.id'))
-    branch = Column(String(32))
-    commit = Column(String(8))
-
+    id              = Column(Integer, primary_key=True)
+    project_id      = Column(Integer, ForeignKey('project.id'))
+    branch          = Column(String(32))
+    commit          = Column(String(8))
 
 # Logic
 if __name__ == '__main__':
@@ -44,13 +65,13 @@ if __name__ == '__main__':
     # from sqlalchemy.orm import sessionmaker
 
     from classes import ConfigManager
-    mysql_config = ConfigManager().get_config().db
+    db_cfg = ConfigManager().get_config().db
     engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
-        host = mysql_config['host'],
-        port = mysql_config['port'],
-        user = mysql_config['user'],
-        password = mysql_config['password'],
-        dbname = mysql_config['database']
+        host        = db_cfg['host'],
+        port        = db_cfg['port'],
+        user        = db_cfg['user'],
+        password    = db_cfg['password'],
+        dbname      = db_cfg['database']
     ))
     # Session = sessionmaker(bind=engine)
     # session = Session()

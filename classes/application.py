@@ -18,8 +18,6 @@ from tornado.httpclient import AsyncHTTPClient as HTTPClient
 from tornado.httpclient import HTTPClient as SyncHTTPClient
 
 # Local Packages
-from req_handler import BaseRequestHandler
-
 
 # CONST
 MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/mysql.json")
@@ -46,19 +44,20 @@ class Application(OriginApplication):
         )
 
 
-
 class GitlabServer():
     def __init__(self):
-        self.url = "http://192.168.3.252/api/v4/"
-        self.token = "K2faEp9ofGwNWNBpUo-L"
-        self.client = HTTPClient()
+        __gitlab_url__  = None
+        __ret__         = None
+        self.url        = "http://192.168.3.252/api/v4/"
+        self.token      = "K2faEp9ofGwNWNBpUo-L"
+        self.client     = HTTPClient()
         try:
             __gitlab_url__ = self.url + "version"
-            ret = SyncHTTPClient().fetch(__gitlab_url__, headers={"PRIVATE-TOKEN": self.token}, request_timeout = 3.0)
-            version = json.loads(ret.body.decode())
+            __ret__ = SyncHTTPClient().fetch(__gitlab_url__, headers={"PRIVATE-TOKEN": self.token}, request_timeout = 3.0)
+            version = json.loads(__ret__.body.decode())
             logging.info("gitlab Connected! Version: {}".format(str(version["version"])))
         except json.decoder.JSONDecodeError as e:
-            logging.debug('\n' + ret.body.decode())
+            logging.debug('\n' + __ret__.body.decode())
             logging.error('Gitlab 返回结果不正确。检查gitlab版本、权限 或dns解析是否跳转到宽带运营商页面')
             exit(111)
         except HTTPClientError as e:

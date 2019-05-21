@@ -24,13 +24,11 @@ ROUTE.extend(route)
 if __name__ == '__main__':
     cm = ConfigManager()
     lm = LogManager()
+
     lm.get_base_logger()
-
     configuration = cm.get_config()
-    cm.validate()
+    configuration.validate()
     lm.get_logger(configuration.log)
-
-
 
     application = Application(
         ROUTE,

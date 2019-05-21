@@ -79,7 +79,7 @@ class CIScriptGenerator(BashRequestHandler):
     async def get_ci_branch_from_commit(self, project_id, commit):
         return json.loads(await self.application.gitlab.read_api('/projects/{id}/repository/commits/{sha}/refs'.format(
             id=project_id, sha=commit
-        ), self))[0]["name"]
+        )))[0]["name"]
 
 
 @stream_request_body
