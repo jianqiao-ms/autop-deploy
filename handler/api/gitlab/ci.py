@@ -23,26 +23,35 @@ class CIScriptGenerator(BashRequestHandler):
     """
     scripts executed by gitlab-runner after build projects.
     基本逻辑:
-        开始 ==> 获取request arguments ==> 生成token:project字典 ==> 生成ci脚本并返回
+        开始 ==> 获取request arguments ==> 生成token字典,保存上传文件信息 ==> 生成ci脚本并返回
+    token 结构:
+        uuid(16)：{
+            project : TableProjectType(role='project')
+            ci_commit_short_sha: ci_commit_short_sha
+            ci_branch_name : ci_branch_name
+        }
     """
     def get(self):
         self.finish(json.dumps(self.application.catm, indent=2))
 
     async def post(self):
-        ci_args = dict(
-            ci_gitlab_project_id    = int(self.request.arguments['GITLAB_PROJECT_ID'][0]),
-            ci_commit_short_sha     = self.request.arguments['COMMIT_SHA'][0].decode()[0:8]
-        )
-        ci_args['ci_branch_name'] = await self.get_ci_branch_from_commit(
-            ci_args['ci_gitlab_project_id'], ci_args['ci_commit_short_sha'])
+        ci_gitlab_project_id    = int(self.request.arguments['GITLAB_PROJECT_ID'][0])
+        ci_commit_short_sha     = self.request.arguments['COMMIT_SHA'][0].decode()[0:8]
 
+        print(ci_gitlab_project_id)
+        print(ci_commit_short_sha)
+        ci_branch_name          = await self.get_ci_branch_from_commit(
+            ci_gitlab_project_id, ci_commit_short_sha
+        )
+        print(ci_branch_name)
         # TODO: 根据curl post过来的PROJECT_ID 和 COMMIT_SHA，调用gitlab api获取更新列表。
         #       根据更新列表，过滤数据库中保存的gitlab project序列，得到最终需要上传artifacts的project序列
         # 测试使用的临时数据
         project = self.application.session.query(TableProject).\
-            filter(TableProject.gitlab_id == ci_args['ci_gitlab_project_id']).one()
+            filter(TableProject.gitlab_id == ci_gitlab_project_id).one()
 
-
+        if project.role == 'repo':
+            all_projects = list(filter(lambda x:print(x) if x.role == 'project' else None, project.children))
 
         artifacts = [
             dict(
