@@ -32,6 +32,6 @@ if __name__ == '__main__':
 
     application = Application(
         ROUTE,
-    **configuration.app)
+    configuration = configuration)
     application.listen(60000)
     IOLoop.current().start()

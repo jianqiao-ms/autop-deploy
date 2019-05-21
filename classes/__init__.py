@@ -9,3 +9,6 @@ from req_handler import RESTRequestHandler
 from req_handler import BashRequestHandler
 
 from application import Application
+
+
+from database import *

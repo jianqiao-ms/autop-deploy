@@ -31,7 +31,7 @@ class TableProjectType(BaseTable):
     start_cmd       = Column(String(64))
     restart_cmd     = Column(String(64))
 
-    member = relationship('TableProject')
+    # member = relationship('TableProject')
 
 class TableProject(BaseTable):
     """自关联表"""
@@ -41,7 +41,7 @@ class TableProject(BaseTable):
     gitlab_id       = Column(Integer)
     name            = Column(String(32))
     build_cmd       = Column(String(128))
-    role            = Column(Enum('repo', 'project', 'public'), nullable = True)
+    role            = Column(Enum('repo', 'project', 'public','parent'), nullable = True)
     path            = Column(String(32))
     artifact_path   = Column(String(128))
 
@@ -61,19 +61,4 @@ class TableProjectCIHistory(BaseTable):
 
 # Logic
 if __name__ == '__main__':
-    from sqlalchemy import create_engine
-    # from sqlalchemy.orm import sessionmaker
-
-    from classes import ConfigManager
-    db_cfg = ConfigManager().get_config().db
-    engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
-        host        = db_cfg['host'],
-        port        = db_cfg['port'],
-        user        = db_cfg['user'],
-        password    = db_cfg['password'],
-        dbname      = db_cfg['database']
-    ))
-    # Session = sessionmaker(bind=engine)
-    # session = Session()
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(engine)
+    pass

@@ -12,8 +12,8 @@ from classes import ConfigManager
 from public import BaseTable, Base
 
 from project import TableProjectType, TableProject, TableProjectCIHistory
-from enviroment import TableEnviroment
-from container import TableContainer
+# from enviroment import TableEnviroment
+# from container import TableContainer
 
 # CONST
 

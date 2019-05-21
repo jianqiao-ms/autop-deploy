@@ -11,39 +11,19 @@ from concurrent.futures import ThreadPoolExecutor
 # 3rd-party Packages
 from tornado.web import access_log
 from tornado.web import Application as OriginApplication
-
 from tornado.web import HTTPError
 from tornado.httpclient import HTTPClientError
 from tornado.httpclient import AsyncHTTPClient as HTTPClient
 from tornado.httpclient import HTTPClient as SyncHTTPClient
 
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 # Local Packages
-
+from cfg_manager import Configuration
 # CONST
-MYSQL_CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "conf/mysql.json")
-
-
 # Class&Function Defination
-class Application(OriginApplication):
-    def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
-        self.gitlab = GitlabServer()
-        self.catm = dict()
-        self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
-        super(Application, self).__init__(handlers, default_host, transforms, **settings)
-
-    def log_request(self, handler) -> None:
-        if handler.get_status() < 400:
-            log_method = access_log.info
-        elif handler.get_status() < 500:
-            log_method = access_log.warning
-        else:
-            log_method = access_log.error
-        request_time = 1000.0 * handler.request.request_time()
-        log_method("%s \"%d %s %s\" %.2fms", handler.request.remote_ip, handler.get_status(),
-                   handler.request.method, handler.request.uri, request_time
-        )
-
-
 class GitlabServer():
     def __init__(self):
         __gitlab_url__  = None
@@ -76,6 +56,37 @@ class GitlabServer():
         except:
             logging.exception('Error occur reading api [{}]'.format(api))
             HTTPError(503, reason='Error occur reading api [{}]'.format(api))
+
+
+class Application(OriginApplication):
+    def __init__(self, handlers=None, default_host=None, transforms=None, configuration:Configuration = None):
+        # catm : CI Access Token Manager
+        self.catm = dict()
+        self.gitlab = GitlabServer()
+        self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
+
+        db_cfg = configuration.db
+        engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
+            host=db_cfg['host'],
+            port=db_cfg['port'],
+            user=db_cfg['user'],
+            password=db_cfg['password'],
+            dbname=db_cfg['database']
+        ))
+        self.session = sessionmaker(bind=engine)()
+        super(Application, self).__init__(handlers, default_host, transforms, **configuration.app)
+
+    def log_request(self, handler) -> None:
+        if handler.get_status() < 400:
+            log_method = access_log.info
+        elif handler.get_status() < 500:
+            log_method = access_log.warning
+        else:
+            log_method = access_log.error
+        request_time = 1000.0 * handler.request.request_time()
+        log_method("%s \"%d %s %s\" %.2fms", handler.request.remote_ip, handler.get_status(),
+                   handler.request.method, handler.request.uri, request_time
+        )
 
 # Logic
 if __name__ == "__main__":

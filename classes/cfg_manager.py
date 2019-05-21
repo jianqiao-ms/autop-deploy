@@ -16,8 +16,6 @@ __BASEPATH__    = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 __CONFIG_FILE__ = os.path.join(__BASEPATH__, 'conf/autop.json')
 
 # Class&Function Defination
-
-
 class Configuration():
     app = dict(
         debug           = False,
@@ -71,7 +69,7 @@ class Configuration():
             logging.exception(
                 'Configuration log_path \"{}\" validate Failed'.format(self.log['path']))
             exit(103)
-        logging.info("Configuration validata ok")
+
 
         # 验证MySQL配置，并返回mysql connection session
         try:
@@ -89,11 +87,12 @@ class Configuration():
             session = sessionmaker(bind=engine)()
             session.close()
             logging.info(
-                'Configuration db \"{}\" validate OK'.format(self.db['host']))
+                'Configuration database@\"{}\" validate OK'.format(self.db['host']))
         except:
             logging.exception(
-                'Configuration db@\"{}\" validate Failed'.format(self.db['host']))
+                'Configuration database@\"{}\" validate Failed'.format(self.db['host']))
             exit(103)
+
         logging.info("Configuration validata ok")
 
 class ConfigManager():

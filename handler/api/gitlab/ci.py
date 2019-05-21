@@ -14,6 +14,7 @@ from tornado.web import HTTPError
 
 # Local Packages
 from classes import BashRequestHandler
+from classes import TableProject
 
 # CONST
 
@@ -21,28 +22,28 @@ from classes import BashRequestHandler
 class CIScriptGenerator(BashRequestHandler):
     """
     scripts executed by gitlab-runner after build projects.
-    错误码：
-      101: 编译过程出错，跳过上传
+    基本逻辑:
+        开始 ==> 获取request arguments ==> 生成token:project字典 ==> 生成ci脚本并返回
     """
     def get(self):
         self.finish(json.dumps(self.application.catm, indent=2))
 
     async def post(self):
-        "BUILD失败后执行"
-        if 'BUILD_STATUS' in self.request.arguments:
-            if not bool(int(self.get_form_data('BUILD_STATUS'))):
-                raise HTTPError(403, reason="编译过程出错，跳过上传")
-
         ci_args = dict(
-            ci_gitlab_project_id = int(self.request.arguments['GITLAB_PROJECT_ID'][0]),
-            ci_commit_short_sha = self.request.arguments['COMMIT_SHA'][0].decode()[0:8])
+            ci_gitlab_project_id    = int(self.request.arguments['GITLAB_PROJECT_ID'][0]),
+            ci_commit_short_sha     = self.request.arguments['COMMIT_SHA'][0].decode()[0:8]
+        )
         ci_args['ci_branch_name'] = await self.get_ci_branch_from_commit(
             ci_args['ci_gitlab_project_id'], ci_args['ci_commit_short_sha'])
 
         # TODO: 根据curl post过来的PROJECT_ID 和 COMMIT_SHA，调用gitlab api获取更新列表。
         #       根据更新列表，过滤数据库中保存的gitlab project序列，得到最终需要上传artifacts的project序列
         # 测试使用的临时数据
-        build_cmd = "mvn -P prod -f warranty-parent/pom.xml clean install"
+        project = self.application.session.query(TableProject).\
+            filter(TableProject.gitlab_id == ci_args['ci_gitlab_project_id']).one()
+
+
+
         artifacts = [
             dict(
                 project_id = 0,
@@ -73,7 +74,7 @@ class CIScriptGenerator(BashRequestHandler):
                 **ci_args
             )) for artifact in artifacts
         )
-        await self.render('bash_scripts/default_ci_script.sh',build_cmd = build_cmd, token_map = token_map)
+        await self.render('bash_scripts/default_ci_script.sh',build_cmd = project.build_cmd, token_map = token_map)
         self.application.catm.update(token_map)
 
     async def get_ci_branch_from_commit(self, project_id, commit):
