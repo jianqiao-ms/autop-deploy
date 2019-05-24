@@ -20,7 +20,7 @@ class SSHConnectorViewHandler(UIRequestHandler):
     """
 
     def get(self):
-        self.render("ssh_connector/ui.html")
+        self.render("ssh_connector/login.html")
 
     
 # Logic

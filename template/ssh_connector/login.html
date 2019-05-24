@@ -1,0 +1,25 @@
+{% extends ../bootstrap.html %}
+
+{% block global-container %}
+<div class="d-flex align-self-center justify-content-center row vw-100">
+    <div class="pl-4 pr-4 pt-4 pb-4 bg-warning col-2">
+    <form>
+        <div class="form-group">
+            <label for="fqdnInput">Server FQDN</label>
+            <input type="text" class="form-control" id="fqdnInput" aria-describedby="fqdnHelp" 
+                   placeholder="Server FQDN">
+            <small id="fqdnHelp" class="form-text text-muted">input ipaddr or hostname</small>
+        </div>
+        <div class="form-group">
+            <label for="sshPortInput">SSH Port</label>
+            <input type="text" class="form-control" id="sshPortInput" placeholder="22" data-default="22">
+        </div>
+        <div class="form-group">
+            <label for="passwordInput">Password</label>
+            <input type="password" class="form-control" id="passwordInput" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">Connect</button>
+    </form>
+    </div>
+</div>
+{% end %}
