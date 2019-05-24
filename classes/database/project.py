@@ -31,17 +31,15 @@ class TableProjectType(BaseTable):
     start_cmd       = Column(String(64))
     restart_cmd     = Column(String(64))
 
-    # member = relationship('TableProject')
-
 class TableProject(BaseTable):
     """自关联表"""
     __tablename__   = 'project'
 
     id              = Column(Integer, primary_key=True)
     gitlab_id       = Column(Integer)
-    name            = Column(String(32))
+    name            = Column(String(32), nullable = False)
     build_cmd       = Column(String(128))
-    role            = Column(Enum('repo', 'project', 'public','parent'), nullable = True)
+    role            = Column(Enum('repo', 'project', 'public','parent'), nullable = False)
     path            = Column(String(32))
     artifact_path   = Column(String(128))
 

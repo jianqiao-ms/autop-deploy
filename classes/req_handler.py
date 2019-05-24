@@ -14,8 +14,7 @@ from tornado.web import RequestHandler
 
 # Class&Function Defination
 class BaseRequestHandler(RequestHandler):
-    def get_form_data(self, name):
-        return self.request.arguments[name][0]
+    pass
 
 class RESTRequestHandler(BaseRequestHandler):
     """
@@ -39,6 +38,13 @@ class RESTRequestHandler(BaseRequestHandler):
             ))
 
 class BashRequestHandler(BaseRequestHandler):
+    """
+    返回Raw格式的错误信息
+    """
+    def write_error(self, status_code: int, **kwargs):
+        self.finish(self._reason)
+        
+class UIRequestHandler(BaseRequestHandler):
     """
     返回Raw格式的错误信息
     """

@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{{static_url('bootstrap/dist/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{static_url('css/global.min.css')}}">
     {% block css %}{% end %}<!-- Optional StyleSheet -->
-    {% block csss %}{% end %}<!-- Optional StyleSheet -->
 
     <title>{% block title %}Auto Operation System{% end %}</title>
 </head>
@@ -17,7 +16,7 @@
     {% block header %}{% end %}
     {% block second_nav %}{% end %}
 
-    <div class="container-fluid mt-5">
+    <div class="container-fluid min-vh-100 vh-100 bg-danger">
         {% block global-container %}{% end %}
     </div>
     {% block modal %}{% end %}
@@ -27,9 +26,7 @@
     <script src="{{static_url('bootstrap/popper.min.js')}}"></script>
     <script src="{{static_url('bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <script src="{{static_url('fontawesome/js/all.min.js')}}"></script>
-    <script src="{{static_url('js/func.js')}}"></script>
     {% block js %}{% end %}<!-- Optional JavaScript -->
-    {% block jss %}{% end %}<!-- Optional JavaScript -->
 
 </body>
 </html>

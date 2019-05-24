@@ -63,7 +63,16 @@ class LogManager():
         if log_configuration['console']:
             ___console_handler_ = logging.StreamHandler()
             ___console_handler_.setFormatter(__app_log_formater__)
-            list(map(lambda x: x.addHandler(___console_handler_), __loggers__))
+            # access_log.addHandler(___console_handler_)
+            # app_log.addHandler(___console_handler_)
+            # gen_log.addHandler(___console_handler_)
+            root_log.addHandler(___console_handler_)
+            # print(__loggers__)
+            # [x.addHandler(___console_handler_) for x in __loggers__]
+            # print(access_log.handlers)
+            # print(app_log.handlers)
+            # print(gen_log.handlers)
+            # print(gen_log.handlers)
 
 # Logic
 if __name__ == '__main__':
