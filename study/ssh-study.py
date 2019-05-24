@@ -3,6 +3,7 @@
 
 # Official packages
 import os
+import sys
 import random
 # 3rd-party Packages
 import paramiko
@@ -26,6 +27,11 @@ proxy.connect(**desc_proxy )
 a = proxy.invoke_shell()
 a.sendall('ip a')
 rst = a.recv(4096)
-print(rst)
+sys.stdout.write(rst.decode())
 
 proxy.close()
+
+from tornado.ioloop import IOLoop
+print(IOLoop.READ)
+print(IOLoop.WRITE)
+print(IOLoop.ERROR)

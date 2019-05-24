@@ -7,6 +7,7 @@ import traceback
 
 # 3rd-party Packages
 from tornado.web import RequestHandler
+from tornado.websocket import WebSocketHandler
 
 # Local Packages
 
@@ -24,32 +25,21 @@ class RESTRequestHandler(BaseRequestHandler):
         "message": "reason"
     }
     """
-    def write_error(self, status_code: int, **kwargs):
-        logging.exception(self._reason)
-        if self.settings.get("serve_traceback") and "exc_info" in kwargs:
-            # in debug mode, try to send a traceback
-            self.set_header("Content-Type", "text/plain")
-            for line in traceback.format_exception(*kwargs["exc_info"]):
-                self.write(line)
-            self.finish()
-        else:
-            self.finish(dict(
-                message = self._reason
-            ))
+    pass
 
 class BashRequestHandler(BaseRequestHandler):
     """
-    返回Raw格式的错误信息
+    
     """
-    def write_error(self, status_code: int, **kwargs):
-        self.finish(self._reason)
-        
+    pass
 class UIRequestHandler(BaseRequestHandler):
     """
-    返回Raw格式的错误信息
+    
     """
-    def write_error(self, status_code: int, **kwargs):
-        self.finish(self._reason)
+    pass
+
+class BaseWebSocketHandler(WebSocketHandler):
+    pass
 
 # Logic
 if __name__ == '__main__':
