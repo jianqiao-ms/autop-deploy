@@ -1,6 +1,6 @@
 function wsconnect(terminal) {
     terminal.reset();
-    var ws = new WebSocket("ws://localhost:60000/websocket");
+    var ws = new WebSocket("ws://192.168.2.200:60000/websocket");
     ws.onmessage = function (e) {
         console.log(e);
         terminal.write(e.data);
@@ -8,8 +8,12 @@ function wsconnect(terminal) {
     return ws
 }
 $(document).ready(function() {
+    Terminal.applyAddon(fit);
+    Terminal.applyAddon(fullscreen);
+    
     let terminal = new Terminal();
     terminal.open(document.getElementById('terminal-container'));
+    
     let ws = wsconnect(terminal);
     
     terminal.on('data', function (data) {
@@ -20,5 +24,7 @@ $(document).ready(function() {
             ws.send(data);
         }
     });
-    
+    terminal.toggleFullScreen(); 
+    terminal.fit();
+
 });
