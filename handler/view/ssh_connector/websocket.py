@@ -6,52 +6,75 @@ import os.path
 import logging
 import json
 import sys
-
+import asyncio
 # 3rd-party Packages
 import paramiko
+import asyncssh
 from tornado.ioloop import IOLoop
+from tornado.iostream import BaseIOStream, IOStream, PipeIOStream
 # Local Packages
 from classes.req_handler import BaseWebSocketHandler
 
 
 # CONST
 ssh_args = dict(
-    hostname='192.168.3.9',
+    host = '192.168.3.9',
     port=22,
     username='root',
-    password=' ',
-    timeout=2
+    password=' '
 )
 
 # Class&Function Defination
+def make_call_back(sock):
+    def a(data, datatype):
+        sock.send_stream(data)
+    return a
+        
 class SSHConnectorSocketHandler(BaseWebSocketHandler):
     """Handler for a terminal websocket"""
-    def open(self, *args: str, **kwargs: str):
-        self.channel = self.new_channel()
+    async def open(self, *args: str, **kwargs: str):
+        inr, inw = os.pipe()
+        INPUT_r = PipeIOStream(inr)
+        INPUT = PipeIOStream(inw)
+
+        outr, outw = os.pipe()
+        OUTPUT = PipeIOStream(outr)
+        OUTPUT_w = PipeIOStream(outw)
         
-        IOLoop.current().add_handler(self.channel, self.send_asd, IOLoop.current().READ)
+        self.process = await self.new_channel()
+        self.process.redirect(stdin=INPUT_r, stdout=OUTPUT_w, stderr='STDOUT')
+        
+
+    async def new_channel(self):
+        
+
+        async with asyncssh.connect('192.168.3.9', username='root', password=' ', keepalive_interval=30) as conn:
+            async with conn.create_process(term_size=(80, 24), term_type='xterm') as process:
+                process.data_received = make_call_back(self)
+                
+                # await process.communicate('bash')
+                
+                return process
     
-    def new_channel(self):
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(**ssh_args)
-        return client.invoke_shell()
-    
-    def send_asd(self, fd, events):
+    def send_stream(self, data):
         try:
-            if fd.closed:
-                self.close()
-                return 0
-            a = fd.recv(1024)
-            sys.stdout.write(a.decode())
-            self.write_message(a)
+            self.write_message({
+                'type':'stdout',
+                'data' : data
+            })
         except:
             import traceback
             traceback.print_exc()
             IOLoop.current().stop()
             
     def on_message(self, message):
-        self.channel.send(message)
+        msg_object = json.loads(message)
+        logging.info(msg_object)
+
+        if msg_object['type'] == 'stdin': 
+            self.process.stdin.write(msg_object['data'])
+        if msg_object['type'] == 'resize':
+            self.process.resize_pty(*msg_object['data'])
 
 # Logic
 if __name__ == '__main__':

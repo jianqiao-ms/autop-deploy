@@ -2,8 +2,9 @@
 #-* coding: utf-8 -*
 
 # Official packages
-
+import asyncio
 # 3rd-party Packages
+import tornado.platform.asyncio
 import tornado.options
 from tornado.ioloop import IOLoop
 
@@ -22,6 +23,9 @@ ROUTE.extend(route)
 
 # Logic
 if __name__ == '__main__':
+    tornado.platform.asyncio.AsyncIOMainLoop().install()
+    IOLoop = asyncio.get_event_loop()
+    
     cm = ConfigManager()
     lm = LogManager()
 
@@ -34,4 +38,4 @@ if __name__ == '__main__':
         ROUTE,
     configuration = configuration)
     application.listen(60000)
-    IOLoop.current().start()
+    IOLoop.run_forever()
