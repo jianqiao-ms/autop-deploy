@@ -76,5 +76,5 @@ class LogManager():
 
 # Logic
 if __name__ == '__main__':
-    import time
+    import time_generator
     # log.debug(time.strftime("%Y-%m-%d %H:%M:%S"))

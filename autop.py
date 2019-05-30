@@ -2,11 +2,12 @@
 #-* coding: utf-8 -*
 
 # Official packages
-import asyncio
+# import asyncio
 # 3rd-party Packages
 import tornado.platform.asyncio
+from tornado.platform import asyncio
 import tornado.options
-from tornado.ioloop import IOLoop
+# from tornado.ioloop import IOLoop
 
 # Local Packages
 from classes import ConfigManager
@@ -23,8 +24,7 @@ ROUTE.extend(route)
 
 # Logic
 if __name__ == '__main__':
-    tornado.platform.asyncio.AsyncIOMainLoop().install()
-    IOLoop = asyncio.get_event_loop()
+    IOLoop = asyncio.IOLoop()
     
     cm = ConfigManager()
     lm = LogManager()
@@ -38,4 +38,4 @@ if __name__ == '__main__':
         ROUTE,
     configuration = configuration)
     application.listen(60000)
-    IOLoop.run_forever()
+    IOLoop.current().start()

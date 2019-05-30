@@ -5,9 +5,9 @@ function new_terminal() {
     let terminal    = new Terminal();
 
     
-    ws.onopen = function (event) {
-        ws.onmessage = function (event) {
-            json_msg = JSON.parse(event.data);
+    ws.onopen = function (e) {
+        ws.onmessage = function (ee) {
+            json_msg = JSON.parse(ee.data);
             switch(json_msg['type']) {
                 case 'stdout':
                     terminal.write(json_msg['data']);
@@ -34,26 +34,21 @@ function new_terminal() {
                 ]
             }));
         });
-
+        terminal.fit()
+    };
+    ws.onclose = function (e){
+        terminal.reset();
+    };
+    
+    window.onresize = function() { 
+        terminal.fit();
     };
     
     terminal.open(document.getElementById('terminal-container'));
     return {socket: ws, terminal: terminal};
-    
-    
-
 }
 
 $(document).ready(function() {
     Terminal.applyAddon(fit);
-    Terminal.applyAddon(fullscreen);
-    
-    let term = new_terminal();
-    term.terminal.toggleFullScreen(); 
-    term.terminal.fit();
-    
-    window.onresize = function() { 
-        term.terminal.toggleFullScreen(true); 
-        term.terminal.fit();
-    };
+    new_terminal();
 });
