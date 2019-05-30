@@ -52,12 +52,4 @@ function new_terminal() {
 $(document).ready(function() {
     Terminal.applyAddon(fit);
     new_terminal();
-
-    // for (var i = 0; i < 5; i++) {
-    //     (function(ii){   //立刻执行函数
-    //         setTimeout(function (){
-    //             console.log(ii);
-    //         },ii * 1000);
-    //     })(i);
-    // }
 });
