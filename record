@@ -1,17 +1,54 @@
-timestamp1559212918276Last login: Thu May 30 18:39:32 2019 from 192.168.18.10
+timestamp1559294834110Last login: Fri May 31 16:30:01 2019 from 192.168.18.10
 endtimestamp
-timestamp1559212918297]0;root@localhost:~[root@localhost ~]# endtimestamp
-timestamp1559212918426[K[root@localhost ~]# endtimestamp
-timestamp1559212919266lendtimestamp
-timestamp1559212919366sendtimestamp
-timestamp1559212919686
+timestamp1559294834131]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294834295[K[root@localhost ~]# endtimestamp
+timestamp1559294835056lendtimestamp
+timestamp1559294835145sendtimestamp
+timestamp1559294835249
 endtimestamp
-timestamp1559212919689[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
+timestamp1559294835252[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
 ]0;root@localhost:~[root@localhost ~]# endtimestamp
-timestamp1559212922216eendtimestamp
-timestamp1559212922437xendtimestamp
-timestamp1559212922596iendtimestamp
-timestamp1559212922789tendtimestamp
-timestamp1559212922944
+timestamp1559294835413lendtimestamp
+timestamp1559294835765sendtimestamp
+timestamp1559294835961
+endtimestamp
+timestamp1559294835965[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
+]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294836098lendtimestamp
+timestamp1559294836235sendtimestamp
+timestamp1559294836333
+endtimestamp
+timestamp1559294836337[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
+]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294836481lendtimestamp
+timestamp1559294836653sendtimestamp
+timestamp1559294836715
+endtimestamp
+timestamp1559294836719[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
+]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294836869lendtimestamp
+timestamp1559294837013sendtimestamp
+timestamp1559294837093
+endtimestamp
+timestamp1559294837097[0m[01;32mapi.sh[0m  [01;32mpm.sh[0m  positionmanager.war.0  [01;32mwatch.sh[0m
+]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294837691fendtimestamp
+timestamp1559294837893rendtimestamp
+timestamp1559294838085eendtimestamp
+timestamp1559294838249eendtimestamp
+timestamp1559294838351 endtimestamp
+timestamp1559294838389-endtimestamp
+timestamp1559294838581mendtimestamp
+timestamp1559294838830
+endtimestamp
+timestamp1559294838836              total        used        free      shared  buff/cache   available
+Mem:           1838        1144         143          96         551         421
+Swap:          2047          28        2019
+]0;root@localhost:~[root@localhost ~]# endtimestamp
+timestamp1559294839131eendtimestamp
+timestamp1559294839373xendtimestamp
+timestamp1559294839485iendtimestamp
+timestamp1559294839613tendtimestamp
+timestamp1559294839831
 logout
 endtimestamp

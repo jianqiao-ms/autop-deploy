@@ -34,7 +34,5 @@
 {% end %}
 
 {% block js %}
-<script src="{{static_url('xterm/xterm.js')}}"></script>
-<script src="{{static_url('xterm/addons/fit/fit.js')}}"></script>
-<script src="{{static_url('js/ssh_connector/record.js')}}"></script>
+<script type="module" src="{{static_url('js/ssh_connector/record.js')}}"></script>
 {% end %}
