@@ -50,5 +50,5 @@ function new_terminal() {
 
 $(document).ready(function() {
     Terminal.applyAddon(fit);
-    new_terminal();
+    // new_terminal();
 });

@@ -4,7 +4,10 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ static_url('favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ static_url('favicon//favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ static_url('favicon/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ static_url('favicon/site.webmanifest') }}">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{static_url('bootstrap/dist/css/bootstrap.min.css')}}">
     {% block css %}{% end %}<!-- Optional StyleSheet -->
@@ -15,13 +18,13 @@
     {% block header %}{% end %}
     {% block second_nav %}{% end %}
 
-    <div class="container-fluid p-0 min-vh-100 vh-100  bg-secondary">
+    <div class="container-fluid p-0 min-vh-100 vh-100"  style="background: black">
         {% block global-container %}{% end %}
     </div>
     {% block modal %}{% end %}
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{{static_url('bootstrap/jquery.slim.min.js')}}"></script>
+    <script src="{{static_url('jquery/jquery.min.js')}}"></script>
     <script src="http://code.z01.com/v4/dist/js/popper.min.js"></script>
     <!--<script src="{{static_url('bootstrap/popper.min.js')}}"></script>-->
     <script src="{{static_url('bootstrap/dist/js/bootstrap.min.js')}}"></script>

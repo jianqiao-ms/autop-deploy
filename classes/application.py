@@ -61,19 +61,19 @@ class GitlabServer():
 class Application(OriginApplication):
     def __init__(self, handlers=None, default_host=None, transforms=None, configuration:Configuration = None):
         # catm : CI Access Token Manager
-        self.catm = dict()
-        self.gitlab = GitlabServer()
-        self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
-
-        db_cfg = configuration.db
-        engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
-            host=db_cfg['host'],
-            port=db_cfg['port'],
-            user=db_cfg['user'],
-            password=db_cfg['password'],
-            dbname=db_cfg['database']
-        ))
-        self.session = sessionmaker(bind=engine)()
+        # self.catm = dict()
+        # self.gitlab = GitlabServer()
+        # self.EXECUTOR = ThreadPoolExecutor(max_workers=4)
+        # 
+        # db_cfg = configuration.db
+        # engine = create_engine('mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbname}'.format(
+        #     host=db_cfg['host'],
+        #     port=db_cfg['port'],
+        #     user=db_cfg['user'],
+        #     password=db_cfg['password'],
+        #     dbname=db_cfg['database']
+        # ))
+        # self.session = sessionmaker(bind=engine)()
         super(Application, self).__init__(handlers, default_host, transforms, **configuration.app)
 
     def log_request(self, handler) -> None:

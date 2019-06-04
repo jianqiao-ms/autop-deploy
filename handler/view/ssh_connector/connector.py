@@ -6,12 +6,13 @@ import os.path
 import logging
 import json
 import sys
-import asyncio
+import traceback
+
 # 3rd-party Packages
 import paramiko
 import asyncssh
 from tornado.platform.asyncio import IOLoop
-from tornado.iostream import BaseIOStream, IOStream, PipeIOStream
+from tornado.concurrent import Future
 
 # Local Packages
 from classes.req_handler import UIRequestHandler
@@ -37,18 +38,14 @@ class SSHConnectorViewHandler(UIRequestHandler):
     ssh_connector UI
     """
     def get(self):
-        self.render("ssh_connector/login.html")
-        
+        self.render("ssh_connector/connector.html")
+
 class SSHConnectorSocketHandler(BaseWebSocketHandler):
     """Handler for a terminal websocket"""
     async def open(self, *args: str, **kwargs: str):
-        conn = await asyncssh.connect('192.168.3.9', username='root', password=' ')
-        self.process = await conn.create_process(term_type='xterm-color')
-        self.process.data_received = self.send_stream
-        self.process.eof_received = self.close
-        self.record = open('record', 'wb')
-
+        logging.info('websocket opened')
     def send_stream(self, data, event):
+        logging.info(data)
         try:
             self.write_message({
                 'type':'stdout',
@@ -61,8 +58,38 @@ class SSHConnectorSocketHandler(BaseWebSocketHandler):
             traceback.print_exc()
             IOLoop.current().stop()
             
+        
+    async def create_process(self, host, user, password, port=22):
+        conn = await asyncssh.connect(host=host, username=user, password=password, port=int(port))
+        self.process = await conn.create_process(term_type='xterm-color')
+        self.process.data_received = self.send_stream
+        self.process.eof_received = self.close
+        self.record = open('record', 'wb')
+        return self.process
+            
+        
     async def on_message(self, message):
         msg_object = json.loads(message)
+        logging.info(msg_object)
+        if msg_object['type'] == 'conn':
+            try:
+                self.process = await self.create_process(**msg_object['data'])
+                await self.write_message({
+                    'type' : 'conn',
+                    'data' : {
+                        'status': True,
+                        'details' : ''
+                    }
+                })
+            except:
+                await self.write_message({
+                    'type': 'conn',
+                    'data': {
+                        'status': False,
+                        'details': traceback.print_exc()
+                    }
+                })
+                self.close()
         if msg_object['type'] == 'stdin':
             self.process.stdin.write(msg_object['data'])
         if msg_object['type'] == 'resize':
@@ -70,8 +97,10 @@ class SSHConnectorSocketHandler(BaseWebSocketHandler):
         
     def on_close(self):
         logging.info('websocket closed')
-        self.record.close()
-
+        try:
+            self.record.close()
+        except:
+            pass
 
 class SSHConnectorParamikoSocketHandler(BaseWebSocketHandler):
     """Handler for a terminal websocket"""
