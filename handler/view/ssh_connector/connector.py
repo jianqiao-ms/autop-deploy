@@ -29,6 +29,9 @@ ssh_args = dict(
 )
 
 # Class&Function Defination
+def validate_host_public_key(*args, **kwargs):
+    return True
+
 class A(asyncssh.SSHClientProcess):
     def data_received(self, data, datatype):
         sys.stdout.write(data)
@@ -57,17 +60,15 @@ class SSHConnectorSocketHandler(BaseWebSocketHandler):
             import traceback
             traceback.print_exc()
             IOLoop.current().stop()
-            
         
     async def create_process(self, host, user, password, port=22):
-        conn = await asyncssh.connect(host=host, username=user, password=password, port=int(port))
+        conn = await asyncssh.connect(host=host, username=user, password=password, port=int(port),known_hosts = None)
         self.process = await conn.create_process(term_type='xterm-color')
         self.process.data_received = self.send_stream
         self.process.eof_received = self.close
         self.record = open('record', 'wb')
         return self.process
             
-        
     async def on_message(self, message):
         msg_object = json.loads(message)
         logging.info(msg_object)
@@ -90,9 +91,9 @@ class SSHConnectorSocketHandler(BaseWebSocketHandler):
                     }
                 })
                 self.close()
-        if msg_object['type'] == 'stdin':
+        elif msg_object['type'] == 'stdin':
             self.process.stdin.write(msg_object['data'])
-        if msg_object['type'] == 'resize':
+        elif msg_object['type'] == 'resize':
             self.process.change_terminal_size(*msg_object['data'])
         
     def on_close(self):

@@ -6,7 +6,7 @@ class Timeline {
     *   'timestamp[59294838085]recordcontentendtimestamp\ntimestamp[59294838085]recordcontentendtimestamp...'
     * ts_rec_array
     *   [ timestamp[59294838085]recordcontent, ... ]
-    * ts_rec_array
+    * ts_rec_map
     *   { ts:recordcontenct, ... }
     * */
     constructor(container)  {
@@ -17,8 +17,9 @@ class Timeline {
         // Get basic data
         this.ts_rec_array   = this.get_ts_rec_array(rawRecords);
         this.ts_rec_map     = this.get_ts_rec_map(this.ts_rec_array);
+        
         this.startTs        = this.ts_rec_array[0].substring(11,22);
-        this.stopTs         = this.ts_rec_array[this.ts_rec_array.length - 1].substring(11,22);
+        this.stopTs         = this.ts_rec_array[this.ts_rec_array.length - 2].substring(11,22);
         
         this.timeoutArray = [];
         this.playing = NaN;
@@ -40,16 +41,23 @@ class Timeline {
     };
      
     play = (startTimestamp = this.startTs) => {
+        console.log(this.startTs);
+        console.log(this.stopTs);
+        console.log(startTimestamp);
         let container = this.container;
         let timeOutArray = this.timeoutArray;
         for (let [ts, rec] of this.ts_rec_map) {
             (function (ts, rec) {
                 let diff = ts - startTimestamp;
-                if (diff < 0) {return}
-                let _t = setTimeout(function (){
+                if (diff <= 0) {
                     container.write(rec)
-                }, ts - startTimestamp); 
-                timeOutArray.push(_t);
+                }
+                else {
+                    let _t = setTimeout(function (){
+                        container.write(rec)
+                    }, ts - startTimestamp);
+                    timeOutArray.push(_t);
+                }
             })(ts, rec)
         }
     };
@@ -62,7 +70,10 @@ class Timeline {
         for (let timeoutID of this.timeoutArray) {
             clearTimeout(timeoutID)
         }
-    } 
+    };
+    stop = () => {
+        this.play(this.stopTs);
+    }
 }
 
 export {Timeline}

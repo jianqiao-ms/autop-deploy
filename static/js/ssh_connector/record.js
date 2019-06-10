@@ -1,7 +1,5 @@
 import '../../xterm/xterm.js';
-import '../../xterm/addons/fit/fit.js';
 import '../../xterm/addons/fullscreen/fullscreen.js';
-Terminal.applyAddon(fit);
 Terminal.applyAddon(fullscreen);
 
 import {Timeline} from "./timeline.js";
@@ -21,14 +19,14 @@ function new_terminal() {
         };
     };
     ws.onclose = function (ee) {
-        timeline.start_play();
+        timeline.stop();
     };
     window.onresize = function() { 
-        terminal.fit();
+        terminal.toggleFullScreen(true);
     };
 
     terminal.open(document.getElementById('terminal-container'));
-    terminal.fit();
+    terminal.toggleFullScreen(true);
     
     return timeline
 }
@@ -36,9 +34,9 @@ function new_terminal() {
 $(document).ready(function() {
     let timeline = new_terminal();
     
-    setTimeout(function () {
-        timeline.pause()
-    }, 1500)
+    // setTimeout(function () {
+    //     timeline.pause()
+    // }, 1500)
     
     
 });
