@@ -1,0 +1,19 @@
+body {
+    position: relative;
+}
+
+#terminal-container {
+    position: fixed;
+}
+
+#terminal-play-control {
+    z-index:0;
+}
+.progress {
+    height: 2px!important;
+}
+
+#terminal-play-control > .fa-3x > .active {
+    cursor: pointer;
+    color: #ffc107!important;
+}

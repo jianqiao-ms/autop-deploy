@@ -41,9 +41,6 @@ class Timeline {
     };
      
     play = (startTimestamp = this.startTs) => {
-        console.log(this.startTs);
-        console.log(this.stopTs);
-        console.log(startTimestamp);
         let container = this.container;
         let timeOutArray = this.timeoutArray;
         for (let [ts, rec] of this.ts_rec_map) {
@@ -63,6 +60,8 @@ class Timeline {
     };
     
     start_play = () => {
+        this.container.reset();
+        console.log('Start play from' + this.startTs);
         this.play(this.startTs);
     };
     
