@@ -10,7 +10,27 @@ class Timeline {
     *   { ts:recordcontenct, ... }
     * */
     constructor(container)  {
-        this.container = container;
+        this.container      = container;
+        this.init();
+    };
+    
+    init = () => {
+        let btnPlay        = $('svg.svg-inline--fa.fa-play-circle');
+        let btnPause       = $('svg.svg-inline--fa.fa-pause-circle');
+        let btnStop        = $('svg.svg-inline--fa.fa-stop-circle');
+        
+        btnPlay.click( () => {
+            console.log('play');
+            // this.start_play();
+            btnPlay.removeClass('active');
+            btnPause.addClass('active');
+        });
+        btnPause.click( () => {
+            console.log('pause');
+            // this.pause();
+            btnPause.removeClass('active');
+            btnPlay.addClass('active');
+        })
     };
     
     open = (ws, rawRecords) => {
@@ -61,7 +81,6 @@ class Timeline {
     
     start_play = () => {
         this.container.reset();
-        console.log('Start play from' + this.startTs);
         this.play(this.startTs);
     };
     
