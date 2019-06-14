@@ -13,7 +13,7 @@ body {
     height: 2px!important;
 }
 
-#terminal-play-control > .fa-3x > .active {
+#terminal-play-control .active {
     display: inline-block!important;
     z-index: 2;
     cursor: pointer;

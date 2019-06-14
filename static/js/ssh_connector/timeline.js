@@ -9,25 +9,21 @@ class Timeline {
     * ts_rec_map
     *   { ts:recordcontenct, ... }
     * */
-    constructor(container)  {
-        this.container      = container;
-        this.init();
-    };
-    
-    init = () => {
-        let btnPlay        = $('svg.svg-inline--fa.fa-play-circle');
-        let btnPause       = $('svg.svg-inline--fa.fa-pause-circle');
-        let btnStop        = $('svg.svg-inline--fa.fa-stop-circle');
+    constructor(container, terminal)  {
+        this.terminal      = terminal;
+        let btnPlay        = $('#play');
+        let btnPause       = $('#pause');
+        let btnStop        = $('#stop');
         
-        btnPlay.click( () => {
-            console.log('play');
-            // this.start_play();
+        btnPlay.click( (e) => {
+            e.preventDefault();
+            this.start_play();
             btnPlay.removeClass('active');
             btnPause.addClass('active');
         });
-        btnPause.click( () => {
-            console.log('pause');
-            // this.pause();
+        btnPause.click( (e) => {
+            e.preventDefault();
+            this.pause();
             btnPause.removeClass('active');
             btnPlay.addClass('active');
         })
@@ -45,7 +41,9 @@ class Timeline {
         this.playing = NaN;
         this.next = NaN;
         
-        ws.close()
+        ws.close();
+        
+        
 
     };
     
@@ -61,17 +59,18 @@ class Timeline {
     };
      
     play = (startTimestamp = this.startTs) => {
-        let container = this.container;
+        let terminal = this.terminal;
         let timeOutArray = this.timeoutArray;
+        
         for (let [ts, rec] of this.ts_rec_map) {
             (function (ts, rec) {
                 let diff = ts - startTimestamp;
                 if (diff <= 0) {
-                    container.write(rec)
+                    terminal.write(rec)
                 }
                 else {
                     let _t = setTimeout(function (){
-                        container.write(rec)
+                        terminal.write(rec)
                     }, ts - startTimestamp);
                     timeOutArray.push(_t);
                 }
@@ -80,7 +79,7 @@ class Timeline {
     };
     
     start_play = () => {
-        this.container.reset();
+        this.terminal.reset();
         this.play(this.startTs);
     };
     

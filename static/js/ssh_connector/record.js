@@ -38,7 +38,7 @@ function new_timeline() {
 }
 
 $(document).ready(function() {
-    let timeline = new_timeline();
+    new_timeline();
     
     // setTimeout(function () {
     //     timeline.pause()
