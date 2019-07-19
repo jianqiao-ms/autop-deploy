@@ -663,15 +663,15 @@ var Buffer = (function () {
             }
         }));
         marker.register(this.lines.onInsert(function (event) {
-            if (marker.line >= event.index) {
+            if (marker.line >= event.dashboard) {
                 marker.line += event.amount;
             }
         }));
         marker.register(this.lines.onDelete(function (event) {
-            if (marker.line >= event.index && marker.line < event.index + event.amount) {
+            if (marker.line >= event.dashboard && marker.line < event.dashboard + event.amount) {
                 marker.dispose();
             }
-            if (marker.line > event.index) {
+            if (marker.line > event.dashboard) {
                 marker.line -= event.amount;
             }
         }));
@@ -3445,7 +3445,7 @@ var InputHandler = (function (_super) {
         return;
     };
     InputHandler.prototype.index = function () {
-        this._terminal.index();
+        this._terminal.dashboard();
     };
     InputHandler.prototype.tabSet = function () {
         this._terminal.tabSet();
@@ -9302,7 +9302,7 @@ var DynamicCharAtlas = (function (_super) {
                 index = this._cacheMap.size;
             }
             else {
-                index = this._cacheMap.peek().index;
+                index = this._cacheMap.peek().dashboard;
             }
             var cacheValue_1 = this._drawToCache(glyph, index);
             this._cacheMap.set(glyphKey, cacheValue_1);
@@ -9324,8 +9324,8 @@ var DynamicCharAtlas = (function (_super) {
         if (cacheValue.isEmpty) {
             return;
         }
-        var cacheX = this._toCoordinateX(cacheValue.index);
-        var cacheY = this._toCoordinateY(cacheValue.index);
+        var cacheX = this._toCoordinateX(cacheValue.dashboard);
+        var cacheY = this._toCoordinateY(cacheValue.dashboard);
         ctx.drawImage(cacheValue.inBitmap ? this._bitmap : this._cacheCanvas, cacheX, cacheY, this._config.scaledCharWidth, this._config.scaledCharHeight, x, y, this._config.scaledCharWidth, this._config.scaledCharHeight);
     };
     DynamicCharAtlas.prototype._getColorFromAnsiIndex = function (idx) {

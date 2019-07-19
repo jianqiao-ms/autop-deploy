@@ -2227,7 +2227,7 @@
    * @argument {Array} arr
    * @argument prop
    * @argument value
-   * @returns index or -1
+   * @returns dashboard.js or -1
    */
   function find(arr, check) {
     // use native find if supported
@@ -2246,7 +2246,7 @@
    * @argument {Array} arr
    * @argument prop
    * @argument value
-   * @returns index or -1
+   * @returns dashboard.js or -1
    */
   function findIndex(arr, prop, value) {
     // use native findIndex if supported
@@ -6421,7 +6421,7 @@
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.1.3): index.js
+   * Bootstrap (v4.1.3): dashboard.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
