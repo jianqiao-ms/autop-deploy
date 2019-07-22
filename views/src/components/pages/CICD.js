@@ -1,30 +1,29 @@
 import React from 'react';
-
 import {HeaderNavbtn} from '../BaseFramework'
 
-class DashboardNavbtn extends React.Component {
+import '../../scss/index.scss'
+
+
+class CICDNavBtn extends React.Component {
   handleActive = (e) => {
-    console.log(e);
     this.props.handlerGlobalActive(e);
+
   };
 
   render() {
-    const text = "Dashboard";
+    const text = "CICD";
     const isActive = text.indexOf(this.props.active) >= 0;
     return(<HeaderNavbtn text={text} handleSpecificActive={this.handleActive} active={isActive}/>)
   }
 }
 
-class DashboardPanel extends React.Component {
-  text = () => {
-    return "Dashboard"
-  };
+class CICDPanel extends React.Component {
 
   render() {
     return(
-        <h1>Dashboard Panel</h1>
+        <h1>CICD Panel</h1>
     )
   }
 }
 
-export {DashboardNavbtn, DashboardPanel}
+export {CICDNavBtn, CICDPanel}
