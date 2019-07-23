@@ -1,8 +1,9 @@
 import React from 'react';
 import {HeaderNavbtn} from '../BaseFramework'
-
 import '../../scss/ssh_connector.scss'
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTerminal} from "@fortawesome/free-solid-svg-icons";
 import {FormInputText} from "../PublicComponents";
 import {FormInputPassword} from "../PublicComponents";
 
@@ -48,9 +49,9 @@ class SSHTerminal extends React.Component {
 class SSHLoginForm extends React.Component {
   render() {
     return(
-      <div className={"bg-light shadow p-4"}>
-        <FontAwesomeIcon icon="terminal" />
-        <form>
+      <div className={"bg-light shadow p-3 rounded-lg"} id={"ssh-connector"}>
+        <div className={"pt-1 mb-3 mr-3"}><FontAwesomeIcon icon={faTerminal} size="3x" className={"text-light bg-secondary p-2 rounded"}/></div>
+        <form >
           <FormInputText label={"Server FQDN"} placeholder={"IP or DNS Name of Server"}/>
           <FormInputPassword />
           <div className={"d-flex justify-content-end"}>

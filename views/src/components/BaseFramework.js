@@ -34,7 +34,7 @@ class HeaderNavBar extends React.Component {
 
   render() {
     return(
-      <nav className="navbar navbar-expand-md navbar-dark bg-dark mb-4"><a className="navbar-brand" href="/">Autop</a>
+      <nav className="navbar navbar-expand-md navbar-dark bg-dark mb-4 fixed-top"><a className="navbar-brand" href="/">Autop</a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span
           className="navbar-toggler-icon" /></button>
