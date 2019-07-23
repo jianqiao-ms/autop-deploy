@@ -1,28 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import "../scss/index.scss";
+
 // BaseFramework
 import {BaseFramework} from './components/BaseFramework'
 
 //NavBtns
-import {DashboardNavbtn} from "./components/pages/dashboard";
+import {DashboardNavbtn} from "./components/pages/Dashboard";
+import {MonitorNavBtn} from "./components/pages/Monitor";
 import {CICDNavBtn} from "./components/pages/CICD";
-
-// Panels
-import {DashboardPanel} from './components/pages/dashboard'
-import {CICDPanel} from "./components/pages/CICD";
+import {SSHConnectorNavBtn} from "./components/pages/SSHConnector";
 
 const navBtns = [
   DashboardNavbtn,
-  CICDNavBtn
-];
-
-const panels = [
-  <DashboardPanel />,
-  <CICDPanel/>
+  MonitorNavBtn,
+  CICDNavBtn,
+  SSHConnectorNavBtn
 ];
 
 ReactDOM.render(
-  <BaseFramework btns = {navBtns} panels={panels}/>,
+  <BaseFramework btns = {navBtns} DefaultActiveHeaderBtn = {DashboardNavbtn} />,
   document.getElementById('root')
 );

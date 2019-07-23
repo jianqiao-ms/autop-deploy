@@ -1,20 +1,25 @@
 import React from 'react';
 
-import "../scss/index.scss";
-
 class HeaderNavbtn extends React.Component {
-  handleActive = (e) => {
-    this.props.handleSpecificActive(e)
+  handleActive = (e, id = this.props.id, panel) => {
+    this.props.handleSpecificActive(e, id, panel)
   };
 
+  componentDidMount() {
+     if (this.props.headerActiveId === "ACTIVE") {
+       this.handleActive(null)
+     }
+  }
+
   render() {
+    const isActive = (this.props.id.indexOf(this.props.headerActiveId) >= 0);
     return(
       <li className="nav-item">
-        <button className={"btn nav-link " + (this.props.active? "active":"")}
-                id={this.props.text}
+        <button className={"btn nav-link " + (isActive? "active":"")}
+                id={this.props.id}
                 onClick={this.handleActive}
         >
-          {this.props.text}
+          {this.props.id}
         </button>
       </li>
     )
@@ -22,23 +27,9 @@ class HeaderNavbtn extends React.Component {
 }
 
 class HeaderNavBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {active:null};
-    // this.btnList = props.btns.map(
-    //   (BTN) => <BTN handlerGlobalActive={this.handleActive} key={BTN.name} active={this.state.active}/>
-    //   );
-  }
-
-
-  handleActive = (e) => {
-    this.setState({active:e.target.id});
+  handleActive = (e, id, panel) => {
+    this.props.handlerGlobalActive(e, id, panel)
   };
-
-  componentDidMount = () => {
-
-  };
-
 
   render() {
     return(
@@ -48,9 +39,17 @@ class HeaderNavBar extends React.Component {
           className="navbar-toggler-icon" /></button>
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <ul className="navbar-nav mr-auto">
-            {this.props.btns.map(
-              (BTN) => <BTN handlerGlobalActive={this.handleActive} key={BTN.name} active={this.state.active}/>
-              )}
+            {this.props.btns.map((BTN, index) => {
+              if (this.props.headerActiveId === BTN ) {
+                return <BTN key={index}
+                            hanlerHeaderActive={this.handleActive}
+                            headerActiveId="ACTIVE"/>
+              } else {
+                return <BTN key={index}
+                            hanlerHeaderActive={this.handleActive}
+                            headerActiveId={this.props.headerActiveId} />
+              }
+            })}
           </ul>
           <form className="form-inline mt-2 mt-md-0">
             <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" />
@@ -64,20 +63,45 @@ class HeaderNavBar extends React.Component {
 
 class Container extends React.Component {
   render() {
+    const Child = this.props.child;
+    if (!Child) { return null}
     return(
-      <div className={"container-fluid fixed-top mt-5 p-0"}>
-        {this.props.children}
-      </div>
+      <Child />
     )
   }
 }
 
 class BaseFramework extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      headerActiveId : null,
+      panelActive : null
+    };
+
+    if (this.state.headerActiveId  === null && typeof this.props.DefaultActiveHeaderBtn === 'function') {
+      this.state = {
+        headerActiveId : this.props.DefaultActiveHeaderBtn,
+        panelActive : null
+      }
+    }
+  }
+
+  handleActive = (e, id, panel) => {
+    this.setState({
+      headerActiveId : id,
+      panelActive : panel
+    });
+  };
+
   render() {
     return(
       <React.Fragment>
-        <HeaderNavBar btns = {this.props.btns}/>
-        <Container panels = {this.props.panels}/>
+        <HeaderNavBar btns = {this.props.btns}
+                      headerActiveId={this.state.headerActiveId}
+                      handlerGlobalActive={this.handleActive}
+                      />
+        <Container child = {this.state.panelActive} />
       </React.Fragment>
     );
   }

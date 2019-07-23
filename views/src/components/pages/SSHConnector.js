@@ -1,23 +1,23 @@
 import React from 'react';
 import {HeaderNavbtn} from '../BaseFramework'
 
-class CICDNavBtn extends React.Component {
-  handleActive = (e, id, panel = CICDPanel) => {
+class SSHConnectorNavBtn extends React.Component {
+  handleActive = (e, id, panel = SSHConnectorPanel) => {
     this.props.hanlerHeaderActive(e, id, panel);
   };
 
   render() {
-    const id = "CICD";
+    const id = "SSHConnector";
     return(<HeaderNavbtn id={id} handleSpecificActive={this.handleActive} headerActiveId={this.props.headerActiveId}/>)
   }
 }
 
-class CICDPanel extends React.Component {
+class SSHConnectorPanel extends React.Component {
   render() {
     return(
-        <h1>CICD Panel</h1>
+        <h1>SSHConnector Panel</h1>
     )
   }
 }
 
-export {CICDNavBtn}
+export {SSHConnectorNavBtn}
