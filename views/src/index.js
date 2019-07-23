@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import "../scss/index.scss";
+import "./scss/index.scss";
 
 // BaseFramework
 import {BaseFramework} from './components/BaseFramework'
@@ -20,6 +20,6 @@ const navBtns = [
 ];
 
 ReactDOM.render(
-  <BaseFramework btns = {navBtns} DefaultActiveHeaderBtn = {DashboardNavbtn} />,
+  <BaseFramework btns = {navBtns} DefaultActiveHeaderBtn = {SSHConnectorNavBtn} />,
   document.getElementById('root')
 );

@@ -1,4 +1,5 @@
 import React from 'react';
+import "../scss/index.scss";
 
 class HeaderNavbtn extends React.Component {
   handleActive = (e, id = this.props.id, panel) => {
@@ -106,5 +107,7 @@ class BaseFramework extends React.Component {
     );
   }
 }
+
+
 
 export {HeaderNavbtn, BaseFramework}
