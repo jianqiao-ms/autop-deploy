@@ -7,6 +7,8 @@ import {faTerminal} from "@fortawesome/free-solid-svg-icons";
 import {FormInputText} from "../PublicComponents";
 import {FormInputPassword} from "../PublicComponents";
 
+// Header And Console Control
+
 class SSHConnectorNavBtn extends React.Component {
   handleActive = (e, id, panel = SSHConnectorPanel) => {
     this.props.hanlerHeaderActive(e, id, panel);
@@ -35,6 +37,7 @@ class SSHConnectorPanel extends React.Component {
 }
 export {SSHConnectorNavBtn}
 
+// Console modules
 
 class SSHTerminal extends React.Component {
   render() {
@@ -44,15 +47,14 @@ class SSHTerminal extends React.Component {
   }
 }
 
-
-
 class SSHLoginForm extends React.Component {
   render() {
     return(
-      <div className={"bg-light shadow p-3 rounded-lg"} id={"ssh-connector"}>
+      <div className={"bg-light shadow p-3 rounded-lg" + this.props.extraClasses}>
         <div className={"pt-1 mb-3 mr-3"}><FontAwesomeIcon icon={faTerminal} size="3x" className={"text-light bg-secondary p-2 rounded"}/></div>
         <form >
           <FormInputText label={"Server FQDN"} placeholder={"IP or DNS Name of Server"}/>
+          <FormInputText label={"SSH Port"} placeholder={"SSH Port. Default 22"} />
           <FormInputPassword />
           <div className={"d-flex justify-content-end"}>
             <button type="submit" className="btn btn-primary">SSH Login</button>

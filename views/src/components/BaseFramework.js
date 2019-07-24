@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import "../scss/index.scss";
 
 class HeaderNavbtn extends React.Component {
@@ -28,13 +29,23 @@ class HeaderNavbtn extends React.Component {
 }
 
 class HeaderNavBar extends React.Component {
+  componentDidMount() {
+    const headerHeight = document.getElementById('header').clientHeight;
+    this.uploadHeight(headerHeight);
+  }
+
+  uploadHeight = (h) => {
+    this.props.getHeaderHeight(h);
+  };
+
   handleActive = (e, id, panel) => {
     this.props.handlerGlobalActive(e, id, panel)
   };
 
   render() {
     return(
-      <nav className="navbar navbar-expand-md navbar-dark bg-dark mb-4 fixed-top"><a className="navbar-brand" href="/">Autop</a>
+      <nav className="navbar navbar-expand-md navbar-dark bg-dark mb-4 fixed-top" id={"header"}>
+        <a className="navbar-brand" href="">Autop</a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span
           className="navbar-toggler-icon" /></button>
@@ -66,8 +77,14 @@ class Container extends React.Component {
   render() {
     const Child = this.props.child;
     if (!Child) { return null}
+    console.log(this.props.headerHeight);
+
+
     return(
-      <Child />
+      //<div style={{paddingTop : this.props.headerHeight + 17}}>
+      <div className={"position-fixed vw-100 "} style={{top : this.props.headerHeight + 17, bottom:0}}>
+        <Child />
+      </div>
     )
   }
 }
@@ -76,6 +93,7 @@ class BaseFramework extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      headerHeight : "7em",
       headerActiveId : null,
       panelActive : null
     };
@@ -88,6 +106,12 @@ class BaseFramework extends React.Component {
     }
   }
 
+  getHeaderHeight = (h) => {
+    this.setState({
+      headerHeight : h
+    })
+  };
+
   handleActive = (e, id, panel) => {
     this.setState({
       headerActiveId : id,
@@ -98,11 +122,12 @@ class BaseFramework extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <HeaderNavBar btns = {this.props.btns}
-                      headerActiveId={this.state.headerActiveId}
-                      handlerGlobalActive={this.handleActive}
+        <HeaderNavBar btns                = {this.props.btns}
+                      headerActiveId      = {this.state.headerActiveId}
+                      handlerGlobalActive = {this.handleActive}
+                      getHeaderHeight     = {this.getHeaderHeight}
                       />
-        <Container child = {this.state.panelActive} />
+        <Container child = {this.state.panelActive} headerHeight = {this.state.headerHeight} />
       </React.Fragment>
     );
   }

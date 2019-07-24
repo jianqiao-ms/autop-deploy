@@ -1,15 +1,3 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import 'private_variables';
 @import "form";
-
-#ssh-connector {
-  margin-top: 3em;
-
-  @include media-breakpoint-up(sm) {
-    margin-top: 5em!important;
-  }
-
-  @include media-breakpoint-up(md) {
-    margin-top: 7em!important;
-  }
-}
