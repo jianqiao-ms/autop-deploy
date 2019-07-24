@@ -2,7 +2,7 @@
 
 ## Dependencies
 ```bash
-$ sudo pip3 install django mysqlclient paramiko channels
+$ sudo pip3 install tornado sqlalchemy mysqlclient asyncssh
 ```
 
 ## Frequently used django-admin cmd

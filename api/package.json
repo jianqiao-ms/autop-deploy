@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "startAPI": "python3 manage.py runserver 0:8000",
-    "createSchemas": "python3 manage.py migrate"
+    "startApi": "python3 ../autop.py"
   }
 }

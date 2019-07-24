@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import "../scss/index.scss";
 
 class HeaderNavbtn extends React.Component {
@@ -77,9 +77,6 @@ class Container extends React.Component {
   render() {
     const Child = this.props.child;
     if (!Child) { return null}
-    console.log(this.props.headerHeight);
-
-
     return(
       //<div style={{paddingTop : this.props.headerHeight + 17}}>
       <div className={"position-fixed vw-100 "} style={{top : this.props.headerHeight + 17, bottom:0}}>
