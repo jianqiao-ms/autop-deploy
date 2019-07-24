@@ -14,4 +14,4 @@ views/yarn.lock
 
 # api part
 api/*.pyc
-api/api/setting.py
+api/api/settings.py

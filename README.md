@@ -2,7 +2,7 @@
 
 ## Dependencies
 ```bash
-$ sudo pip3 install django mysqlclient
+$ sudo pip3 install django mysqlclient paramiko channels
 ```
 
 ## Frequently used django-admin cmd
