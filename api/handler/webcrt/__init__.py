@@ -1,7 +1,9 @@
 
 __all__ = [
-    'SSHConnectorSocketHandler'
+    'SSHConnectorSocketHandler',
+    'SSHConnectorParamikoSocketHandler'
 ]
 
 from .connector import SSHConnectorSocketHandler
+from .connector import SSHConnectorParamikoSocketHandler
 

@@ -11,6 +11,7 @@ import traceback
 import paramiko
 import asyncssh
 from tornado.platform.asyncio import IOLoop
+from tornado.websocket import WebSocketHandler
 
 # Local Packages
 from api.classes import BaseWebSocketHandler
@@ -19,11 +20,12 @@ from time_generator import timestamp_millisecond
 # CONST
 
 # Class&Function Defination
-class SSHConnectorSocketHandler(BaseWebSocketHandler):
+class SSHConnectorSocketHandler(WebSocketHandler):
     """Handler for a terminal websocket"""
-    async def open(self, *args: str, **kwargs: str):
+    def check_origin(self, origin):
+        return True
+    def open(self):
         logging.info('websocket opened')
-
     def send_stream(self, data, event):
         logging.info(data)
         try:

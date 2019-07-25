@@ -5,9 +5,9 @@
 
 # 3rd-party Packages
 from tornado.platform import asyncio
-
+from tornado.options import parse_command_line
+from tornado.web import Application
 # Local Packages
-from api.classes import Application
 from api.handler import route
 
 
@@ -17,6 +17,9 @@ from api.handler import route
 
 # Logic
 if __name__ == '__main__':
+    parse_command_line()
+    settings = {'debug': True}
+
     IOLoop = asyncio.IOLoop()
     
     # cm = ConfigManager()
@@ -27,6 +30,6 @@ if __name__ == '__main__':
     # configuration.validate()
     # lm.get_logger(configuration.log)
     #
-    application = Application(route)
+    application = Application(route, **settings)
     application.listen(8080)
     IOLoop.current().start()
