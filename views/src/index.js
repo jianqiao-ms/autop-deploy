@@ -7,10 +7,10 @@ import "./scss/index.scss";
 import {BaseFramework} from './components/BaseFramework'
 
 //NavBtns
-import {DashboardNavbtn} from "./components/pages/Dashboard";
-import {MonitorNavBtn} from "./components/pages/Monitor";
-import {CICDNavBtn} from "./components/pages/CICD";
-import {SSHConnectorNavBtn} from "./components/pages/SSHConnector";
+import {DashboardNavbtn} from "./pages/Dashboard";
+import {MonitorNavBtn} from "./pages/Monitor";
+import {CICDNavBtn} from "./pages/CICD";
+import {SSHConnectorNavBtn} from "./pages/SSHConnector";
 
 const navBtns = [
   DashboardNavbtn,

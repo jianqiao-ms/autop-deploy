@@ -1,6 +1,6 @@
 import React from 'react';
-import {HeaderNavbtn} from '../BaseFramework'
-import '../../scss/ssh_connector.scss'
+import {HeaderNavbtn} from '../components/BaseFramework'
+import '../scss/ssh_connector.scss'
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTerminal} from "@fortawesome/free-solid-svg-icons";
@@ -92,7 +92,6 @@ class SSHTerminal extends React.Component {
   };
 
   render() {
-    console.log('terminal mount ');
     return(
       <React.Fragment>
       <div className={"w-100 vh-100"} id={"terminal"} ref={ _this => this.termDiv = _this} />

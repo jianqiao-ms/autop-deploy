@@ -1,5 +1,5 @@
 import React from 'react';
-import {HeaderNavbtn} from '../BaseFramework'
+import {HeaderNavbtn} from '../components/BaseFramework'
 
 class CICDNavBtn extends React.Component {
   handleActive = (e, id, panel = CICDPanel) => {
