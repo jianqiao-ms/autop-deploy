@@ -1,14 +1,9 @@
 import React from 'react';
-import {HeaderNavbtn} from '../components/BaseFramework'
 
-class DashboardNavbtn extends React.Component {
-  handleActive = (e, id, panel = DashboardPanel) => {
-    this.props.hanlerHeaderActive(e, id, panel);
-  };
+class DashboardPage extends React.Component {
 
   render() {
-    const id = "Dashboard";
-    return(<HeaderNavbtn id={id} handleSpecificActive={this.handleActive} headerActiveId={this.props.headerActiveId}/>)
+    return(<DashboardPanel />)
   }
 }
 
@@ -20,4 +15,4 @@ class DashboardPanel extends React.Component {
   }
 }
 
-export {DashboardNavbtn}
+export default DashboardPage

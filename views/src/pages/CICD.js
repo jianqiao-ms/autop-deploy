@@ -1,14 +1,8 @@
 import React from 'react';
-import {HeaderNavbtn} from '../components/BaseFramework'
 
-class CICDNavBtn extends React.Component {
-  handleActive = (e, id, panel = CICDPanel) => {
-    this.props.hanlerHeaderActive(e, id, panel);
-  };
-
+class CICDPage extends React.Component {
   render() {
-    const id = "CICD";
-    return(<HeaderNavbtn id={id} handleSpecificActive={this.handleActive} headerActiveId={this.props.headerActiveId}/>)
+    return(<CICDPanel />)
   }
 }
 
@@ -20,4 +14,4 @@ class CICDPanel extends React.Component {
   }
 }
 
-export {CICDNavBtn}
+export default CICDPage

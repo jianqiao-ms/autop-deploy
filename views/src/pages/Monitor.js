@@ -1,14 +1,8 @@
 import React from 'react';
-import {HeaderNavbtn} from '../components/BaseFramework'
 
-class MonitorNavBtn extends React.Component {
-  handleActive = (e, id, panel = MonitorPanel) => {
-    this.props.hanlerHeaderActive(e, id, panel);
-  };
-
+class MonitorPage extends React.Component {
   render() {
-    const id = "Monitor";
-    return(<HeaderNavbtn id={id} handleSpecificActive={this.handleActive} headerActiveId={this.props.headerActiveId}/>)
+    return(<MonitorPanel />)
   }
 }
 
@@ -20,4 +14,4 @@ class MonitorPanel extends React.Component {
   }
 }
 
-export {MonitorNavBtn}
+export default MonitorPage
