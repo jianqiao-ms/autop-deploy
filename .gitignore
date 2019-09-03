@@ -1,17 +1,21 @@
+*test*
+*.pyc*
+*lock*
+*node_modules*/
+
 .idea/
 *.pyc
-*test*
+
 logs/*log*
 *.jar
 upload/*
 !upload/README.md
-node_modules/
 
-# views part
-views/node_modules/
-views/package.json.lock
-views/yarn.lock
+
+
+
+
 
 # api part
-api/*.pyc
 api/api/settings.py
+

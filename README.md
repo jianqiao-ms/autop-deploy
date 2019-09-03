@@ -39,3 +39,8 @@ $ sudo pip3 install tornado sqlalchemy mysqlclient asyncssh
 | 102 | Upload path permmision problem |
 | 103 | Cannot connect to gitlab |
 
+# 开源进销存系统 
+ 
+| Component | Description | Name |
+| --- | --- | --- |
+| Sales Client | | FatCat |
