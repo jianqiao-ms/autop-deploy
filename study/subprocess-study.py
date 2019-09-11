@@ -37,16 +37,24 @@ class MainHandler(tornado.web.RequestHandler):
         # p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
         #                stderr=subprocess.STDOUT, universal_newlines=True)
 
-        p = Subprocess(shlex.split("ping -c 100 baidu.com"), stdin=Subprocess.STREAM, stdout=Subprocess.STREAM,
-                                         stderr=Subprocess.STREAM, close_fds=True)
+        p = Subprocess(shlex.split("ping -c 10 baidu.com"), stdin=Subprocess.STREAM, stdout=Subprocess.STREAM,
+                                         stderr=Subprocess.STREAM)
         IOLoop.instance().add_handler(p.stdout, self.transfer, IOLoop.READ)
-        await p.wait_for_exit()
+
+        await p.stdout.read_until_close()
 
     def transfer(self, fd, events):
-        a = fd.read_until(b'\n')
+        # try:
+        #     a = fd.read_until(b'\n')
+        #     rst = a.result().decode().replace('\n', '<br />')
+        #
+        # except tornado.iostream.StreamClosedError:
+        #     print('ERROR')
+        a = fd.read_bytes(128)
         rst = a.result().decode().replace('\n', '<br />')
         self.write(rst)
         self.flush()
+
 
         # try:
         #     a = await p.stdout.read_until(b'\n')
