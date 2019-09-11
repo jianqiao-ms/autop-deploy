@@ -34,11 +34,19 @@ def fsub():
 
 class MainHandler(tornado.web.RequestHandler):
     async def get(self):
-        p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
-                       stderr=subprocess.STDOUT, universal_newlines=True)
+        # p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
+        #                stderr=subprocess.STDOUT, universal_newlines=True)
 
-        a = await p.stdout.read_until_close()
-        self.finish(a.decode().replace('\n', '<br/>'))
+        p = Subprocess(shlex.split("ping -c 100 baidu.com"), stdin=Subprocess.STREAM, stdout=Subprocess.STREAM,
+                                         stderr=Subprocess.STREAM, close_fds=True)
+        IOLoop.instance().add_handler(p.stdout, self.transfer, IOLoop.READ)
+        await p.wait_for_exit()
+
+    def transfer(self, fd, events):
+        a = fd.read_until(b'\n')
+        rst = a.result().decode().replace('\n', '<br />')
+        self.write(rst)
+        self.flush()
 
         # try:
         #     a = await p.stdout.read_until(b'\n')
