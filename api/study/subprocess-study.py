@@ -34,27 +34,34 @@ def fsub():
 
 class MainHandler(tornado.web.RequestHandler):
     async def get(self):
-        # p = Subprocess(shlex.split('ping -c 10 baidu.com'), stdin=None, stdout=Subprocess.STREAM,
-        #                stderr=subprocess.STDOUT, universal_newlines=True)
+        self.process = Subprocess(shlex.split('ping -c 1000 baidu.com'), stdin=Subprocess.STREAM, stdout=Subprocess.STREAM,
+                       stderr=Subprocess.STREAM)
 
-        p = Subprocess(shlex.split("ping -c 10 baidu.com"), stdin=Subprocess.STREAM, stdout=Subprocess.STREAM,
-                                         stderr=Subprocess.STREAM)
-        IOLoop.instance().add_handler(p.stdout, self.transfer, IOLoop.READ)
+        IOLoop.current().add_handler(self.process.stdout
+                                     , self.transfer, IOLoop.READ)
+        ret = await self.process.wait_for_exit()
 
-        await p.stdout.read_until_close()
+        IOLoop.current().remove_handler(self.process.stdout)
 
     def transfer(self, fd, events):
-        # try:
-        #     a = fd.read_until(b'\n')
-        #     rst = a.result().decode().replace('\n', '<br />')
-        #
-        # except tornado.iostream.StreamClosedError:
-        #     print('ERROR')
-        a = fd.read_bytes(128)
-        rst = a.result().decode().replace('\n', '<br />')
-        self.write(rst)
-        self.flush()
+        try:
+            if fd.closed():
+                print("AAA")
+                self.finish()
+            # a = fd.read_bytes(128)
+            # rst = a.result().decode().replace('\n', '<br />')
+            a = os.read(fd.fileno(), 128)
+            rst = a.decode().replace('\n', '<br />')
+            print(rst)
+            self.write(rst)
+            self.flush()
+        except:
+            import traceback
+            traceback.print_exc()
+            IOLoop.current().stop()
 
+    def stop(self, fd, events):
+        self.finish()
 
         # try:
         #     a = await p.stdout.read_until(b'\n')
