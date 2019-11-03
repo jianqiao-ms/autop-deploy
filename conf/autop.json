@@ -1,0 +1,19 @@
+{
+  "app": {
+    "debug": true,
+    "upload_path": "/home/jianqiao/workspace/autop/upload"
+  },
+  "db": {
+    "host": "192.168.3.251",
+    "port": 3306,
+    "user": "majianqiao",
+    "password": "jianqiaoA1!",
+    "database": "autop"
+  },
+  "log": {
+    "level": "info",
+    "console": true,
+    "path": "/home/jianqiao/workspace/autop/logs",
+    "format": "[%(asctime)s] %(levelname)s %(filename)s %(funcName)s %(lineno)d -- %(message)s"
+  }
+}
